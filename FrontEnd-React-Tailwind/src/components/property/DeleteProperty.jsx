@@ -16,11 +16,11 @@ function DeleteProperty() {
 
       if (response.ok) {
         setMessage("El inmueble se ha eliminado correctamente");
-        showSuccessAlert(); // Muestra un SweetAlert de éxito
+        showSuccessAlert();
       } else {
         setMessage("Error al eliminar el inmueble");
         setShowRetry(true);
-        showErrorAlert(); // Muestra un SweetAlert de error
+        showErrorAlert();
       }
     } catch (error) {
       console.error("Error al eliminar el inmueble:", error);

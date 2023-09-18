@@ -20,14 +20,11 @@ function Login() {
       if (response.ok) {
         const userData = await response.json();
         if (userData.length > 0) {
-          // Si las credenciales son correctas, redirige a la página de usuarios
           navigate("/user");
         } else {
-          // Si las credenciales son incorrectas, muestra un mensaje de error
           alert("Credenciales incorrectas. Por favor, inténtalo de nuevo o regístrate.");
         }
       } else {
-        // Manejo de otros errores de autenticación
         alert("Error de autenticación. Por favor, inténtalo de nuevo más tarde.");
       }
     } catch (error) {

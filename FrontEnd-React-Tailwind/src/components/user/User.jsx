@@ -1,7 +1,7 @@
 import { useState } from "react";
-import RegisterProperty from "../rentals/RegisterProperty";
-import DeleteProperty from "../rentals/DeleteProperty";
-import ModifyProperty from "../rentals/ModifyProperty";
+import RegisterProperty from "../property/RegisterProperty";
+import DeleteProperty from "../property/DeleteProperty";
+import ModifyProperty from "../property/ModifyProperty";
 
 function User() {
   const [shownComponent, setShownComponent] = useState(null);

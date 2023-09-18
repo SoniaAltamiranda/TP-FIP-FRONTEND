@@ -3,10 +3,10 @@ import Home from "./components/home/Home";
 import Contact from "./components/contact/Contact";
 import Login from "./components/register-login/Login";
 import Register from "./components/register-login/Register";
-import Rentals from "./components/rentals/Rentals";
+import Rentals from "./components/property/Rentals";
 import Footer from "./components/footer/Footer";
 import User from "./components/user/User";
-import PropertyDetails from "./components/rentals/PropertyDetails";
+import PropertyDetails from "./components/property/PropertyDetails";
 import Navbar from "./components/navbar/Navbar";
 
 function App() {
