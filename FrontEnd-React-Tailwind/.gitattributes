@@ -1,0 +1,9 @@
+# Configurar archivos para usar LF (Unix-style) en lugar de CRLF (Windows-style)
+*.js text eol=lf
+*.json text eol=lf
+*.jsx text eol=lf
+
+
+
+
+

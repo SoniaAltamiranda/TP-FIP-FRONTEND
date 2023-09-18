@@ -14,23 +14,21 @@ function Login() {
     e.preventDefault();
     const { name, password } = formData;
     const BASE_URL = "http://localhost:3030/users/";
-    try {
-      const response = await fetch(BASE_URL + "authenticate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name, password }),
-      });
 
-      if (response.status === 200) {
-        navigate("/");
-      } else if (response.status === 401) {
-        alert("Credenciales incorrectas. Por favor, inténtalo de nuevo.");
+    try {
+      const response = await fetch(`${BASE_URL}?name=${name}&password=${password}`);
+      if (response.ok) {
+        const userData = await response.json();
+        if (userData.length > 0) {
+          // Si las credenciales son correctas, redirige a la página de usuarios
+          navigate("/user");
+        } else {
+          // Si las credenciales son incorrectas, muestra un mensaje de error
+          alert("Credenciales incorrectas. Por favor, inténtalo de nuevo o regístrate.");
+        }
       } else {
-        alert(
-          "Error de autenticación. Por favor, inténtalo de nuevo más tarde."
-        );
+        // Manejo de otros errores de autenticación
+        alert("Error de autenticación. Por favor, inténtalo de nuevo más tarde.");
       }
     } catch (error) {
       console.error("Error al realizar la autenticación:", error);
@@ -51,8 +49,8 @@ function Login() {
             <label className="block text-gray-700">Usuario:</label>
             <input
               type="text"
-              name="name" // Cambiado a "name"
-              value={formData.name} // Cambiado a "name"
+              name="name"
+              value={formData.name}
               onChange={handleChange}
               className="border border-gray-400 p-2 w-full"
               required

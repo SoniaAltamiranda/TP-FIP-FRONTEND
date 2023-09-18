@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { NavLink } from "./NavLink";
 
 const Navbar = () => {
@@ -37,7 +37,7 @@ const Navbar = () => {
             to="/login"
             isActive={() => location.pathname.includes("/login")}
           >
-            Registro/Login
+            Login/Registro
           </NavLink>
           <NavLink
             to="/rentals"
