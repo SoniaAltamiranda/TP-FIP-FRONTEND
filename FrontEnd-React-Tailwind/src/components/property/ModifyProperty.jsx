@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Swal from 'sweetalert2';
 
 function ModifyProperty() {
   const [id, setId] = useState("");
@@ -10,24 +11,40 @@ function ModifyProperty() {
   const fetchPropertyById = async () => {
     try {
       const response = await fetch(`http://localhost:3000/properties/${id}`);
-
+  
       if (response.ok) {
         const data = await response.json();
         setProperty(data);
         setIsPropertyFound(true);
-        setIsSuccess(false); 
-        setIsError(false); 
+        setIsSuccess(false);
+        setIsError(false);
       } else {
         console.error("Error al obtener la propiedad por ID");
         setProperty(null);
         setIsPropertyFound(false);
         setIsError(true);
+  
+        // Mostrar el SweetAlert
+        Swal.fire({
+          icon: 'error',
+          title: 'Propiedad no encontrada',
+          text: 'La propiedad con el ID indicado no existe.',
+          showCancelButton: true,
+          confirmButtonText: 'Reintentar',
+          cancelButtonText: 'Salir',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            //Reintentar
+          } else if (result.isDismissed) {
+            window.location.href = "http://localhost:5173/user";
+          }
+        });
       }
     } catch (error) {
       console.error("Error al obtener la propiedad por ID:", error);
       setProperty(null);
       setIsPropertyFound(false);
-      setIsError(true); 
+      setIsError(true);
     }
   };
 
@@ -55,6 +72,19 @@ function ModifyProperty() {
         console.log("La propiedad se modificó con éxito.");
         setIsSuccess(true);
         setIsError(false);
+
+        // Mostrar el SweetAlert de éxito
+        Swal.fire({
+          icon: 'success',
+          title: 'Cambios realizados con éxito',
+          showConfirmButton: false,
+          html: '<button id="continueButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Continuar</button>',
+          didOpen: () => {
+            document.getElementById('continueButton').addEventListener('click', () => {
+              window.location.href = "http://localhost:5173/user";
+            });
+          },
+        });
       } else {
         console.error("Error al modificar la propiedad.");
         setIsError(true);
@@ -115,6 +145,7 @@ function ModifyProperty() {
                 setProperty({ ...property, title: e.target.value })
               }
               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
+              required
             />
           </div>
           <div className="mb-2">
@@ -133,6 +164,7 @@ function ModifyProperty() {
                 setProperty({ ...property, type: e.target.value })
               }
               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
+              required
             />
           </div>
           <div className="mb-2">
@@ -151,6 +183,7 @@ function ModifyProperty() {
                 setProperty({ ...property, rooms: parseInt(e.target.value) })
               }
               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
+              required
             />
           </div>
           <div className="mb-2">
@@ -169,6 +202,7 @@ function ModifyProperty() {
                 setProperty({ ...property, description: e.target.value })
               }
               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
+              required
             />
           </div>
           <div className="mb-2">
@@ -187,6 +221,7 @@ function ModifyProperty() {
                 setProperty({ ...property, price: parseInt(e.target.value) })
               }
               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
+              required
             />
           </div>
           <div className="mb-2">
@@ -205,6 +240,7 @@ function ModifyProperty() {
                 setProperty({ ...property, images: e.target.value })
               }
               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
+              required
             />
           </div>
           <button

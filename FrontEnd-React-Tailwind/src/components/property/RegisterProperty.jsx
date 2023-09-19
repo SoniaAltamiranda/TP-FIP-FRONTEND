@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Swal from "sweetalert2";
 
 const BASE_URL = "http://localhost:3000/properties/";
 
@@ -61,6 +62,17 @@ const RegisterProperty = () => {
       .then((data) => {
         console.log("Datos enviados con éxito:", data);
 
+        Swal.fire({
+          icon: "success",
+          title: "Su propiedad fue publicada exitosamente",
+          showCancelButton: false,
+          showConfirmButton: true,
+          confirmButtonText: "Continuar",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = "http://localhost:5173/user";
+          }
+        });
         setFormData(initialFormData);
       })
       .catch((error) => {
@@ -79,22 +91,27 @@ const RegisterProperty = () => {
     <div className="flex justify-center items-center min-h-screen">
       <div className="w-3/4 p-2 bg-white rounded-lg shadow-md">
         <form onSubmit={handleSubmit}>
+        <div className="mb-2">
+  <label htmlFor="title" className="block text-gray-800 font-bold mb-1">
+    Título:
+  </label>
+  <input
+    type="text"
+    id="title"
+    name="title"
+    value={formData.title}
+    onChange={handleInputChange}
+    className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
+    required
+    pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+"
+    title="Solo se permiten letras y espacios en blanco"
+  />
+</div>
           <div className="mb-2">
-            <label htmlFor="title" className="block text-gray-800 font-bold mb-1">
-              Título:
-            </label>
-            <input
-              type="text"
-              id="title"
-              name="title"
-              value={formData.title}
-              onChange={handleInputChange}
-              className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
-              required 
-            />
-          </div>
-          <div className="mb-2">
-            <label htmlFor="title" className="block text-gray-800 font-bold mb-1">
+            <label
+              htmlFor="title"
+              className="block text-gray-800 font-bold mb-1"
+            >
               Tipo de Alquiler:
             </label>
             <input
@@ -104,11 +121,14 @@ const RegisterProperty = () => {
               value={formData.type}
               onChange={handleInputChange}
               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
-              required 
+              required
             />
           </div>
           <div className="mb-2">
-            <label htmlFor="title" className="block text-gray-800 font-bold mb-1">
+            <label
+              htmlFor="title"
+              className="block text-gray-800 font-bold mb-1"
+            >
               Ubicacion:
             </label>
             <input
@@ -118,11 +138,14 @@ const RegisterProperty = () => {
               value={formData.location}
               onChange={handleInputChange}
               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
-              required 
+              required
             />
           </div>
           <div className="mb-2">
-            <label htmlFor="title" className="block text-gray-800 font-bold mb-1">
+            <label
+              htmlFor="title"
+              className="block text-gray-800 font-bold mb-1"
+            >
               Ambientes:
             </label>
             <input
@@ -136,7 +159,10 @@ const RegisterProperty = () => {
             />
           </div>
           <div className="mb-2">
-            <label htmlFor="title" className="block text-gray-800 font-bold mb-1">
+            <label
+              htmlFor="title"
+              className="block text-gray-800 font-bold mb-1"
+            >
               Descripcion:
             </label>
             <input
@@ -150,7 +176,10 @@ const RegisterProperty = () => {
             />
           </div>
           <div className="mb-2">
-            <label htmlFor="title" className="block text-gray-800 font-bold mb-1">
+            <label
+              htmlFor="title"
+              className="block text-gray-800 font-bold mb-1"
+            >
               Precio:
             </label>
             <input
@@ -164,7 +193,10 @@ const RegisterProperty = () => {
             />
           </div>
           <div className="mb-2">
-            <label htmlFor="imageUrls" className="block text-gray-800 font-bold mb-2">
+            <label
+              htmlFor="imageUrls"
+              className="block text-gray-800 font-bold mb-2"
+            >
               URLs de las Imágenes (una por línea):
             </label>
             <textarea
