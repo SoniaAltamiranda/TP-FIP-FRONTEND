@@ -2,6 +2,7 @@ import { useState } from "react";
 import RegisterProperty from "../property/RegisterProperty";
 import DeleteProperty from "../property/DeleteProperty";
 import ModifyProperty from "../property/ModifyProperty";
+import DeleteUser from "./DeleteUser";
 
 function User() {
   const [shownComponent, setShownComponent] = useState(null);
@@ -54,7 +55,7 @@ function User() {
         </button>
         <button
           className="bg-gray-500 hover:bg-gray-700 text-white font-bold  px-8 py-4 rounded"
-          onClick={() => showComponent("Alquilar")}
+          onClick={() => showComponent("Delete User")}
         >
           Eliminar mi usuario
         </button>
@@ -63,6 +64,7 @@ function User() {
         {shownComponent === "Register Property" && <RegisterProperty />}
         {shownComponent === "Delete Property" && <DeleteProperty />}
         {shownComponent === "Modify Property" && <ModifyProperty />}
+        {shownComponent === "Delete User" && <DeleteUser />}
       </div>
     </div>
   );
