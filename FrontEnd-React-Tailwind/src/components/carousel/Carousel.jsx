@@ -19,12 +19,15 @@ const CarouselComponent = () => {
         interval={5000}
       >
         {showProperties.map((property, index) => (
-          <div key={index}>
+          <div key={index} className="relative">
             <img
               src={property.images}
               alt={`Image ${index}`}
               className="w-full h-screen object-cover"
             />
+            <div className="absolute bottom-2 left-2 text-white p-8 title-fade-in">
+              <p className="text-6xl">{property.title}</p>
+            </div>
           </div>
         ))}
       </Carousel>
@@ -33,3 +36,5 @@ const CarouselComponent = () => {
 };
 
 export default CarouselComponent;
+
+
