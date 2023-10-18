@@ -1,0 +1,89 @@
+form {
+    max-width: 400px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+  
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  textarea {
+    width: 200%;
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 2px solid #007bff;
+    border-radius: 8px;
+    font-size: 18px;
+  }
+  
+  button[type="submit"] {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+  }
+  
+  button[type="submit"]:hover {
+    background-color: #0056b3;
+  }
+  
+  .message {
+    padding: 10px 20px;
+    margin-top: 100px;
+    border-radius: 8px;
+    font-size: 18px;
+    text-align: center;
+    transition: opacity 0.3s ease-in-out;
+  }
+  
+  .success-message {
+    background-color: #28a745;
+    color: #fff;
+  }
+  
+  .error-message {
+    background-color: #dc3545;
+    color: #fff;
+  }
+  
+  #contact-page {
+    flex: 1;
+    padding: 100px;
+  }
+  
+  
+  #contact-content h1 {
+    font-size: 50px;
+  }
+  
+  #contact-content p {
+    font-size: 20px;
+  }
+  
+  #contact-image {
+    flex: 1;
+    padding: 100px;
+    background-image: url("https://cdn.pixabay.com/photo/2015/02/02/11/08/office-620817_1280.jpg");
+    background-size: 100% 100%;
+    height: 1600px;
+  
+  }
+  
+  #contact {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
