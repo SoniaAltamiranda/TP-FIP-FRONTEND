@@ -3,46 +3,47 @@ import { propertiesContext } from "../../context/propertiesContext";
 import { Link } from "react-router-dom";
 import Navbar from "../navbar/Navbar";
 
+
+
 function PermanentRentals() {
   const properties = useContext(propertiesContext);
 
   return (
-    <>
-    <Navbar/>
-      <div className="flex">
-        <div className="flex-1">
+    <div className="bg-gray-100">
+      <Navbar className="fixed top-0 left-0 right-0" />
+      <div className="mt-20 container mx-auto">
+        <h1 className="text-3xl font-semibold text-center mb-8">Alquileres Permanentes</h1>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {properties.map((property) => (
-            <div key={property.id} className="flex p-4">
-              <div className="w-1/4">
-                <div className="person-image-container">
-                  <div className="person-image">
-                    <img
-                      src={`${property.images[0]}`}
-                      alt="Avatar"
-                      className="object-cover w-full h-40"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="w-3/4 p-4">
-                <h4 className="text-xl font-semibold">{property.title}</h4>
-                <p className="text-gray-600">{property.description}</p>
-                <div className="text-center mt-4">
-                  <Link
-                    to={`/rentals/${property.id}`} 
-                    state={{ property }} 
-                    className="inline-block bg-blue-500 text-white py-2 px-4 rounded-full hover:bg-blue-700 mx-auto"
-                  >
-                    Details
-                  </Link>
-                </div>
-              </div>
+            <div key={property.id}>
+              <div className="bg-white shadow-lg rounded-lg overflow-hidden h-[470px]">
+  <img
+    src={`${property.images[0]}`}
+    alt="Imagen de propiedad"
+    className="w-full h-[200px] object-cover"
+  />
+  <div className="p-4" style={{ fontFamily: 'Roboto, sans-serif' }}>
+    <h4 className="text-2xl font-semibold mb-2 text-gray-500">{property.title}</h4>
+    <p className="text-gray-600 text-sm">{property.description}</p>
+    <div className="mt-4 text-center">
+      <Link
+        to={`/rentals/${property.id}`}
+        state={{ property }}
+        className="inline-block bg-gray-700 text-white py-2 px-4 rounded-full hover:bg-gray-800 mx-auto"
+      >
+        Ver más...
+      </Link>
+    </div>
+  </div>
+</div>
+
             </div>
           ))}
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
 export default PermanentRentals;
+
