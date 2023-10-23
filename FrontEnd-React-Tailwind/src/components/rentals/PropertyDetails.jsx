@@ -5,28 +5,26 @@ function PropertyDetails() {
   const { property } = location.state;
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-semibold mb-4">{property.title}</h1>
+    <div className="container mx-auto p-">
+      <h1 className="text-2xl font-semibold mb-4 text-blue-600">{property.title}</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Imágenes */}
         {property.images.map((image, index) => (
           <div key={index} className="mb-4">
             <img
               src={image}
               alt={`Image ${index + 1}`}
-              className="w-full h-auto"
+              className="w-full h-auto rounded-lg"
             />
           </div>
         ))}
 
-        {/* Datos */}
-        <div className="md:col-span-44">
-          <p>Type: {property.type}</p>
-          <p>Rooms: {property.rooms}</p>
-          <p>Description: {property.description}</p>
-          <p>Price: ${property.price}</p>
-          <p>Location: {property.location}</p>
+        <div className="md:col-span-4 bg-gray-100 p-4 rounded-lg">
+          <p className="text-lg">Type: {property.type}</p>
+          <p className="text-lg">Rooms: {property.rooms}</p>
+          <p className="text-lg">Description: {property.description}</p>
+          <p className="text-lg">Price: ${property.price}</p>
+          <p className="text-lg">Location: {property.location}</p>
         </div>
       </div>
     </div>
