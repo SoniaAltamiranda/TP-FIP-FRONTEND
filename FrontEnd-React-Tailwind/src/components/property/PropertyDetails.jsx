@@ -28,7 +28,15 @@ function PropertyDetails() {
           <p>Price: ${property.price}</p>
           <p>Location: {property.location}</p>
         </div>
+        
       </div>
+      <div className="md:col-span-4 md:col-start-2 flex items-center justify-center mt-4">
+          <iframe
+            src={property.url_iframe}
+            
+            className="w-1/2 h-305"
+          ></iframe>
+        </div>
     </div>
   );
 }

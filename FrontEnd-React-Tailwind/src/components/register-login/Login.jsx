@@ -22,7 +22,7 @@ function Login() {
       if (response.ok) {
         const userData = await response.json();
         if (userData.length > 0) {
-          navigate("/user");
+          navigate("/user", { state: { user: userData[0] } });
         } else {
           alert(
             "Credenciales incorrectas. Por favor, inténtalo de nuevo o regístrate."
@@ -43,7 +43,7 @@ function Login() {
 
   return (
     <div className="bg-gradient-to-b from-gray-100 to-gray-400 min-h-screen flex items-center justify-center">
-      <div className="text-center mb-8">
+      <div className="text-center mb-8 mr-2">
         <h1 className="text-6xl text-gray-700 font-extrabold mb-2">ALQUILAFÁCIL.COM</h1>
         <hr className="w-1/4 border-t-2 border-gray-700 mx-auto mb-4" />
         <p className="text-lg text-gray-700">La forma más conveniente de alquilar lo que necesitas.</p>
