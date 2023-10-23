@@ -24,14 +24,9 @@ const Navbar = () => {
       } z-50 bg-gray-800 text-white p-4`}
     >
       <div className="flex items-center justify-between">
-        <NavLink
-          className="text-xl font-bold"
-          to="/"
-          exact
-          isActive={() => location.pathname === "/"}
-        >
-          Logo
-        </NavLink>
+      <NavLink className="text-xl font-bold" to="/" exact isActive={() => location.pathname === "/"}>
+  <img src="/TP-FIP-FRONTEND/FrontEnd-React-Tailwind/public/images/1-fotor-20230919192113.jpg" alt="Logo" />
+</NavLink>
         <div className="flex space-x-4">
           <NavLink
             to="/login"
