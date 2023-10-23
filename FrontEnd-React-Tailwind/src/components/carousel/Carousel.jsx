@@ -7,7 +7,7 @@ import { propertiesContext } from "../../context/propertiesContext";
 const CarouselComponent = () => {
   const properties = useContext(propertiesContext);
 
-  const showProperties = properties.slice(0, 5);
+  const showProperties = properties.slice(1,4);
 
   return (
     <div className="w-full h-screen flex items-center justify-center">

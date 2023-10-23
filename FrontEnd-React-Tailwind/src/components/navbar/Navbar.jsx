@@ -21,7 +21,8 @@ const Navbar = () => {
     <nav
       className={`fixed top-0 left-0 right-0 transition-transform transform ${
         isMouseMoving ? "translate-y-0" : "-translate-y-full"
-      } z-50 bg-gray-800 text-white p-4`}
+      } z-50 bg-gray-800 text-white p-2`}
+      style={{ paddingTop: "0px", paddingBottom: "0px" }}
     >
       <div className="flex items-center justify-between">
         <NavLink
@@ -30,7 +31,13 @@ const Navbar = () => {
           exact
           isActive={() => location.pathname === "/"}
         >
-          Logo
+          <img
+            src="/images/1-fotor-20230919192113.jpg"
+            alt="Logo"
+            height="100"
+            width="100"
+            style={{ borderRadius: "50%" }}
+          />
         </NavLink>
         <div className="flex space-x-4">
           <NavLink

@@ -1,0 +1,18 @@
+.footer-icons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.icon-container {
+    padding: 20px;
+    font-size: 30px;
+    width: 30px;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 50%;
+    color: white;
+    margin: 0 10px;
+}
+.icon-container:hover {
+    opacity: 0.7;
+}
