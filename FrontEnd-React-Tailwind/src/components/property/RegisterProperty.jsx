@@ -88,7 +88,7 @@ const RegisterProperty = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen">
+    <div className="flex justify-center items-center min-h-screen mt-10">
       <div className="w-3/4 p-2 bg-white rounded-lg shadow-md">
         <form onSubmit={handleSubmit}>
         <div className="mb-2">

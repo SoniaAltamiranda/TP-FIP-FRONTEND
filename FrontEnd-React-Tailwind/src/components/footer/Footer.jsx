@@ -11,7 +11,7 @@ function Footer() {
             alt="Logo"
             height="100"
             width="100"
-            style={{ borderRadius: "50%" }}
+            style={{ borderRadius: "50%", margin: 10 }}
           />
           <div>
             <p className="text-lg font-semibold">¡Gracias por visitar nuestro sitio web!</p>
