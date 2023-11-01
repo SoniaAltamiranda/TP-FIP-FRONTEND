@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 // eslint-disable-next-line no-unused-vars
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -126,14 +126,7 @@ function Register() {
           Registrar
         </button>
       </form>
-=======
-import React from 'react';
 
-function Register() {
-  return (
-    <div className="flex items-center justify-center h-screen">
-      <h1 className="font-bold border-2 border-black p-4">Register</h1>
->>>>>>> main
     </div>
   );
 }
