@@ -63,6 +63,7 @@ function Register() {
       </div>
       <form
         onSubmit={handleSubmit}
+        encType="multipart/form-data"
         className="border-2 border-gray-300 p-4 rounded-lg shadow-lg w-80"
       >
         <h1 className="text-xl font-semibold text-center mb-4">Registro</h1>
