@@ -71,9 +71,9 @@ function DeleteUser() {
 
   return (
     <div className="flex items-center justify-center h-screen">
-      <div className="border-2 border-black p-4">
+      <div className="border-1 border-black p-6 rounded-lg shadow-lg bg-gray-200">
         <div className="mb-4 flex justify-center">
-          <h1 className="font-bold ">Borrar Usuario</h1>
+          <h1 className="font-bold">Borrar Usuario</h1>
         </div>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
@@ -83,7 +83,7 @@ function DeleteUser() {
               name="name"
               value={formData.name}
               onChange={handleChange}
-              className="border border-gray-400 p-2 w-full"
+              className="border border-gray-400 p-2 w-full rounded"
               required
             />
           </div>
@@ -94,25 +94,26 @@ function DeleteUser() {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="border border-gray-400 p-2 w-full"
+              className="border border-gray-400 p-2 w-full rounded"
               required
             />
           </div>
           <div className="mb-4 flex justify-center">
-            <button
-              type="submit"
-              className="bg-red-500 text-white py-2 px-4 mx-2 rounded-full hover:bg-red-700"
-            >
-              Eliminar
-            </button>
-            <button
-              type="button"
-              className="bg-blue-500 text-white py-2 px-4 mx-2 rounded-full hover:bg-blue-700"
-              onClick={handleCancel}
-            >
-              Cancelar
-            </button>
-          </div>
+  <button
+    type="submit"
+    className="w-full bg-gray-700 text-white py-2 rounded-md hover:bg-gray-800 focus:outline-none focus:ring focus:ring-blue-200 mr-2" // Agregando margen derecho
+  >
+    Eliminar
+  </button>
+  <button
+    type="button"
+    className="w-full bg-gray-700 text-white py-2 rounded-md hover:bg-gray-800 focus:outline-none focus:ring focus:ring-blue-200"
+    onClick={handleCancel}
+  >
+    Cancelar
+  </button>
+</div>
+      
         </form>
       </div>
     </div>

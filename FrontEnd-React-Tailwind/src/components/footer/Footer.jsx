@@ -1,11 +1,9 @@
-import './Footer.css';
-
+import "./Footer.css";
 
 function Footer() {
   return (
     <footer className="bg-gray-800 text-white py-4">
       <div className="container mx-auto text-center">
-
         <div className="flex items-center justify-center">
           <img
             src="/images/1-fotor-20230919192113.jpg"
@@ -15,7 +13,9 @@ function Footer() {
             style={{ borderRadius: "50%", margin: 10 }}
           />
           <div>
-            <p className="text-lg font-semibold">¡Gracias por visitar nuestro sitio web!</p>
+            <p className="text-lg font-semibold">
+              ¡Gracias por visitar nuestro sitio web!
+            </p>
             <p className="text-sm">© 2023 Todos los derechos reservados</p>
           </div>
         </div>
@@ -33,15 +33,9 @@ function Footer() {
         <a href="https://www.twitter.com" className="icon-container">
           <i className="fab fa-twitter"></i>
         </a>
-
-        <p className="text-lg font-semibold">¡Gracias por visitar nuestro sitio web!</p>
-        <p className="text-sm">© 2023 Todos los derechos reservados</p>
-
       </div>
     </footer>
   );
 }
 
 export default Footer;
-
-

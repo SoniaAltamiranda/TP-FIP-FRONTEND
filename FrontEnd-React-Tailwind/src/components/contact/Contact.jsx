@@ -1,6 +1,5 @@
 
-/* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 function Contact() {
   const [formData, setFormData] = useState({
@@ -103,8 +102,8 @@ function Contact() {
   return (
     <div
       id="contact"
-      className="w-1/4 mx-auto p-4 flex flex-col" style={{ width: '70%' }}
-    >
+      className="w-1/4 mx-auto p-10 flex flex-col mt-20" style={{ width: '70%' }}
+      >
       <div
         id="contact-page"
         className="border-2 border-gray-300 p-2 rounded-md shadow-md w-full flex"
