@@ -1,6 +1,7 @@
 # TP-FIP-FRONTEND-   ALQUILAFÁCIL.COM 
 
 En este proyecto, nos embarcamos en la creación de una plataforma innovadora de alquileres diseñada para simplificar el proceso de encontrar y publicar propiedades de una manera fácil y eficiente.
+
 Objetivo Principal:
 Esta plataforma tiene como objetivo principal proporcionar a los usuarios una experiencia integral al buscar su próximo hogar y, al mismo tiempo, facilitar a los propietarios la gestión efectiva de sus propiedades para alquilar.
 
