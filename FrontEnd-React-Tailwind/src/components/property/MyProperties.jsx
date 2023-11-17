@@ -126,6 +126,7 @@ function MyProperties({ properties }) {
     <div className="mt-16">
       <p className="font-bold text-3xl text-center underline mb-4">Mis Propiedades</p>
       {properties.map((property, index) => (
+
         <div key={property.id} className={`flex p-4 ${index > 0 ? 'border-t border-gray-300 pt-4' : ''}`}>
           <div className="w-1/4">
             <div className="person-image-container">
@@ -154,10 +155,12 @@ function MyProperties({ properties }) {
               >
                 Eliminar
               </button>
+
             </div>
           </div>
         </div>
       ))}
+
 
       {isEditing && propertyToEdit && (
         <form onSubmit={handleSaveChanges} encType="multipart/form-data" className="w-3/4 p-2 bg-white rounded-lg shadow-md mt-4">
@@ -339,6 +342,7 @@ function MyProperties({ properties }) {
           </div>
         </form>
       )}
+
     </div>
   );
 }
