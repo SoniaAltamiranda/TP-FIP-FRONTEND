@@ -34,7 +34,8 @@ npm run db  # Iniciar la base de datos
 npm run start dev  # Iniciar el servidor
 
 Contribuyentes
+
 -Nicolas Stuer
--Eric Schenonne
+-Eric Schenone
 -Agustin Juarez
 -Sonia Altamiranda
