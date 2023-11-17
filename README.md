@@ -8,14 +8,16 @@ Esta plataforma tiene como objetivo principal proporcionar a los usuarios una ex
  Tecnologías Utilizadas
 - Frontend: React con Vite, Tailwind CSS
 - Backend: TP-PORTALINMOBILIARIO (Base de datos simulada con JSON)
-  
+
 Descargar el Proyecto
+
 Para descargar el proyecto, ejecuta el siguiente comando en tu terminal:
 -Bash
 git clone https://github.com/SoniaAltamiranda/TP-FIP-FRONTEND.git
 cd FrontEnd-React-Tailwind
 
 Instalación y Ejecución del Frontend
+
 En la carpeta FrontEnd-React-Tailwind, ejecuta los siguientes comandos para instalar las dependencias y iniciar la aplicación:
 -Bash
 cd FrontEnd-React-Tailwind
@@ -24,6 +26,7 @@ npm run dev
 Este último comando utilizará Vite para ejecutar el servidor de desarrollo.
 
 Ejecución del Backend y la Base de Datos
+
 En la carpeta TP-PORTALINMOBILIARIO, inicia la base de datos simulada y el servidor con el siguiente comando:
 -Bash
 npm install
