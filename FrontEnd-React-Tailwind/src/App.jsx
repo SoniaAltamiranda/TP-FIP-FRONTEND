@@ -8,6 +8,7 @@ import Footer from "./components/footer/Footer";
 import User from "./components/user/User";
 import PropertyDetails from "./components/property/PropertyDetails";
 import Navbar from "./components/navbar/Navbar";
+import ModifyProperty from "./components/property/ModifyProperty"
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/rentals" element={<Rentals />} />
         <Route path="/rentals/:id" element={<PropertyDetails />} />
+    
       </Routes>
 
       <Footer />
