@@ -21,10 +21,10 @@ function User() {
     backgroundPosition: "center",
   };
 
-  const propertiesByUser = properties.filter(
-    (property) => property.id_propietor === user.id
-  );
 
+  const propertiesByUser = user
+  ? properties.filter((property) => property.id_propietor === user.id)
+  : [];
   
 
   const handleShowComponent = (component) => {
@@ -45,7 +45,7 @@ function User() {
   return (
     <div className="h-screen flex flex-row" style={containerStyle}>
       <div className="flex flex-col justify-start items-start pt-20 space-y-12 p-4 w-1/4">
-        <h1>Hola, {user.name} ..!!</h1>
+      <h1>Hola, {user ? user.name : 'Usuario'} ..!!</h1>
         
         <button
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold px-8 py-4 rounded"
