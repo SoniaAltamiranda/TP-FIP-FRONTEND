@@ -8,7 +8,7 @@ Esta plataforma tiene como objetivo principal proporcionar a los usuarios una ex
  Tecnologías Utilizadas
 - Frontend: React con Vite, Tailwind CSS
 - Backend: TP-PORTALINMOBILIARIO (Base de datos simulada con JSON)
-- 
+  
 Descargar el Proyecto
 Para descargar el proyecto, ejecuta el siguiente comando en tu terminal:
 -Bash
