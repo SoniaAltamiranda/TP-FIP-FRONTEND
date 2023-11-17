@@ -75,7 +75,7 @@ function DeleteProperty() {
             <p className="text-red-500">{message}</p>
             <button
               onClick={handleRetry}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-2 mr-2"
+              className="bg-gray-700 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-2 mr-2"
             >
               Reintentar
             </button>
@@ -99,13 +99,13 @@ function DeleteProperty() {
             <div className="text-center">
               <button
                 type="submit"
-                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                className="bg-red-500 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               >
                 Eliminar Inmueble por ID
               </button>
             </div>
             {message && (
-              <div className="text-center mt-2 text-red-500">{message}</div>
+              <div className="text-center mt-2 text-gray-800">{message}</div>
             )}
           </form>
         )}

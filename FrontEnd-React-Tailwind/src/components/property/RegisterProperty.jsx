@@ -98,20 +98,19 @@ const RegisterProperty = () => {
       });
   };
 
-  // Función para prevenir el comportamiento predeterminado de arrastrar y soltar
+
   const handleDragOver = (e) => {
     e.preventDefault();
   };
 
-  // Función para manejar la caída de archivos
   const handleDrop = (e) => {
     e.preventDefault();
     const files = e.dataTransfer.files;
-    const imageUrls = formData.images.slice(); // Copia la lista de imágenes actual
+    const imageUrls = formData.images.slice(); 
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
-      const imageUrl = URL.createObjectURL(file); // Genera una URL temporal para la imagen
+      const imageUrl = URL.createObjectURL(file); 
       imageUrls.push(imageUrl);
     }
 
@@ -121,14 +120,14 @@ const RegisterProperty = () => {
     });
   };
 
-  // Función para seleccionar archivos 
+  
   const handleFileSelect = (e) => {
     const files = e.target.files;
-    const imageUrls = formData.images.slice(); // Copia la lista de imágenes actual
+    const imageUrls = formData.images.slice(); 
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
-      const imageUrl = URL.createObjectURL(file); // Genera una URL temporal para la imagen
+      const imageUrl = URL.createObjectURL(file);
       imageUrls.push(imageUrl);
     }
 
@@ -139,21 +138,21 @@ const RegisterProperty = () => {
   };
 
   const handleRemoveImage = (index) => {
-    // Copia el array de imágenes actual y elimina la imagen en el índice proporcionado
+  
     const updatedImages = [...formData.images];
     updatedImages.splice(index, 1);
   
-    // Actualiza el estado con las imágenes actualizadas
+    
     setFormData({ ...formData, images: updatedImages });
   };
 
 
   return (
-    <div className="flex justify-center items-center min-h-screen">
-      <div className="w-3/4 p-2 bg-white rounded-lg shadow-md">
+    <div className="flex justify-center items-center h-auto">
+  <div className="max-w-md p-4 bg-white rounded-lg shadow-md mt-20">
         <form onSubmit={handleSubmit} encType="multipart/form-data">
-          <div className="mb-2">
-            <label htmlFor="title" className="block text-gray-800 font-bold mb-1">
+          <div className="">
+            <label htmlFor="title" className="block text-gray-800 text-sm font-bold mb-1">
               Título:
             </label>
             <input
@@ -169,7 +168,7 @@ const RegisterProperty = () => {
             />
           </div>
           <div className="mb-2">
-            <label htmlFor="type" className="block text-gray-800 font-bold mb-1">
+            <label htmlFor="type" className="block text-gray-800 text-sm font-bold mb-1">
               Tipo de Alquiler:
             </label>
             <select
@@ -188,9 +187,9 @@ const RegisterProperty = () => {
           <div className="mb-2">
             <label
               htmlFor="title"
-              className="block text-gray-800 font-bold mb-1"
+              className="block text-gray-800 text-sm font-bold mb-1"
             >
-              Ubicacion:
+              Ubicación:
             </label>
             <input
               type="text"
@@ -205,7 +204,7 @@ const RegisterProperty = () => {
           <div className="mb-2">
             <label
               htmlFor="title"
-              className="block text-gray-800 font-bold mb-1"
+              className="block text-gray-800 text-sm font-bold mb-1"
             >
               Ambientes:
             </label>
@@ -222,9 +221,9 @@ const RegisterProperty = () => {
           <div className="mb-2">
             <label
               htmlFor="title"
-              className="block text-gray-800 font-bold mb-1"
+              className="block text-gray-800 text-sm font-bold mb-1"
             >
-              Descripcion:
+              Descripción:
             </label>
             <textarea
               id="description"
@@ -238,7 +237,7 @@ const RegisterProperty = () => {
           <div className="mb-2">
             <label
               htmlFor="title"
-              className="block text-gray-800 font-bold mb-1"
+              className="block text-gray-800 text-sm font-bold mb-1"
             >
               Precio - $:
             </label>
@@ -254,7 +253,7 @@ const RegisterProperty = () => {
           </div>
 
           <div className="mb-2">
-            <label htmlFor="imageUpload" className="block text-gray-800 font-bold mb-2">
+            <label htmlFor="imageUpload" className="block  text-sm text-gray-800 font-bold mb-2">
               Imágenes:
             </label>
             <div
@@ -262,7 +261,7 @@ const RegisterProperty = () => {
               className="w-full px-3 py-3 border rounded-lg focus:outline-none focus:shadow-outline transition-colors ease-in-out duration-300 hover:bg-blue-200"
               onDragOver={(e) => handleDragOver(e)}
               onDrop={(e) => handleDrop(e)}
-            ><label htmlFor="imageUpload">
+            ><label htmlFor="imageUpload text-sm">
               Arrastra y suelta imágenes aquí o haz clic para seleccionarlas.
             </label></div>
             <input
@@ -275,13 +274,13 @@ const RegisterProperty = () => {
           </div>
           {formData.images.length > 0 && (
             <div className="mb-2">
-            <label className="block text-gray-800 font-bold mb-2">Imágenes cargadas:</label>
+            <label className="block text-gray-800 font-bold text-sm mb-2">Imágenes cargadas:</label>
             <div className="flex flex-wrap">
               {formData.images.map((imageUrl, index) => (
                 <div key={index} className="relative w-1/4 p-2">
                   <img src={imageUrl} alt={`Imagen ${index + 1}`} className="w-full h-auto rounded" />
                   <button
-                    className="absolute top-0 right-0 p-1 text-red-500 hover:text-red-700 cursor-pointer"
+                    className="absolute top-0 right-0 p-1 text-gray-500 hover:text-gray-700 cursor-pointer"
                     onClick={() => handleRemoveImage(index)}
                   >
                     <img src="../public/images/boton-x.png" alt="Eliminar" className="w-4 h-4" />
@@ -294,7 +293,7 @@ const RegisterProperty = () => {
           <div className="text-center">
             <button
               type="submit"
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              className="bg-gray-600 hover:bg-blue-700 text-white font-bold py-2 px-8 rounded focus:outline-none focus:shadow-outline"
             >
               Enviar
             </button>
