@@ -36,12 +36,12 @@ function User() {
   };
 
   return (
-    <div className="h-screen flex flex-row" style={containerStyle}>
-      <div className="flex flex-col justify-start items-start pt-20 space-y-12 p-4 w-1/4">
+    <div className="h-screen flex flex-col sm:flex-row" style={containerStyle}>
+      <div className="flex flex-col justify-center items-center bg-gray-800 text-white pt-6 space-y-12 p-4 sm:w-1/4">
       <h1 className="text-3xl font-bold mb-10 mt-24">¡Bienvenido, {user ? user.name :'usuario'}!</h1>
         
         <button
-          className="w-2/3 bg-gray-700 text-white py-4 rounded-md hover:bg-gray-800 focus:outline-none focus:ring focus:ring-blue-200 mb-4"
+          className="w-2/3 bg-gray-700 text-white py-4 rounded-md hover:bg-gray-800 focus:outline-none focus:ring focus:ring-gray-200 mb-4"
           onClick={() => (window.location.href = "http://localhost:5173/rentals")}
         >
           Alquilar

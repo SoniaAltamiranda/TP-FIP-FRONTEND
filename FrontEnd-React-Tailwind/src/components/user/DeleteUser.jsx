@@ -12,7 +12,7 @@ function DeleteUser() {
   };
 
   const handleCancel = () => {
-    window.location.href = "http://localhost:5173/user";
+    navigate("/user"); // Use navigate from react-router-dom instead of changing window.location.href directly
   };
 
   const handleSubmit = async (e) => {
@@ -52,7 +52,7 @@ function DeleteUser() {
             if (result.isConfirmed) {
               // Reintento
             } else if (result.dismiss === Swal.DismissReason.cancel) {
-              window.location.href = "http://localhost:5173/user";
+              navigate("/user");
             }
           });
         }
@@ -71,13 +71,13 @@ function DeleteUser() {
 
   return (
     <div className="flex items-center justify-center h-screen">
-      <div className="border-1 border-black p-6 rounded-lg shadow-lg bg-gray-200">
-        <div className="mb-4 flex justify-center">
-          <h1 className="font-bold">Borrar Usuario</h1>
+      <div className="border-1 border-black p-6 rounded-lg shadow-lg bg-gray-200 w-96">
+        <div className="mb-6 flex justify-center">
+          <h1 className="font-bold text-xl">Borrar Usuario</h1>
         </div>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-black font-bold">Usuario:</label>
+            <label className="block text-black font-bold mb-2">Usuario:</label>
             <input
               type="text"
               name="name"
@@ -88,7 +88,7 @@ function DeleteUser() {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-black font-bold">Contraseña:</label>
+            <label className="block text-black font-bold mb-2">Contraseña:</label>
             <input
               type="password"
               name="password"
@@ -98,22 +98,22 @@ function DeleteUser() {
               required
             />
           </div>
-          <div className="mb-4 flex justify-center">
-  <button
-    type="submit"
-    className="w-full bg-gray-700 text-white py-2 rounded-md hover:bg-gray-800 focus:outline-none focus:ring focus:ring-blue-200 mr-2" // Agregando margen derecho
-  >
-    Eliminar
-  </button>
-  <button
-    type="button"
-    className="w-full bg-gray-700 text-white py-2 rounded-md hover:bg-gray-800 focus:outline-none focus:ring focus:ring-blue-200"
-    onClick={handleCancel}
-  >
-    Cancelar
-  </button>
-</div>
-      
+          <div className="mb-8   flex justify-between">
+          <button
+            type="submit"
+            className="w-1/2 bg-gray-800 text-white py-2 rounded-md hover:bg-red-700 focus:outline-none focus:ring focus:ring-blue-200"
+          >
+            Eliminar
+          </button>
+          <div className="w-4"></div> {/* Espacio entre los botones */}
+          <button
+            type="button"
+            className="w-1/2 bg-gray-800 text-white py-2 rounded-md hover:bg-gray-800 focus:outline-none focus:ring focus:ring-blue-200"
+            onClick={handleCancel}
+          >
+            Cancelar
+          </button>
+          </div>
         </form>
       </div>
     </div>
