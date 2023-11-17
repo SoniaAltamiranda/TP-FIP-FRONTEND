@@ -1,9 +1,13 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { usersContext } from "../../context/usersContext";
 
 function Login() {
   const [formData, setFormData] = useState({ name: "", password: "" });
   const navigate = useNavigate();
+
+  const { setCurrentUser } = useContext(usersContext);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -22,6 +26,7 @@ function Login() {
       if (response.ok) {
         const userData = await response.json();
         if (userData.length > 0) {
+          setCurrentUser(userData[0]);
           navigate("/user", { state: { user: userData[0] } });
         } else {
           alert(
