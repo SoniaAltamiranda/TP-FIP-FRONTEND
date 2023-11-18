@@ -28,6 +28,7 @@ Este último comando utilizará Vite para ejecutar el servidor de desarrollo.
 Ejecución del Backend y la Base de Datos
 
 En la carpeta TP-PORTALINMOBILIARIO, inicia la base de datos simulada y el servidor con el siguiente comando:
+
 -Bash
 npm install
 npm run db  # Iniciar la base de datos
