@@ -1,21 +1,24 @@
-// eslint-disable-next-line no-unused-vars
-import React, { useState, useContext } from "react";
-import { useLocation } from "react-router-dom";
+import React, { useState, useContext, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { propertiesContext } from "../../context/propertiesContext";
+import { useAuth } from "../../context/AuthContext";
+import Swal from "sweetalert2";
 import RegisterProperty from "../property/RegisterProperty";
 import MyProperties from "../property/MyProperties";
 import DeleteUser from "./DeleteUser";
 import EditUser from "./EditUser";
 
 function User() {
-  const { state } = useLocation();
-  const user = state ? state.user : null;
+  const { user, logout } = useAuth();
   const properties = useContext(propertiesContext);
 
   const [shownComponent, setShownComponent] = useState(null);
   const [userProperties, setUserProperties] = useState([]);
-  // eslint-disable-next-line no-unused-vars
   const [showMyProperties, setShowMyProperties] = useState(false);
+
+  useEffect(() => {
+    setUserProperties(propertiesByUser);
+  }, [user, properties]);
 
   const containerStyle = {
     backgroundImage: `url('../../../public/images/fondo.jpg')`,
@@ -24,11 +27,9 @@ function User() {
     backgroundPosition: "center",
   };
 
-
   const propertiesByUser = user
-  ? properties.filter((property) => property.id_propietor === user.id)
-  : [];
-  
+    ? properties.filter((property) => property.id_propietor === user.id)
+    : [];
 
   const handleShowComponent = (component) => {
     setShowMyProperties(component === "My Properties");
@@ -36,17 +37,40 @@ function User() {
     setShownComponent(component);
   };
 
+  const handleLogout = () => {
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: "¿Quieres cerrar sesión?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí",
+      cancelButtonText: "No",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        logout();
+        window.location.href = "http://localhost:5173/"; // Redirige al home
+      }
+    });
+  };
+
   return (
-    <div className="h-screen flex flex-col sm:flex-row" style={containerStyle}>
-      <div className="flex flex-col justify-center items-center bg-gray-800 text-white pt-6 space-y-12 p-4 sm:w-1/4">
-      <h1 className="text-3xl font-bold mb-10 mt-24">¡Bienvenido, {user ? user.name :'usuario'}!</h1>
-        
-        <button
-          className="w-2/3 bg-gray-700 text-white py-4 rounded-md hover:bg-gray-800 focus:outline-none focus:ring focus:ring-gray-200 mb-4"
-          onClick={() => (window.location.href = "http://localhost:5173/rentals")}
+    <div className="flex flex-col h-full sm:flex-row " style={containerStyle}>
+      <div
+        className="flex flex-col justify-start items-center bg-gray-800 text-white pt-32 space-y-12 p-4 sm:w-1/4 flex-grow f-screen"
+        style={{ alignItems: "flex-start" }}
+      >
+        <h1 className="text-3xl font-bold ">
+          ¡Bienvenido, {user ? user.name : "usuario"}!
+        </h1>
+
+        <Link
+          to="/rentals"
+          className="w-2/3 bg-gray-700 text-white py-4 rounded-md hover:bg-gray-800 focus:outline-none focus:ring focus:ring-gray-200 mb-4 flex items-center justify-center"
         >
           Alquilar
-        </button>
+        </Link>
         <button
           className="w-2/3 bg-gray-700 text-white py-4 rounded-md hover:bg-gray-800 focus:outline-none focus:ring focus:ring-blue-200 mb-4"
           onClick={() => handleShowComponent("Register Property")}
@@ -70,6 +94,12 @@ function User() {
           onClick={() => handleShowComponent("Eliminar Usuario")}
         >
           Eliminar mi usuario
+        </button>
+        <button
+          className="w-2/3 bg-gray-700 text-white py-4 rounded-md hover:bg-gray-800 focus:outline-none focus:ring focus:ring-blue-200"
+          onClick={handleLogout}
+        >
+          Salir
         </button>
       </div>
 

@@ -1,9 +1,20 @@
 import { useState, useEffect } from "react";
 import { NavLink } from "./NavLink";
+import { useLocation } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
+// eslint-disable-next-line react/prop-types
 const Navbar = () => {
   const [isMouseMoving, setIsMouseMoving] = useState(true);
+  const location = useLocation()
+  const { isAuthenticated, user } = useAuth();
   let timerId;
+
+  useEffect(() => {
+    console.log("isAuthenticated:", isAuthenticated);
+    console.log("user:", user);
+  }, [isAuthenticated, user]);
+
   const handleMouseMove = () => {
     setIsMouseMoving(true);
     clearTimeout(timerId);
@@ -40,12 +51,16 @@ const Navbar = () => {
           />
         </NavLink>
         <div className="flex space-x-4">
-          <NavLink
-            to="/login"
-            isActive={() => location.pathname.includes("/login")}
-          >
-            Login/Registro
-          </NavLink>
+          {isAuthenticated ? (
+            <NavLink to="/user">Mi cuenta</NavLink>
+          ) : (
+            <NavLink
+              to="/login"
+              isActive={() => location.pathname.includes("/login")}
+            >
+              Login/Registro
+            </NavLink>
+          )}
           <NavLink
             to="/rentals"
             isActive={() => location.pathname.includes("/rentals")}
