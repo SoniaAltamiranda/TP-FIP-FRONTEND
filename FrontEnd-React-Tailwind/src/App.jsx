@@ -8,23 +8,26 @@ import Footer from "./components/footer/Footer";
 import User from "./components/user/User";
 import PropertyDetails from "./components/property/PropertyDetails";
 import Navbar from "./components/navbar/Navbar";
-import ModifyProperty from "./components/property/ModifyProperty"
+import ProtectedRoute from "./components/user/ProtectedRoute";
+import { useAuth } from "./context/AuthContext";
 
 function App() {
+
+  const { currentUser } = useAuth(); // Asegúrate de tener una función useAuth en tu AuthContext
+  const isAuthenticated = !!currentUser;
+
   return (
     <>
-        <Navbar />
+      <Navbar isAuthenticated={isAuthenticated} />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="/user" element={<User />} />
+        <Route path="/user" element={<ProtectedRoute component={User} />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/rentals" element={<Rentals />} />
         <Route path="/rentals/:id" element={<PropertyDetails />} />
-    
       </Routes>
-
       <Footer />
     </>
   );

@@ -2,7 +2,8 @@
 *.js text eol=lf
 *.json text eol=lf
 *.jsx text eol=lf
-
+src/components/user/ProtectedRoute.jsx -text
+src/context/AuthContext.jsx -text
 
 
 
