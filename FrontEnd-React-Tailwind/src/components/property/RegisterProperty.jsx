@@ -5,9 +5,10 @@ import { usersContext } from "../../context/usersContext";
 
 const BASE_URL = "http://localhost:3000/properties/";
 
-const RegisterProperty = () => {
+const RegisterProperty = ({user}) => {
 
   const { currentUser } = useContext(usersContext);
+  console.log(user);
 
   const initialFormData = {
     title: "",
@@ -33,7 +34,7 @@ const RegisterProperty = () => {
     });
   };
 
-  const id_user = currentUser ? currentUser.id : null;
+  const id_user = user ? user.id : null;
   console.log("id_user:", id_user);
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -81,7 +82,7 @@ const RegisterProperty = () => {
           confirmButtonText: "Continuar",
         }).then((result) => {
           if (result.isConfirmed) {
-          location.reload();
+            location.reload();
           }
         });
         setFormData(initialFormData);
@@ -106,11 +107,11 @@ const RegisterProperty = () => {
   const handleDrop = (e) => {
     e.preventDefault();
     const files = e.dataTransfer.files;
-    const imageUrls = formData.images.slice(); 
+    const imageUrls = formData.images.slice();
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
-      const imageUrl = URL.createObjectURL(file); 
+      const imageUrl = URL.createObjectURL(file);
       imageUrls.push(imageUrl);
     }
 
@@ -120,10 +121,10 @@ const RegisterProperty = () => {
     });
   };
 
-  
+
   const handleFileSelect = (e) => {
     const files = e.target.files;
-    const imageUrls = formData.images.slice(); 
+    const imageUrls = formData.images.slice();
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
@@ -138,18 +139,18 @@ const RegisterProperty = () => {
   };
 
   const handleRemoveImage = (index) => {
-  
+
     const updatedImages = [...formData.images];
     updatedImages.splice(index, 1);
-  
-    
+
+
     setFormData({ ...formData, images: updatedImages });
   };
 
 
   return (
     <div className="flex justify-center items-center h-auto">
-  <div className="max-w-md p-4 bg-white rounded-lg shadow-md mt-20">
+      <div className="max-w-md p-4 bg-white rounded-lg shadow-md mt-20">
         <form onSubmit={handleSubmit} encType="multipart/form-data">
           <div className="">
             <label htmlFor="title" className="block text-gray-800 text-sm font-bold mb-1">
@@ -261,34 +262,36 @@ const RegisterProperty = () => {
               className="w-full px-3 py-3 border rounded-lg focus:outline-none focus:shadow-outline transition-colors ease-in-out duration-300 hover:bg-blue-200"
               onDragOver={(e) => handleDragOver(e)}
               onDrop={(e) => handleDrop(e)}
-            ><label htmlFor="imageUpload text-sm">
-              Arrastra y suelta imágenes aquí o haz clic para seleccionarlas.
-            </label></div>
-            <input
-              type="file"
-              id="imageUpload"
-              accept="image/*"
-              style={{ display: "none" }}
-              onChange={(e) => handleFileSelect(e)}
-            />
+            >
+              <label htmlFor="imageUpload" className="text-sm">
+                Arrastra y suelta imágenes aquí o haz clic para seleccionarlas.
+              </label>
+              <input
+                type="file"
+                id="imageUpload"
+                accept="image/*"
+                style={{ display: "none" }}
+                onChange={(e) => handleFileSelect(e)}
+              />
+            </div>
           </div>
           {formData.images.length > 0 && (
             <div className="mb-2">
-            <label className="block text-gray-800 font-bold text-sm mb-2">Imágenes cargadas:</label>
-            <div className="flex flex-wrap">
-              {formData.images.map((imageUrl, index) => (
-                <div key={index} className="relative w-1/4 p-2">
-                  <img src={imageUrl} alt={`Imagen ${index + 1}`} className="w-full h-auto rounded" />
-                  <button
-                    className="absolute top-0 right-0 p-1 text-gray-500 hover:text-gray-700 cursor-pointer"
-                    onClick={() => handleRemoveImage(index)}
-                  >
-                    <img src="../public/images/boton-x.png" alt="Eliminar" className="w-4 h-4" />
-                  </button>
-                </div>
-              ))}
+              <label className="block text-gray-800 font-bold text-sm mb-2">Imágenes cargadas:</label>
+              <div className="flex flex-wrap">
+                {formData.images.map((imageUrl, index) => (
+                  <div key={index} className="relative w-1/4 p-2">
+                    <img src={imageUrl} alt={`Imagen ${index + 1}`} className="w-full h-auto rounded" />
+                    <button
+                      className="absolute top-0 right-0 p-1 text-gray-500 hover:text-gray-700 cursor-pointer"
+                      onClick={() => handleRemoveImage(index)}
+                    >
+                      <img src="../public/images/boton-x.png" alt="Eliminar" className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
           )}
           <div className="text-center">
             <button

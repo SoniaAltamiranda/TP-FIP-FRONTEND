@@ -104,7 +104,7 @@ function User() {
       </div>
 
       <div className="w-full sm:w-3/4 p-4 mt-8 mx-auto my-auto">
-        {shownComponent === "Register Property" && <RegisterProperty />}
+        {shownComponent === "Register Property" && <RegisterProperty user={user} />}
         {shownComponent === "My Properties" && (
           <MyProperties properties={userProperties} />
         )}

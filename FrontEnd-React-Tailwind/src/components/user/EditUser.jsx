@@ -83,10 +83,10 @@ function EditUser({ user }) {
   }
 
   return (
-    <div>
+    <div className="flex items-center justify-center h-screen">
       <form
 
-        className="border-2 border-gray-300 p-4 rounded-lg shadow-lg w-80"
+        className="border-2 border-gray-300  bg-gray-200 p-4 rounded-lg shadow-lg w-80"
       >
         <h1 className="text-xl font-semibold text-center mb-4">Registro</h1>
         <div className="mb-4">
