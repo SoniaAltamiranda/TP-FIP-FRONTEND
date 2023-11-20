@@ -1,13 +1,11 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useContext } from "react";
-import { usersContext } from "../../context/usersContext";
+import { useAuth } from "../../context/AuthContext";
 
 function Login() {
   const [formData, setFormData] = useState({ name: "", password: "" });
   const navigate = useNavigate();
-
-  const { setCurrentUser } = useContext(usersContext);
+  const { login } = useAuth();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -20,23 +18,18 @@ function Login() {
     const BASE_URL = "http://localhost:3030/users/";
 
     try {
-      const response = await fetch(
-        `${BASE_URL}?name=${name}&password=${password}`
-      );
+      const response = await fetch(`${BASE_URL}?name=${name}&password=${password}`);
       if (response.ok) {
         const userData = await response.json();
         if (userData.length > 0) {
-          setCurrentUser(userData[0]);
+          login(userData[0]);
           navigate("/user", { state: { user: userData[0] } });
+        
         } else {
-          alert(
-            "Credenciales incorrectas. Por favor, inténtalo de nuevo o regístrate."
-          );
+          alert("Credenciales incorrectas. Por favor, inténtalo de nuevo o regístrate.");
         }
       } else {
-        alert(
-          "Error de autenticación. Por favor, inténtalo de nuevo más tarde."
-        );
+        alert("Error de autenticación. Por favor, inténtalo de nuevo más tarde.");
       }
     } catch (error) {
       console.error("Error al realizar la autenticación:", error);
