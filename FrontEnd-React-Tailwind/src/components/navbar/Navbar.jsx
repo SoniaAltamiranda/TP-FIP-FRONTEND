@@ -58,6 +58,12 @@ const Navbar = () => {
           >
             Contacto
           </NavLink>
+          <NavLink
+            to="/aboutUs"
+            isActive={() => location.pathname.includes("/aboutUs")}
+          >
+            Sobre Nosotros...
+          </NavLink>
         </div>
       </div>
     </nav>

@@ -5,6 +5,7 @@ import { propertiesContext } from "../../context/propertiesContext";
 import RegisterProperty from "../property/RegisterProperty";
 import MyProperties from "../property/MyProperties";
 import DeleteUser from "./DeleteUser";
+import EditUser from "./EditUser";
 
 function User() {
   const { state } = useLocation();
@@ -60,7 +61,7 @@ function User() {
         </button>
         <button
           className="w-2/3 bg-gray-700 text-white py-4 rounded-md hover:bg-gray-800 focus:outline-none focus:ring focus:ring-blue-200 mb-4"
-          onClick={() => handleShowComponent("Editar Datos")}
+          onClick={() => handleShowComponent("Editar Usuario")}
         >
           Editar mis datos
         </button>
@@ -77,6 +78,7 @@ function User() {
         {shownComponent === "My Properties" && (
           <MyProperties properties={userProperties} />
         )}
+         {shownComponent === "Editar Usuario" && <EditUser user={user} />}
         {shownComponent === "Eliminar Usuario" && <DeleteUser />}
       </div>
     </div>

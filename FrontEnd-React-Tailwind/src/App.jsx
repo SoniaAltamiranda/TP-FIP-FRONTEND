@@ -8,7 +8,7 @@ import Footer from "./components/footer/Footer";
 import User from "./components/user/User";
 import PropertyDetails from "./components/property/PropertyDetails";
 import Navbar from "./components/navbar/Navbar";
-import ModifyProperty from "./components/property/ModifyProperty"
+import AboutUs from "./components/aboutUs/aboutUs";
 
 function App() {
   return (
@@ -19,6 +19,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/user" element={<User />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/aboutUs" element={<AboutUs />} />
         <Route path="/register" element={<Register />} />
         <Route path="/rentals" element={<Rentals />} />
         <Route path="/rentals/:id" element={<PropertyDetails />} />
