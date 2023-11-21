@@ -113,8 +113,8 @@ function MyProperties({ properties }) {
               .addEventListener("click", () => {
                 setIsEditing(false);
                 setPropertyToEdit(null);
-                navigate("/user");
               });
+              navigate("/user");
           },
         });
       } else {
@@ -152,10 +152,21 @@ function MyProperties({ properties }) {
               </div>
             </div>
             <div className="w-3/4 p-8">
-              <h4 className="text-xl text-gray-800 font-semibold">
+            <h4 className="text-xl text-gray-800 font-semibold">
                 {property.title}
               </h4>
               <p className="text-gray-800">{property.description}</p>
+              <p className="mb-2">
+                Ambientes: <span className="text-gray-500">{property.rooms}</span>
+              </p>
+              <p className="mb-2">
+                Precio:{" "}
+                <span style={{ fontWeight: "bold", color: "#555" }}>
+                  ${property.price}
+                </span>
+              </p>
+              <p className="mb-2">Ubicación: {property.location}</p>
+        
               <div className="text-center mt-4">
                 <button
                   className="inline-block bg-gray-700 text-white my-10 py-2 px-6 rounded-full hover:bg-gray-800 mx-auto"

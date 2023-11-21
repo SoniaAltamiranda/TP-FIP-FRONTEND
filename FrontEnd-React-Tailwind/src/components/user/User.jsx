@@ -56,10 +56,10 @@ function User() {
   };
 
   return (
-    <div className="flex flex-col h-full sm:flex-row " style={containerStyle}>
+    <div className="flex flex-col h-full sm:flex-row" style={containerStyle}>
       <div
-        className="flex flex-col justify-start items-center bg-gray-800 text-white pt-32 space-y-12 p-4 sm:w-1/4 flex-grow f-screen"
-        style={{ alignItems: "flex-start" }}
+        className="flex flex-col justify-center  items-center bg-gray-800 text-white pt-32 space-y-12 p-4 sm:w-1/4 flex-grow f-screen"
+        
       >
         <h1 className="text-3xl font-bold ">
           ¡Bienvenido, {user ? user.name : "usuario"}!
