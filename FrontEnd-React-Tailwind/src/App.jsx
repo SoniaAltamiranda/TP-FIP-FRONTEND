@@ -10,6 +10,7 @@ import PropertyDetails from "./components/property/PropertyDetails";
 import Navbar from "./components/navbar/Navbar";
 import ProtectedRoute from "./components/user/ProtectedRoute";
 import { useAuth } from "./context/AuthContext";
+import AboutUs from "./components/aboutUs/aboutUs";
 
 function App() {
 
@@ -24,6 +25,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/user" element={<ProtectedRoute component={User} />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/aboutUs" element={<AboutUs />} />
         <Route path="/register" element={<Register />} />
         <Route path="/rentals" element={<Rentals />} />
         <Route path="/rentals/:id" element={<PropertyDetails />} />
