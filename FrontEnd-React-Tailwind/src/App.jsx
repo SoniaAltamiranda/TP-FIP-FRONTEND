@@ -11,7 +11,7 @@ import Navbar from "./components/navbar/Navbar";
 import ProtectedRoute from "./components/user/ProtectedRoute";
 import { useAuth } from "./context/AuthContext";
 import AboutUs from "./components/aboutUs/aboutUs";
-
+import { AuthProvider } from "./context/AuthContext";
 function App() {
 
   const { currentUser } = useAuth(); // Asegúrate de tener una función useAuth en tu AuthContext
@@ -19,18 +19,20 @@ function App() {
 
   return (
     <>
-      <Navbar isAuthenticated={isAuthenticated} />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/user" element={<ProtectedRoute component={User} />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/aboutUs" element={<AboutUs />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/rentals" element={<Rentals />} />
-        <Route path="/rentals/:id" element={<PropertyDetails />} />
-      </Routes>
-      <Footer />
+      <AuthProvider>
+        <Navbar isAuthenticated={isAuthenticated} />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/user" element={<ProtectedRoute component={User} />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/aboutUs" element={<AboutUs />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/rentals" element={<Rentals />} />
+          <Route path="/rentals/:id" element={<PropertyDetails />} />
+        </Routes>
+        <Footer />
+      </AuthProvider>
     </>
   );
 }

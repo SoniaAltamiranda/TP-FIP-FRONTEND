@@ -2,10 +2,12 @@ import { useState } from "react";
 import Swal from "sweetalert2";
 import { useContext } from "react";
 import { usersContext } from "../../context/usersContext";
+import { useNavigate } from "react-router-dom";
 
 const BASE_URL = "http://localhost:3000/properties/";
 
 const RegisterProperty = ({user}) => {
+  const navigate = useNavigate();
 
   const { currentUser } = useContext(usersContext);
   console.log(user);
@@ -83,9 +85,11 @@ const RegisterProperty = ({user}) => {
         }).then((result) => {
           if (result.isConfirmed) {
             location.reload();
+           
           }
         });
         setFormData(initialFormData);
+    
       })
       .catch((error) => {
         console.error("Error al enviar datos:", error);
