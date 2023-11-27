@@ -2,10 +2,12 @@ import { useState } from "react";
 import Swal from "sweetalert2";
 import { useContext } from "react";
 import { usersContext } from "../../context/usersContext";
+import { useNavigate } from "react-router-dom";
 
 const BASE_URL = "http://localhost:3000/properties/";
 
 const RegisterProperty = ({user}) => {
+  const navigate = useNavigate();
 
   const { currentUser } = useContext(usersContext);
   console.log(user);
@@ -80,12 +82,15 @@ const RegisterProperty = ({user}) => {
           showCancelButton: false,
           showConfirmButton: true,
           confirmButtonText: "Continuar",
+          confirmButtonColor: "#34495E",
         }).then((result) => {
           if (result.isConfirmed) {
             location.reload();
+           
           }
         });
         setFormData(initialFormData);
+    
       })
       .catch((error) => {
         console.error("Error al enviar datos:", error);
@@ -296,7 +301,7 @@ const RegisterProperty = ({user}) => {
           <div className="text-center">
             <button
               type="submit"
-              className="bg-gray-600 hover:bg-blue-700 text-white font-bold py-2 px-8 rounded focus:outline-none focus:shadow-outline"
+              className="bg-gray-600 hover:bg-gray-900 text-white font-bold py-2 px-8 rounded focus:outline-none focus:shadow-outline"
             >
               Enviar
             </button>

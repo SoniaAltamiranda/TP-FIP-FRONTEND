@@ -193,6 +193,7 @@ function Contact() {
               <textarea
                 id="message"
                 name="message"
+                placeholder="Estoy interesado en una propiedad..."
                 value={formData.message}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"

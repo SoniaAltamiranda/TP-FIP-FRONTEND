@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import React, { useState } from "react";
 
-// eslint-disable-next-line react/prop-types
 function MyProperties({ properties }) {
   const [isEditing, setIsEditing] = useState(false);
   const [propertyToEdit, setPropertyToEdit] = useState(null);
@@ -11,36 +10,32 @@ function MyProperties({ properties }) {
 
   const deleteProperty = async (propertyId) => {
     try {
-      const response = await fetch(
+      const result = await Swal.fire({
+        title: "¿Estás seguro?",
+        text: "Si confirmas, se eliminará la propiedad.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#34495E",
+        cancelButtonColor: "#566573",
+        confirmButtonText: "Sí",
+        cancelButtonText: "No",
+      });
+     
+      if (result.isConfirmed) { 
+        const response = await fetch(
         `http://localhost:3000/properties/${propertyId}`,
         {
           method: "DELETE",
         }
       );
-
-      if (response.ok) {
-        // Mostrar una alerta SweetAlert de éxito
-        Swal.fire({
-          title: "Éxito",
-          text: "El inmueble se ha eliminado correctamente",
-          icon: "success",
-        }).then((result) => {
-          if (result.isConfirmed) {
-            location.reload();
-          }
-        });
-      } else {
-        // Mostrar una alerta SweetAlert de error
-        Swal.fire({
-          title: "Error",
-          text: "Error al eliminar el inmueble",
-          icon: "error",
-        });
+        location.reload();
       }
-    } catch (error) {
+    }
+    catch (error) {
       console.error("Error al eliminar el inmueble:", error);
     }
   };
+
 
   const handleEditClick = (property) => {
     setIsEditing(true);
@@ -113,8 +108,8 @@ function MyProperties({ properties }) {
               .addEventListener("click", () => {
                 setIsEditing(false);
                 setPropertyToEdit(null);
-                navigate("/user");
               });
+            navigate("/user");
           },
         });
       } else {
@@ -131,13 +126,12 @@ function MyProperties({ properties }) {
         Mis Propiedades
       </p>
 
-      
+
       {properties.map((property, index) => (
         <div
           key={property.id}
-          className={`rounded-md overflow-hidden shadow-md mb-4 ${
-            index > 0 ? "border-t border-gray-300 pt-4" : ""
-          } bg-gray-300 bg-opacity-50 rounded-lg`}
+          className={`rounded-md overflow-hidden shadow-md mb-4 ${index > 0 ? "border-t border-gray-300 pt-4" : ""
+            } bg-gray-300 bg-opacity-50 rounded-lg`}
         >
           <div className="flex p-6">
             <div className="w-1/3">
@@ -155,7 +149,28 @@ function MyProperties({ properties }) {
               <h4 className="text-xl text-gray-800 font-semibold">
                 {property.title}
               </h4>
-              <p className="text-gray-800">{property.description}</p>
+              <p className="text-gray-800">
+                <span style={{ fontWeight: "bold", color: "#555" }}>{property.description}</span>
+              </p>
+              <p className="mb-2">
+                Ambientes: <span style={{ fontWeight: "bold", color: "#555" }} className="text-gray-500">{property.rooms}</span>
+              </p>
+              <p className="mb-2">
+                Precio:{" "}
+                <span style={{ fontWeight: "bold", color: "#555" }}>
+                  ${property.price}
+                </span>
+              </p>
+              <p className="mb-2">Ubicación:
+                <span style={{ fontWeight: "bold", color: "#555" }}>
+                  {property.location}</span></p>
+              <p className="mb-2">
+                Tipo de alquiler:{" "}
+                <span style={{ fontWeight: "bold", color: "#555" }}>
+                  {property.type}
+                </span>
+              </p>
+
               <div className="text-center mt-4">
                 <button
                   className="inline-block bg-gray-700 text-white my-10 py-2 px-6 rounded-full hover:bg-gray-800 mx-auto"
@@ -175,7 +190,7 @@ function MyProperties({ properties }) {
         </div>
       ))}
       {isEditing && propertyToEdit && (
-      
+
         <form
           onSubmit={handleSaveChanges}
           encType="multipart/form-data"
@@ -393,7 +408,7 @@ function MyProperties({ properties }) {
             </div>
           </div>
         </form>
-     
+
       )}
     </div>
   );
