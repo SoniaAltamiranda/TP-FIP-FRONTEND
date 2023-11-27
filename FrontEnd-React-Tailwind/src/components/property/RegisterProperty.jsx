@@ -82,6 +82,7 @@ const RegisterProperty = ({user}) => {
           showCancelButton: false,
           showConfirmButton: true,
           confirmButtonText: "Continuar",
+          confirmButtonColor: "#34495E",
         }).then((result) => {
           if (result.isConfirmed) {
             location.reload();
@@ -300,7 +301,7 @@ const RegisterProperty = ({user}) => {
           <div className="text-center">
             <button
               type="submit"
-              className="bg-gray-600 hover:bg-blue-700 text-white font-bold py-2 px-8 rounded focus:outline-none focus:shadow-outline"
+              className="bg-gray-600 hover:bg-gray-900 text-white font-bold py-2 px-8 rounded focus:outline-none focus:shadow-outline"
             >
               Enviar
             </button>

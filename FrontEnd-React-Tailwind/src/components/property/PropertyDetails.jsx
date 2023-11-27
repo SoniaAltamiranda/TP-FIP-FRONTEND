@@ -26,19 +26,24 @@ function PropertyDetails() {
                 {property.title}
               </h2>
               <p className="mb-2">
-                Ambientes: <span className="text-gray-500">{property.rooms}</span>
+                Ambientes: <span style={{ fontWeight: 'bold', color: '#555' }} >{property.rooms}</span>
               </p>
-              <p className="mb-2"> {property.description}</p>
+              <p className="mb-2"><span style={{ fontWeight: 'bold', color: '#555' }} > {property.description}</span></p>
               <p className="mb-2">
                 Precio: <span style={{ fontWeight: 'bold', color: '#555' }}>
                   ${property.price}
                 </span>
               </p>
-              <p className="mb-2">Localidad: {property.location}</p>
+              <p className="mb-2">Localidad: <span style={{ fontWeight: 'bold', color: '#555' }} > {property.location}</span></p>
+              <p className="mb-2">
+                Tipo de propiedad: <span style={{ fontWeight: 'bold', color: '#555' }}>
+                  ${property.type}
+                </span>
+              </p>
               {!userLoggedIn && (
                 <p className="mb-2">
                   Para obtener más información, por favor{" "}
-                  <a href="/Contact" style={{ textDecoration: 'none', color: '#3498db' }}>
+                  <a href="/Contact" style={{ textDecoration: 'none', color: '#3498db', fontWeight: 'bold'}}>
                     HAZ CLICK AQUI
                   </a>
                   .
