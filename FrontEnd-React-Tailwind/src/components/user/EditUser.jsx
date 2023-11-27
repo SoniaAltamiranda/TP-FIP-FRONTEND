@@ -1,11 +1,14 @@
+/* eslint-disable react/prop-types */
 // eslint-disable-next-line no-unused-vars
 import Swal from "sweetalert2";
-import { useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from 'react-router-dom';
 
 function EditUser({ user }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isCancelled, setIsCancelled] = useState(false);
+  const [isEditConfirmed, setIsEditConfirmed] = useState(false);
 
   const [userData, setUserData] = useState({
     name: user.name,
@@ -23,9 +26,7 @@ function EditUser({ user }) {
   }
 
   function handleCancel() {
-    // Mostrar SweetAlert de confirmación
     Swal.fire({
-
       icon: 'warning',
       title: '¿Estás seguro?',
       text: 'Si cancelas, perderás los cambios.',
@@ -35,10 +36,9 @@ function EditUser({ user }) {
       confirmButtonText: 'Sí, cancelar',
     }).then((result) => {
       if (result.isConfirmed) {
-
-
         setIsCancelled(true);
-        navigate(`/user/${user.id}`); // hay que redireccionar despues de cancelar
+        setIsEditConfirmed(true);
+        navigate(-1, { state: location.state });
       }
     });
   }
@@ -46,41 +46,60 @@ function EditUser({ user }) {
 
   function handleSubmit(e) {
     e.preventDefault();
-
+  
     if (isCancelled) {
       return;
     }
-
-    fetch(`http://localhost:3030/users/${user.id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(userData),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Error al actualizar usuario');
-        }
-
-      })
-      .then((_data) => {
-        Swal.fire({
-          icon: 'success',
-          title: 'Éxito',
-          text: 'Los cambios se guardaron correctamente.',
-        });
-        navigate(`/user/$user.id`); // hay que redireccionar despues de cancelar
-      })
-      .catch((error) => {
-        console.error('Error al actualizar usuario:', error);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Hubo un error al actualizar el usuario.',
-        });
-      });
+  
+    Swal.fire({
+      icon: 'question',
+      title: '¿Estás seguro de modificar tus datos?',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí',
+      cancelButtonText: 'No',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        fetch(`http://localhost:3030/users/${user.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(userData),
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error('Error al actualizar usuario');
+            }
+          })
+          .then(() => {
+            Swal.fire({
+              icon: 'success',
+              title: 'Éxito',
+              text: 'Los cambios se guardaron correctamente.',
+            });
+            setIsEditConfirmed(true); // Indica que la edición fue confirmada con éxito
+          })
+          .catch((error) => {
+            console.error('Error al actualizar usuario:', error);
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Hubo un error al actualizar el usuario.',
+            });
+          });
+      }
+    });
   }
+
+
+  useEffect(() => {
+    if (isEditConfirmed) {
+      setIsEditConfirmed(false);
+      navigate(`/user/${user.id}`);
+    }
+  }, [isEditConfirmed, navigate, user]);
 
   return (
     <div className="flex items-center justify-center h-screen">
