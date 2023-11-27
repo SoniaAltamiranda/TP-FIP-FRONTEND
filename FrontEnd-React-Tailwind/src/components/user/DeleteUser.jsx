@@ -12,7 +12,7 @@ function DeleteUser() {
   };
 
   const handleCancel = () => {
-    navigate("/user"); // Use navigate from react-router-dom instead of changing window.location.href directly
+    location.reload();
   };
 
   const handleSubmit = async (e) => {
@@ -101,14 +101,14 @@ function DeleteUser() {
           <div className="mb-8   flex justify-between">
           <button
             type="submit"
-            className="w-1/2 bg-gray-800 text-white py-2 rounded-md hover:bg-red-700 focus:outline-none focus:ring focus:ring-blue-200"
+            className="w-1/2 bg-gray-700 text-white py-2 rounded-md hover:bg-gray-800 focus:outline-none focus:ring focus:ring-blue-200"
           >
             Eliminar
           </button>
-          <div className="w-4"></div> {/* Espacio entre los botones */}
+          <div className="w-4"></div> 
           <button
             type="button"
-            className="w-1/2 bg-gray-800 text-white py-2 rounded-md hover:bg-gray-800 focus:outline-none focus:ring focus:ring-blue-200"
+            className="w-1/2 bg-gray-700 text-white py-2 rounded-md hover:bg-gray-800 focus:outline-none focus:ring focus:ring-blue-200"
             onClick={handleCancel}
           >
             Cancelar

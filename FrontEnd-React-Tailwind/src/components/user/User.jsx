@@ -43,8 +43,8 @@ function User() {
       text: "¿Quieres cerrar sesión?",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
+      confirmButtonColor: "#34495E",
+      cancelButtonColor: "#566573",
       confirmButtonText: "Sí",
       cancelButtonText: "No",
     }).then((result) => {
