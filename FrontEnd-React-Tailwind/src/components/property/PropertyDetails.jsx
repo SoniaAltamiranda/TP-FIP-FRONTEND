@@ -1,10 +1,55 @@
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 
+import { initMercadoPago, Wallet } from '@mercadopago/sdk-react'
+
+
+
 function PropertyDetails() {
+
+  initMercadoPago('APP_USR-d8001b82-36a4-4f76-bf0e-f88f96b549ae', {
+    locale: "es-AR"
+  });
+
   const location = useLocation();
   const { property } = location.state;
   const [userLoggedIn, setUserLoggedIn] = useState(false);
+  const [preferenceId, setPreferenceId] = useState(null)
+
+  const createPreference = async () => {
+    const preferenceData = {
+      title: property.title,
+      quantity: 1,
+      price: property.price
+
+    }
+    try {
+      const response = await fetch('http://localhost:3070/create_preference', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(preferenceData)
+      });
+
+      if (!response.ok) {
+        throw new Error('Error creando preferencia: ' + response.status);
+      }
+
+      const { id } = await response.json();
+      return id;
+    } catch (error) {
+      console.error('Error creando preferencia:', error);
+
+    }
+  }
+
+  const handleBuy = async () => {
+    const id = await createPreference();
+    if (id) {
+      setPreferenceId(id);
+    }
+  }
 
   return (
     <div className="container mx-auto p-4 mt-32 text-gray-600">
@@ -41,13 +86,19 @@ function PropertyDetails() {
                 </span>
               </p>
               {!userLoggedIn && (
-                <p className="mb-2">
-                  Para obtener más información, por favor{" "}
-                  <a href="/Contact" style={{ textDecoration: 'none', color: '#3498db', fontWeight: 'bold'}}>
-                    HAZ CLICK AQUI
-                  </a>
-                  .
-                </p>
+                <>
+                  <p className="mb-2">
+                    Para obtener más información, por favor{" "}
+                    <a href="/Contact" style={{ textDecoration: 'none', color: '#3498db', fontWeight: 'bold' }}>
+                      HAZ CLICK AQUI
+                    </a>
+                    .
+                  </p>
+                  <button onClick={handleBuy} className="w-full bg-gray-700 text-white py-2 rounded-md hover:bg-gray-800 focus:outline-none focus:ring focus:ring-blue-200"
+                  > Reservar </button>
+                  {preferenceId && <Wallet initialization={{ preferenceId }} customization={{ texts: { valueProp: 'smart_option' } }} />}
+                  
+                </>
               )}
               <div className="md:col-span-4 md:col-start-2 flex items-center justify-center mt-4">
                 <iframe
@@ -59,7 +110,6 @@ function PropertyDetails() {
           </div>
         </div>
       </div>
-
     </div>
   );
 }
