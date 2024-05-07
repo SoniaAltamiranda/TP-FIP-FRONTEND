@@ -1,17 +1,14 @@
-import { useState } from "react";
+import React, { useState, useContext } from "react";
 import Swal from "sweetalert2";
-import { useContext } from "react";
-import { usersContext } from "../../context/usersContext";
-import { useNavigate } from "react-router-dom";
+import { UsersContext } from "../../context/usersContext"; 
+import {Link} from "react-router-dom"
 
-const BASE_URL = "http://localhost:3000/properties/";
+const BASE_URL = "http://localhost:3000/property/";
 
 const RegisterProperty = ({user}) => {
-  const navigate = useNavigate();
 
-  const { currentUser } = useContext(usersContext);
+  const { currentUser } = useContext(UsersContext); 
   console.log(user);
-
   const initialFormData = {
     title: "",
     type: "",
@@ -82,15 +79,12 @@ const RegisterProperty = ({user}) => {
           showCancelButton: false,
           showConfirmButton: true,
           confirmButtonText: "Continuar",
-          confirmButtonColor: "#34495E",
         }).then((result) => {
           if (result.isConfirmed) {
             location.reload();
-           
           }
         });
         setFormData(initialFormData);
-    
       })
       .catch((error) => {
         console.error("Error al enviar datos:", error);
@@ -258,59 +252,30 @@ const RegisterProperty = ({user}) => {
             />
           </div>
 
-          <div className="mb-2">
-            <label htmlFor="imageUpload" className="block  text-sm text-gray-800 font-bold mb-2">
-              Imágenes:
-            </label>
-            <div
-              id="imageDropArea"
-              className="w-full px-3 py-3 border rounded-lg focus:outline-none focus:shadow-outline transition-colors ease-in-out duration-300 hover:bg-blue-200"
-              onDragOver={(e) => handleDragOver(e)}
-              onDrop={(e) => handleDrop(e)}
-            >
-              <label htmlFor="imageUpload" className="text-sm">
-                Arrastra y suelta imágenes aquí o haz clic para seleccionarlas.
-              </label>
-              <input
-                type="file"
-                id="imageUpload"
-                accept="image/*"
-                style={{ display: "none" }}
-                onChange={(e) => handleFileSelect(e)}
-              />
-            </div>
-          </div>
-          {formData.images.length > 0 && (
-            <div className="mb-2">
-              <label className="block text-gray-800 font-bold text-sm mb-2">Imágenes cargadas:</label>
-              <div className="flex flex-wrap">
-                {formData.images.map((imageUrl, index) => (
-                  <div key={index} className="relative w-1/4 p-2">
-                    <img src={imageUrl} alt={`Imagen ${index + 1}`} className="w-full h-auto rounded" />
-                    <button
-                      className="absolute top-0 right-0 p-1 text-gray-500 hover:text-gray-700 cursor-pointer"
-                      onClick={() => handleRemoveImage(index)}
-                    >
-                      <img src="../public/images/boton-x.png" alt="Eliminar" className="w-4 h-4" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-          <div className="text-center">
-            <button
-              type="submit"
-              className="bg-gray-600 hover:bg-gray-900 text-white font-bold py-2 px-8 rounded focus:outline-none focus:shadow-outline"
-            >
-              Enviar
-            </button>
-          </div>
+          
+          <label htmlFor="imageUpload" className="block  text-sm text-gray-800 font-bold mb-2">
+  Imágenes:
+</label>
+<div
+  id="imageDropArea"
+  className="w-full px-3 py-3 border rounded-lg focus:outline-none focus:shadow-outline transition-colors ease-in-out duration-300 hover:bg-blue-200"
+  onDragOver={(e) => handleDragOver(e)}
+  onDrop={(e) => handleDrop(e)}
+>
+  <label htmlFor="imageUpload text-sm" />
+</div>
+
+          
         </form>
+        <div className="mb-4 text-center">
+          ¿No estás registrado?{" "}
+          <Link to="/register" className="text-blue-500 hover:underline">
+            Regístrate aquí
+          </Link>
+        </div>
       </div>
     </div>
   );
-};
+}
 
 export default RegisterProperty;
-

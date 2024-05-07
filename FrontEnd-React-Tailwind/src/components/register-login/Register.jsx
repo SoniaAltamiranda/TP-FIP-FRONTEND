@@ -1,62 +1,70 @@
-
-// eslint-disable-next-line no-unused-vars
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Swal from 'sweetalert2';
 
 function Register() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    username: "",
+    name: "",
+    lastname: "",
     email: "",
+    username: "",
     password: "",
-    phone: "",
+    confirmPassword: "",
   });
 
   const [message, setMessage] = useState("");
-
+  
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const apiUrl = "http://localhost:3030/users/";
-
+  
+    if (formData.password !== formData.confirmPassword) {
+      setMessage("Las contraseñas no coinciden.");
+      return; // Detiene el envío del formulario si las contraseñas no coinciden
+    } else if (formData.password.length < 8 || formData.password.length > 10) {
+      setMessage("La contraseña debe tener entre 8 y 10 caracteres.");
+      return; // Detiene el envío del formulario si la longitud de la contraseña no es válida
+    }
+  
     try {
-      const response = await fetch(apiUrl, {
-        method: "POST",
+      const response = await fetch('http://localhost:3000/auth/register', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
       });
-
-      if (response.ok) {
-        setMessage("Registro exitoso");
-
-        setFormData({
-          username: "",
-          email: "",
-          password: "",
-          phone: "",
-        });
-
-        // Redirigir al usuario después del registro exitoso
-        navigate("/login");
-      } else {
-        setMessage("Error en el registro");
+  
+      if (!response.ok) {
+        throw new Error('Error al registrar usuario');
       }
+  
+      const data = await response.json();
+      console.log('Usuario registrado:', data);
+      
+      Swal.fire({
+        icon: 'success',
+        title: '¡Registro exitoso!',
+        text: 'Usted se ha registrado correctamente.',
+        confirmButtonText: 'Ir al inicio de sesión',
+        confirmButtonColor: '#2E4053' 
+      }).then(() => {
+        navigate('/login');
+      });
+      
     } catch (error) {
-      console.error("Error en la solicitud POST:", error);
-      setMessage("Error en la solicitud POST");
+      console.error('Error al registrar usuario:', error.message);
+      setMessage(error.message); 
     }
   };
-
+  
   return (
     <div className="bg-gradient-to-b from-gray-100 to-gray-400 min-h-screen flex items-center justify-center">
-       <div className="text-center mb-8">
+      <div className="text-center mb-8">
         <h1 className="text-6xl text-gray-700 font-extrabold mb-2">ALQUILAFÁCIL.COM</h1>
         <hr className="w-1/4 border-t-2 border-gray-700 mx-auto mb-4" />
         <p className="text-lg text-gray-700">La forma más conveniente de alquilar lo que necesitas.</p>
@@ -68,16 +76,31 @@ function Register() {
         <h1 className="text-xl font-semibold text-center mb-4">Registro</h1>
         {message && <p className="text-red-500 mb-4">{message}</p>}
         <div className="mb-4">
-          <label htmlFor="username" className="block text-sm font-medium">
-            Nombre de Usuario:
+          <label htmlFor="name" className="block text-sm font-medium">
+            Nombre:
           </label>
           <input
             type="text"
-            id="username"
-            name="username"
-            value={formData.username}
+            id="name"
+            name="name"
+            value={formData.name}
             onChange={handleChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+            required
+          />  
+        </div>
+        <div className="mb-4">
+          <label htmlFor="lastname" className="block text-sm font-medium">
+            Apellido:
+          </label>
+          <input
+            type="text"
+            id="lastname"
+            name="lastname"
+            value={formData.lastname}
+            onChange={handleChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+            required
           />
         </div>
         <div className="mb-4">
@@ -91,6 +114,21 @@ function Register() {
             value={formData.email}
             onChange={handleChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="username" className="block text-sm font-medium">
+            Nombre de Usuario:
+          </label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+            required
           />
         </div>
         <div className="mb-4">
@@ -104,19 +142,26 @@ function Register() {
             value={formData.password}
             onChange={handleChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+            required
           />
+          {formData.password.length > 0 && ( // Muestra el mensaje solo si el usuario ha empezado a escribir
+    <p className="text-sm text-gray-500">
+      La contraseña debe tener entre 8 y 10 caracteres.
+    </p>
+  )}
         </div>
         <div className="mb-4">
-          <label htmlFor="phone" className="block text-sm font-medium">
-            Teléfono:
+          <label htmlFor="confirmPassword" className="block text-sm font-medium">
+            Confirmar Contraseña:
           </label>
           <input
-            type="text"
-            id="phone"
-            name="phone"
-            value={formData.phone}
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            value={formData.confirmPassword}
             onChange={handleChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+            required
           />
         </div>
         <button
@@ -126,7 +171,6 @@ function Register() {
           Registrar
         </button>
       </form>
-
     </div>
   );
 }

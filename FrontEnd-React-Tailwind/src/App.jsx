@@ -1,4 +1,5 @@
-import { Routes, Route } from "react-router-dom";
+import React from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "./components/home/Home";
 import Contact from "./components/contact/Contact";
 import Login from "./components/register-login/Login";
@@ -8,33 +9,33 @@ import Footer from "./components/footer/Footer";
 import User from "./components/user/User";
 import PropertyDetails from "./components/property/PropertyDetails";
 import Navbar from "./components/navbar/Navbar";
-import ProtectedRoute from "./components/user/ProtectedRoute";
 import { useAuth } from "./context/AuthContext";
 import AboutUs from "./components/aboutUs/aboutUs";
-import { AuthProvider } from "./context/AuthContext";
-function App() {
 
-  const { currentUser } = useAuth(); // Asegúrate de tener una función useAuth en tu AuthContext
-  const isAuthenticated = !!currentUser;
+function App() {
+  const { token } = useAuth();
+  const isAuthenticated = !!token;
 
   return (
     <>
-      <AuthProvider>
-        <Navbar isAuthenticated={isAuthenticated} />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/user" element={<ProtectedRoute component={User} />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/aboutUs" element={<AboutUs />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/rentals" element={<Rentals />} />
-          <Route path="/rentals/:id" element={<PropertyDetails />} />
-        </Routes>
-        <Footer />
-      </AuthProvider>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/aboutUs" element={<AboutUs />} />
+        <Route path="/login" element={isAuthenticated ? <Navigate to="/user" /> : <Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/rentals" element={<Rentals />} />
+        <Route path="/rentals/:id" element={<PropertyDetails />} />
+        <Route path="/user" element={isAuthenticated ? <User /> : <Navigate to="/login" />} />
+        
+      </Routes>
+      <Footer />
     </>
   );
 }
 
 export default App;
+
+
+

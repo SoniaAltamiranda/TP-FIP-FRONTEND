@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 function FeaturedPosts() {
   const properties = useContext(propertiesContext);
 
-  const featuredProperties = properties.slice(0, 3);
+  const featuredProperties = properties.slice(0, 5);
 
   return (
     <div className="flex">
@@ -56,3 +56,5 @@ function FeaturedPosts() {
 }
 
 export default FeaturedPosts;
+
+

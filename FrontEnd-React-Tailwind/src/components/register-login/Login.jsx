@@ -1,63 +1,81 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
+import { Link } from "react-router-dom";
 
 function Login() {
-  const [formData, setFormData] = useState({ name: "", password: "" });
-  const navigate = useNavigate();
   const { login } = useAuth();
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { name, password } = formData;
-    const BASE_URL = "http://localhost:3030/users/";
+    setLoading(true);
 
     try {
-      const response = await fetch(`${BASE_URL}?name=${name}&password=${password}`);
-      if (response.ok) {
-        const userData = await response.json();
-        if (userData.length > 0) {
-          login(userData[0]);
-          navigate("/user", { state: { user: userData[0] } });
-        
-        } else {
-          alert("Credenciales incorrectas. Por favor, inténtalo de nuevo o regístrate.");
-        }
-      } else {
-        alert("Error de autenticación. Por favor, inténtalo de nuevo más tarde.");
-      }
-    } catch (error) {
-      console.error("Error al realizar la autenticación:", error);
-      alert("Error de autenticación. Por favor, inténtalo de nuevo más tarde.");
-    }
+      const userData = { email, password };
 
-    setFormData({ name: "", password: "" });
+      const response = await fetch("http://localhost:3000/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Error en la solicitud de inicio de sesión");
+      }
+
+      const data = await response.json();
+      const authToken = data.token;
+      console.log(authToken);
+
+      login(authToken);
+      
+    } catch (error) {
+      setError(error.message);
+      console.error("Error en la solicitud de inicio de sesión:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === "email") {
+      setEmail(value);
+    } else if (name === "password") {
+      setPassword(value);
+    }
+
+    
+  };
   return (
     <div className="bg-gradient-to-b from-gray-100 to-gray-400 min-h-screen flex items-center justify-center">
       <div className="text-center mb-8 mr-2">
-        <h1 className="text-6xl text-gray-700 font-extrabold mb-2">ALQUILAFÁCIL.COM</h1>
+        <h1 className="text-6xl text-gray-700 font-extrabold mb-2">
+          ALQUILAFÁCIL.COM
+        </h1>
         <hr className="w-1/4 border-t-2 border-gray-700 mx-auto mb-4" />
-        <p className="text-lg text-gray-700">La forma más conveniente de alquilar lo que necesitas.</p>
+        <p className="text-lg text-gray-700">
+          La forma más conveniente de alquilar lo que necesitas.
+        </p>
       </div>
       <div className="border-2 border-gray-300 p-4 rounded-lg shadow-lg w-80">
         <h1 className="text-xl font-semibold text-center mb-4">Login</h1>
+        {error && <div className="text-red-500 mb-4">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label htmlFor="name" className="block text-sm font-medium">
-              Usuario:
+            <label htmlFor="email" className="block text-sm font-medium">
+              Email:
             </label>
             <input
               type="text"
-              id="name"
-              name="name"
-              value={formData.name}
+              id="email"
+              name="email"
+              value={email}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
               required
@@ -71,7 +89,7 @@ function Login() {
               type="password"
               id="password"
               name="password"
-              value={formData.password}
+              value={password}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
               required
@@ -81,8 +99,9 @@ function Login() {
             <button
               type="submit"
               className="w-full bg-gray-700 text-white py-2 rounded-md hover:bg-gray-800 focus:outline-none focus:ring focus:ring-blue-200"
+              disabled={loading}
             >
-              Iniciar sesión
+              {loading ? "Cargando..." : "Iniciar sesión"}
             </button>
           </div>
         </form>
