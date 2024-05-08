@@ -17,11 +17,14 @@ function Login() {
       const userData = { email, password };
 
       const response = await fetch("http://localhost:3000/auth/login", {
+        
+
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(userData),
+
       });
 
       if (!response.ok) {
@@ -31,7 +34,7 @@ function Login() {
       const data = await response.json();
       const authToken = data.token;
       console.log(authToken);
-
+      
       login(authToken);
       
     } catch (error) {
