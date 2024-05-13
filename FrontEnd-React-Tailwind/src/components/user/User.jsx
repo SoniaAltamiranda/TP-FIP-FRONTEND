@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { jwtDecode } from 'jwt-decode';
+import { jwtDecode } from "jwt-decode";
 import RegisterProperty from "../property/RegisterProperty";
 import MyProperties from "../property/MyProperties";
 import EditUser from "./EditUser";

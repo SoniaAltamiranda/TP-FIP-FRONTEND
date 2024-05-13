@@ -12,6 +12,7 @@ const RegisterProperty = () => {
   const decodedToken = token ? jwtDecode(token) : null;
   const userId = decodedToken ? decodedToken.sub : null;
   console.log(userId);
+  console.log(token);
 
   // const { currentUser } = useContext(UsersContext);
 
@@ -24,7 +25,7 @@ const RegisterProperty = () => {
     address: "",
     price: "",
     rate: 0,
-    images: [],
+    //images: [],
     url_iframe: "",
     id_user: userId,
     id_booking: 1,
@@ -58,42 +59,44 @@ const RegisterProperty = () => {
       description: formData.description,
       price: parseInt(formData.price),
       rate: 0, //provisoriamente
-      images: " ",
-      id_user: userId,
+     // images: ["imagen1", "imagen2", "imagen3"],
+      id_user: parseInt(userId),
       url_iframe:
         "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d51639.59303061964!2d-59.09519054999999!3d-36.0087031!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x959635293797eb09%3A0x37727efde49396ee!2sLas%20Flores%2C%20Provincia%20de%20Buenos%20Aires!5e0!3m2!1ses-419!2sar!4v1697058472501!5m2!1ses-419!2sar",
-      id_booking:2,
+      id_booking: 2,
       id_location: 2,
-   };
+    };
+    console.log(jsonData);
+    try {
 
-    try{
-
+      
       const response = await fetch(BASE_URL, {
-      method: "POST",
-      headers: {
-       
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(jsonData ),
-    })
+        method: 'POST',
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: 'Bearer ' + token,
+        },
+        body: JSON.stringify(jsonData),
+      })
 
-    if(!response.ok){
-      throw new Error(`Error en el registro de la propiedad`);
-    }
-console.log(response);
-        Swal.fire({
-          icon: "success",
-          title: "Su propiedad fue publicada exitosamente",
-          showCancelButton: false,
-          showConfirmButton: true,
-          confirmButtonText: "Continuar",
-        })
-        setFormData(initialFormData);
+      console.log(response);
+      if (!response.ok) {
+        throw new Error(`Error en el registro de la propiedad`);
       }
-       catch(error) {
-        console.error("Error al enviar datos:", error);
-        
-   } };
+      Swal.fire({
+        icon: "success",
+        title: "Su propiedad fue publicada exitosamente",
+        showCancelButton: false,
+        showConfirmButton: true,
+        confirmButtonText: "Continuar",
+      })
+      setFormData(initialFormData);
+    }
+    catch (error) {
+      console.error("Error al enviar datos:", error);
+
+    }
+  };
 
   const handleDragOver = (e) => {
     e.preventDefault();
