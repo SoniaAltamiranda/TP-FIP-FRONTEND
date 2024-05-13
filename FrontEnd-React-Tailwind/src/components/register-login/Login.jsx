@@ -67,7 +67,7 @@ function Login() {
         </p>
       </div>
       <div className="border-2 border-gray-300 p-4 rounded-lg shadow-lg w-80">
-        <h1 className="text-xl font-semibold text-center mb-4">Login</h1>
+        <h1 className="text-xl font-semibold text-center mb-4">Iniciar sesión</h1>
         {error && <div className="text-red-500 mb-4">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">

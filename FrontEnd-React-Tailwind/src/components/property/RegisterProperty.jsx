@@ -1,99 +1,21 @@
 import React, { useState } from "react";
 import Swal from "sweetalert2";
-// import { UsersContext } from "../../context/usersContext";
-import { Link } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
 
-const BASE_URL = "http://localhost:3000/property/";
-
-const RegisterProperty = () => {
-
-  const token = localStorage.getItem("token");
-  const decodedToken = token ? jwtDecode(token) : null;
-  const userId = decodedToken ? decodedToken.sub : null;
-  console.log(userId);
-
-  // const { currentUser } = useContext(UsersContext);
-
-  const initialFormData = {
+function RegisterProperty({ user }) {
+  const [propertyData, setPropertyData] = useState({
     title: "",
-    type: "",
-    location: "",
-    rooms: "",
     description: "",
-    address: "",
-    price: "",
+    rooms: 0,
+    price: 0,
+    images: [""],
     rate: 0,
-    images: [],
+    type: "",
+    address: "",
     url_iframe: "",
-    id_user: userId,
-    id_booking: 1,
-    id_location: 2,
-  };
-
-  const [formData, setFormData] = useState(initialFormData);
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-
-    if (!userId) {
-      alert("Debes iniciar sesión para publicar una propiedad.");
-      return;
-    }
-
-    const jsonData = {
-      title: formData.title,
-      type: formData.type,
-      location: formData.location,
-      rooms: parseInt(formData.rooms),
-      description: formData.description,
-      price: parseInt(formData.price),
-      rate: 0, //provisoriamente
-      images: " ",
-      id_user: userId,
-      url_iframe:
-        "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d51639.59303061964!2d-59.09519054999999!3d-36.0087031!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x959635293797eb09%3A0x37727efde49396ee!2sLas%20Flores%2C%20Provincia%20de%20Buenos%20Aires!5e0!3m2!1ses-419!2sar!4v1697058472501!5m2!1ses-419!2sar",
-      id_booking:2,
-      id_location: 2,
-   };
-
-    try{
-
-      const response = await fetch(BASE_URL, {
-      method: "POST",
-      headers: {
-       
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(jsonData ),
-    })
-
-    if(!response.ok){
-      throw new Error(`Error en el registro de la propiedad`);
-    }
-console.log(response);
-        Swal.fire({
-          icon: "success",
-          title: "Su propiedad fue publicada exitosamente",
-          showCancelButton: false,
-          showConfirmButton: true,
-          confirmButtonText: "Continuar",
-        })
-        setFormData(initialFormData);
-      }
-       catch(error) {
-        console.error("Error al enviar datos:", error);
-        
-   } };
+    id_user: user ? user : "",
+    // id_location: 0,
+    // id_booking: 0, //ver
+  });
 
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -102,23 +24,18 @@ console.log(response);
   const handleDrop = (e) => {
     e.preventDefault();
     const files = e.dataTransfer.files;
-    const imageUrls = formData.images.slice();
+    const imageUrls = [...propertyData.images];
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       const imageUrl = URL.createObjectURL(file);
       imageUrls.push(imageUrl);
     }
-
-    setFormData({
-      ...formData,
-      images: imageUrls,
-    });
   };
 
   const handleFileSelect = (e) => {
     const files = e.target.files;
-    const imageUrls = formData.images.slice();
+    const imageUrls = [...propertyData.images];
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
@@ -126,17 +43,88 @@ console.log(response);
       imageUrls.push(imageUrl);
     }
 
-    setFormData({
-      ...formData,
+    setPropertyData({
+      ...propertyData,
       images: imageUrls,
     });
   };
 
-  const handleRemoveImage = (index) => {
-    const updatedImages = [...formData.images];
-    updatedImages.splice(index, 1);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    const numericValue =
+      name === "price" || name === "rooms" ? parseInt(value, 10) : value; // Convertir a número si es 'price' o 'rooms'
+    setPropertyData({
+      ...propertyData,
+      [name]: numericValue,
+    });
+  };
+  const handleRemoveImage = (indexToRemove) => {
+    const updatedImages = propertyData.images.filter(
+      (_, index) => index !== indexToRemove
+    );
+    setPropertyData({
+      ...propertyData,
+      images: updatedImages,
+    });
+  };
 
-    setFormData({ ...formData, images: updatedImages });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const token = localStorage.getItem("token");
+      console.log(propertyData);
+      console.log(user);
+
+      const response = await fetch("http://localhost:3000/property", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          ...propertyData,
+          id_user: user ? user : "",
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Error al registrar la propiedad");
+      }
+
+      setPropertyData({
+        ...propertyData,
+        id_user: id,
+      })
+
+      setPropertyData({
+        title: "",
+        description: "",
+        rooms: 0,
+        price: 0,
+        images: [""],
+        rate: 0,
+        type: "",
+        address: "",
+        url_iframe: "",
+        id_user: user,
+        id_location: 0,
+        id_booking: 0,
+      });
+
+      Swal.fire({
+        title: "¡Propiedad Registrada!",
+        text: "Tu propiedad ha sido registrada exitosamente.",
+        icon: "success",
+      });
+    } catch (error) {
+      console.error("Error al registrar la propiedad:", error);
+      Swal.fire({
+        title: "Error",
+        text: "Hubo un error al registrar la propiedad. Por favor, inténtalo de nuevo más tarde.",
+        icon: "error",
+      });
+    }
   };
 
   return (
@@ -154,8 +142,8 @@ console.log(response);
               type="text"
               id="title"
               name="title"
-              value={formData.title}
-              onChange={handleInputChange}
+              value={propertyData.title}
+              onChange={handleChange}
               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
               required
               pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+"
@@ -172,8 +160,8 @@ console.log(response);
             <select
               id="type"
               name="type"
-              value={formData.type}
-              onChange={handleInputChange}
+              value={propertyData.type}
+              onChange={handleChange}
               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
               required
             >
@@ -195,15 +183,15 @@ console.log(response);
               type="text"
               id="address"
               name="address"
-              value={formData.address}
-              onChange={handleInputChange}
+              value={propertyData.address}
+              onChange={handleChange}
               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
               required
               pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+"
               title="Solo se permiten letras y espacios en blanco"
             />
           </div>
-          <div className="mb-2">
+          {/* <div className="mb-2">
             <label
               htmlFor="title"
               className="block text-gray-800 text-sm font-bold mb-1"
@@ -214,12 +202,12 @@ console.log(response);
               type="text"
               id="location"
               name="location"
-              value={formData.location}
-              onChange={handleInputChange}
+              value={propertyData.location}
+              onChange={handleChange}
               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
               required
             />
-          </div>
+          </div> */}
           <div className="mb-2">
             <label
               htmlFor="title"
@@ -231,8 +219,8 @@ console.log(response);
               type="number"
               id="rooms"
               name="rooms"
-              value={formData.rooms}
-              onChange={handleInputChange}
+              value={propertyData.rooms}
+              onChange={handleChange}
               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
               required
             />
@@ -247,8 +235,8 @@ console.log(response);
             <textarea
               id="description"
               name="description"
-              value={formData.description}
-              onChange={handleInputChange}
+              value={propertyData.description}
+              onChange={handleChange}
               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline h-auto resize-none block"
               required
             />
@@ -264,46 +252,71 @@ console.log(response);
               type="number"
               id="price"
               name="price"
-              value={formData.price}
-              onChange={handleInputChange}
+              value={propertyData.price}
+              onChange={handleChange}
               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
               required
             />
           </div>
 
-          <label
-            htmlFor="imageUpload"
-            className="block  text-sm text-gray-800 font-bold mb-2"
-          >
-            Imágenes:
-          </label>
-          <div
-            id="imageDropArea"
-            className="w-full px-3 py-3 border rounded-lg focus:outline-none focus:shadow-outline transition-colors ease-in-out duration-300 hover:bg-blue-200"
-            onDragOver={(e) => handleDragOver(e)}
-            onDrop={(e) => handleDrop(e)}
-          >
-            <label htmlFor="imageUpload text-sm" />
+          <div>
+            <label
+              htmlFor="imageUpload"
+              className="block text-sm text-gray-800 font-bold mb-2"
+            >
+              Imágenes:
+            </label>
+            <div
+              id="imageDropArea"
+              className="w-full px-3 py-3 border rounded-lg focus:outline-none focus:shadow-outline transition-colors ease-in-out duration-300 hover:bg-blue-200"
+              onDragOver={handleDragOver}
+              onDrop={handleDrop}
+            >
+              <div
+                className="flex flex-wrap gap-4"
+                style={{ maxWidth: "300px" }}
+              >
+                {propertyData.images.map((imageUrl, index) => (
+                  <div key={index} className="relative">
+                    <img
+                      src={imageUrl}
+                      alt={`Image ${index}`}
+                      className="max-w-18 h-auto mb-2 rounded-lg"
+                      style={{ maxWidth: "100px", maxHeight: "100px" }}
+                    />
+                    <button
+                      className="absolute top-0 right-0 p-1 bg-gray-500 text-white rounded-full"
+                      onClick={() => handleRemoveImage(index)}
+                    >
+                      X
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <label htmlFor="imageUpload">
+                Arrastra y suelta imágenes aquí
+              </label>
+            </div>
+            <input
+              type="file"
+              id="imageUpload"
+              name="imageUpload"
+              multiple
+              onChange={handleFileSelect}
+              style={{ display: "none" }}
+            />
           </div>
-          {formData.images}
 
           <button
             type="submit"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            className="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded"
           >
             Enviar
           </button>
         </form>
-
-        <div className="mb-4 text-center">
-          ¿No estás registrado?{" "}
-          <Link to="/register" className="text-blue-500 hover:underline">
-            Regístrate aquí
-          </Link>
-        </div>
       </div>
     </div>
   );
-};
+}
 
 export default RegisterProperty;

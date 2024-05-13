@@ -6,12 +6,14 @@ import Navbar from "../navbar/Navbar";
 
 
 function PermanentRentals() {
+
   const properties = useContext(propertiesContext);
 
   return (
     <div className="bg-gray-100">
       <Navbar className="fixed top-0 left-0 right-0" />
       <div className="mt-20 container mx-auto">
+        <br />
         <h1 className="text-3xl font-semibold text-center mb-8">Alquileres Permanentes</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {properties.map((property) => (
