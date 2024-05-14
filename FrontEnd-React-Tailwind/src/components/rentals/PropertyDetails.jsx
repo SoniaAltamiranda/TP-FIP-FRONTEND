@@ -1,18 +1,12 @@
 import { useLocation } from "react-router-dom";
-import { useNavigate } from 'react-router-dom';
-
 
 function PropertyDetails() {
-    const navigate = useNavigate();
   const location = useLocation();
   const { property } = location.state;
 
-  const handlePropertyClick = (property) => {
-    navigate('/property-details', { state: { property } }); // Pass property
-  };
-
   return (
-    <div className="container mx-auto p-">
+    <div className="bg-gradient-to-b from-gray-100 to-gray-300 container mx-auto p-">
+        <br />
       <h1 className="text-2xl font-semibold mb-4 text-blue-600">{property.title}</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

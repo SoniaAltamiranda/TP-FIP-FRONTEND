@@ -3,6 +3,7 @@ import { propertiesContext } from "../../context/propertiesContext";
 import { Link } from "react-router-dom";
 import Navbar from "../navbar/Navbar";
 function PermanentRentals() {
+
   const properties = useContext(propertiesContext);
 
 

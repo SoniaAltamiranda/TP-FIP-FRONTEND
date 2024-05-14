@@ -55,6 +55,7 @@ function PropertyDetails() {
   return (
     <div className="container mx-auto p-4 mt-16 text-gray-600">
       <div className="text-center">
+        <br />
         <h2 className="text-2xl font-semibold mb-4 text-gray-800">
           {property.title}
         </h2>
