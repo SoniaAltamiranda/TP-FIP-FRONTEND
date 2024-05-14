@@ -1,21 +1,82 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
 import Swal from "sweetalert2";
 
-function RegisterProperty({ user }) {
+function RegisterProperty() {
   const [propertyData, setPropertyData] = useState({
     title: "",
     description: "",
     rooms: 0,
     price: 0,
-    images: [""],
+    images: [],
     rate: 0,
     type: "",
     address: "",
     url_iframe: "",
-    id_user: user ? user : "",
-    // id_location: 0,
-    // id_booking: 0, //ver
+    id_location: 0,
+    id_booking: 0,
   });
+
+  useEffect(() => {
+    const getTokenAndSetUserId = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const payload = jwtDecode(token);
+        setPropertyData({ ...propertyData, id_user: payload.sub });
+      } catch (error) {
+        console.error("Error al obtener el id_user del token:", error);
+      }
+    };
+    getTokenAndSetUserId();
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      
+      const token = localStorage.getItem("token");
+
+      const parsedRooms = parseInt(propertyData.rooms);
+      const parsedPrice = parseInt(propertyData.price);
+      const dataToSend = {
+        ...propertyData,
+        rooms: parsedRooms,
+        price: parsedPrice,
+      };
+
+      const response = await fetch("http://localhost:3000/property", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(dataToSend),
+      });
+
+      const data = await response.json();
+
+      console.log("Propiedad registrada:", data);
+
+      Swal.fire({
+        title: "¡Propiedad Registrada!",
+        text: "Tu propiedad ha sido registrada exitosamente.",
+        icon: "success",
+      });
+    } catch (error) {
+      console.error("Error al registrar la propiedad:", error);
+      Swal.fire({
+        title: "Error",
+        text: "Hubo un error al registrar la propiedad. Por favor, inténtalo de nuevo más tarde.",
+        icon: "error",
+      });
+    }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setPropertyData({ ...propertyData, [name]: value });
+  };
 
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -49,15 +110,6 @@ function RegisterProperty({ user }) {
     });
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    const numericValue =
-      name === "price" || name === "rooms" ? parseInt(value, 10) : value; // Convertir a número si es 'price' o 'rooms'
-    setPropertyData({
-      ...propertyData,
-      [name]: numericValue,
-    });
-  };
   const handleRemoveImage = (indexToRemove) => {
     const updatedImages = propertyData.images.filter(
       (_, index) => index !== indexToRemove
@@ -66,65 +118,6 @@ function RegisterProperty({ user }) {
       ...propertyData,
       images: updatedImages,
     });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-      const token = localStorage.getItem("token");
-      console.log(propertyData);
-      console.log(user);
-
-      const response = await fetch("http://localhost:3000/property", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          ...propertyData,
-          id_user: user ? user : "",
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Error al registrar la propiedad");
-      }
-
-      setPropertyData({
-        ...propertyData,
-        id_user: id,
-      })
-
-      setPropertyData({
-        title: "",
-        description: "",
-        rooms: 0,
-        price: 0,
-        images: [""],
-        rate: 0,
-        type: "",
-        address: "",
-        url_iframe: "",
-        id_user: user,
-        id_location: 0,
-        id_booking: 0,
-      });
-
-      Swal.fire({
-        title: "¡Propiedad Registrada!",
-        text: "Tu propiedad ha sido registrada exitosamente.",
-        icon: "success",
-      });
-    } catch (error) {
-      console.error("Error al registrar la propiedad:", error);
-      Swal.fire({
-        title: "Error",
-        text: "Hubo un error al registrar la propiedad. Por favor, inténtalo de nuevo más tarde.",
-        icon: "error",
-      });
-    }
   };
 
   return (
@@ -191,7 +184,7 @@ function RegisterProperty({ user }) {
               title="Solo se permiten letras y espacios en blanco"
             />
           </div>
-          {/* <div className="mb-2">
+          <div className="mb-2">
             <label
               htmlFor="title"
               className="block text-gray-800 text-sm font-bold mb-1"
@@ -207,7 +200,7 @@ function RegisterProperty({ user }) {
               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
               required
             />
-          </div> */}
+          </div>
           <div className="mb-2">
             <label
               htmlFor="title"

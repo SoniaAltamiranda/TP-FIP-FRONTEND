@@ -110,19 +110,9 @@ function User() {
           </>
         )}
       </div>
-      {/* <div className="absolute inset-0 flex items-center justify-center" style={{ pointerEvents: "none" }}>
-        <div className="text-center">
-          <h1 className="text-6xl text-gray-400 font-extrabold mb-2">
-            ALQUILAFÁCIL.COM
-          </h1>
-          <hr className="w-1/4 border-t-2 border-gray-300 mx-auto mb-4" />
-          <p className="text-lg text-gray-400">
-            La forma más conveniente de alquilar lo que necesitas.
-          </p>
-        </div>
-      </div> */}
+     
 
-      <div className="w-full sm:w-3/4 p-4 mt-8 mx-auto my-auto" style={{ pointerEvents: "none" }}>
+      <div className="w-full sm:w-3/4 p-4 mt-8 mx-auto my-auto" >
         {shownComponent === "Register Property" && <RegisterProperty user={userData} />
         }
         {shownComponent === "My Properties" && <MyProperties user={userData} />}

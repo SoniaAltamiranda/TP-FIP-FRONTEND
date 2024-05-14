@@ -69,6 +69,9 @@ const Navbar = () => {
           <NavLink to="/contact" activeClassName="active">
             <FontAwesomeIcon icon={faEnvelope} size="lg" className="mr-2" /> Contacto
           </NavLink>
+          <NavLink to="/aboutUs" activeClassName="active">
+            <FontAwesomeIcon icon={faEnvelope} size="lg" className="mr-2" /> Sobre nosotros
+          </NavLink>
         </div>
       </div>
     </nav>

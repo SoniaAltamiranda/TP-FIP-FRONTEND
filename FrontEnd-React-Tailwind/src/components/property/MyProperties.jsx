@@ -6,6 +6,7 @@ import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 function MyProperties({ user }) {
   const [properties, setProperties] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
+  const [isDelete, setDelete] = useState(false);
   const [propertyToEdit, setPropertyToEdit] = useState(null);
   const [propertyImages, setPropertyImages] = useState([]);
 
@@ -52,6 +53,48 @@ function MyProperties({ user }) {
     fetchProperties();
   }, [user]);
 
+  // const handleDelete = async (id_property) => {
+  //   try {
+  //     const token = localStorage.getItem("token");
+  //     const payload = jwtDecode(token);
+
+  //     const response = await fetch(
+  //       `http://localhost:3000/property/${payload.sub}`,
+  //       {
+  //         method: "DELETE",
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
+  //     if (response.ok) {
+        
+  //       setProperties(
+  //         properties.filter((property) => property.id !== id_property)
+  //       );
+  //       Swal.fire({
+  //         title: "¡Propiedad Eliminada!",
+  //         text: "La propiedad ha sido eliminada exitosamente.",
+  //         icon: "success",
+  //       });
+  //     } else {
+  //       // Manejar errores en la eliminación
+  //       Swal.fire({
+  //         title: "Error",
+  //         text: "Hubo un error al eliminar la propiedad. Por favor, inténtalo de nuevo más tarde.",
+  //         icon: "error",
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.error("Error al eliminar la propiedad:", error);
+  //     Swal.fire({
+  //       title: "Error",
+  //       text: "Hubo un error al eliminar la propiedad. Por favor, inténtalo de nuevo más tarde.",
+  //       icon: "error",
+  //     });
+  //   }
+  // };
+
   const handleEditClick = (property) => {
     setIsEditing(true);
     setPropertyToEdit(property);
@@ -71,7 +114,6 @@ function MyProperties({ user }) {
       );
 
       if (response.ok) {
-        
         Swal.fire({
           title: "Éxito",
           text: "La propiedad se ha actualizado correctamente",
@@ -83,11 +125,9 @@ function MyProperties({ user }) {
         );
         setProperties(updatedProperties);
 
-        
         setIsEditing(false);
         setPropertyToEdit(null);
       } else {
-        
         throw new Error("Error al actualizar la propiedad");
       }
     } catch (error) {
@@ -110,19 +150,19 @@ function MyProperties({ user }) {
       );
 
       if (response.ok) {
-       
+        // Si la eliminación es exitosa, actualizar el estado de las propiedades
+        const updatedProperties = properties.filter(
+          (property) => property.id_property !== propertyId
+        );
+        setProperties(updatedProperties);
+
         Swal.fire({
           title: "Éxito",
           text: "El inmueble se ha eliminado correctamente",
           icon: "success",
         });
-
-        const updatedProperties = properties.filter(
-          (property) => property.id !== propertyId
-        );
-        setProperties(updatedProperties);
       } else {
-       
+        // Manejar errores en la eliminación
         throw new Error("Error al eliminar la propiedad");
       }
     } catch (error) {
@@ -142,19 +182,18 @@ function MyProperties({ user }) {
   const handleDrop = (e) => {
     e.preventDefault();
     const files = Array.from(e.dataTransfer.files);
-    
   };
 
   const handleFileSelect = (e) => {
     const files = e.target.files;
     const imageUrls = [...propertyToEdit.images];
-  
+
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       const imageUrl = URL.createObjectURL(file);
       imageUrls.push(imageUrl);
     }
-  
+
     setPropertyToEdit({
       ...propertyToEdit,
       images: imageUrls,
@@ -170,7 +209,6 @@ function MyProperties({ user }) {
       images: updatedImages,
     });
   };
-  
 
   return (
     <div className="mt-20 bg-opacity-50 rounded-lg">
@@ -186,7 +224,7 @@ function MyProperties({ user }) {
             className={`rounded-md overflow-hidden shadow-md mb-4 ${
               index > 0 ? "border-t border-gray-300 pt-4" : ""
             } bg-gray-300 bg-opacity-50 rounded-lg `}
-            style={{ maxWidth: "1000px", minWidth: "300px" }} 
+            style={{ maxWidth: "1000px", minWidth: "300px" }}
           >
             <div className="flex p-6">
               <div className="w-1/3">
@@ -225,7 +263,7 @@ function MyProperties({ user }) {
                     Editar
                   </button>
                   <button
-                    onClick={() => handleDelete(property.id)}
+                    onClick={() => handleDelete(property.id_property)}
                     className="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded"
                   >
                     Eliminar
@@ -293,7 +331,9 @@ function MyProperties({ user }) {
                 >
                   <option value="">Seleccionar tipo de alquiler</option>
                   <option value="Alquiler temporal">Alquiler temporal</option>
-                  <option value="Alquiler a largo plazo">Alquiler a largo plazo</option>
+                  <option value="Alquiler a largo plazo">
+                    Alquiler a largo plazo
+                  </option>
                 </select>
               </div>
               <div className="mb-2">
@@ -480,31 +520,6 @@ function MyProperties({ user }) {
 }
 
 export default MyProperties;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // import Swal from "sweetalert2";
 // import { useNavigate } from "react-router-dom";

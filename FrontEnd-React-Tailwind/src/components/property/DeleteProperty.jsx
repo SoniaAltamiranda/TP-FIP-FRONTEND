@@ -10,7 +10,7 @@ function DeleteProperty() {
     e.preventDefault();
 
     try {
-      const response = await fetch(`http://localhost:3000/property/${id}`, {
+      const response = await fetch(`http://localhost:3000/property/${id_pro}`, {
         method: "DELETE",
       });
 
