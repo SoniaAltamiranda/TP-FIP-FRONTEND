@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
+
 const BASE_URL = "http://localhost:3000/property/";
 
 const RegisterProperty = () => {
@@ -59,7 +60,7 @@ const RegisterProperty = () => {
       description: formData.description,
       price: parseInt(formData.price),
       rate: 0, //provisoriamente
-     // images: ["imagen1", "imagen2", "imagen3"],
+      images: ["imagen1", "imagen2", "imagen3"],
       id_user: parseInt(userId),
       url_iframe:
         "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d51639.59303061964!2d-59.09519054999999!3d-36.0087031!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x959635293797eb09%3A0x37727efde49396ee!2sLas%20Flores%2C%20Provincia%20de%20Buenos%20Aires!5e0!3m2!1ses-419!2sar!4v1697058472501!5m2!1ses-419!2sar",
@@ -74,7 +75,7 @@ const RegisterProperty = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'multipart/form-data',
-          Authorization: 'Bearer ' + token,
+          Authorization:  `Bearer ${token}`,
         },
         body: JSON.stringify(jsonData),
       })
