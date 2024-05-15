@@ -65,6 +65,8 @@ function User() {
     });
   };
 
+  
+
   return (
     <div className="h-screen flex flex-col sm:flex-row">
       <div className="flex flex-col justify-center items-center bg-gray-800 text-white pt-6 space-y-12 p-4 sm:w-1/4">
