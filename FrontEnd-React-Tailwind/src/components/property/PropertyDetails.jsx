@@ -7,6 +7,7 @@ function PropertyDetails() {
   initMercadoPago('APP_USR-d8001b82-36a4-4f76-bf0e-f88f96b549ae', {
     locale: "es-AR"
   });
+
   const location = useLocation();
   const { property } = location.state;
   const [userLoggedIn, setUserLoggedIn] = useState(false);
@@ -16,7 +17,7 @@ function PropertyDetails() {
     const preferenceData = {
       title: property.title,
       quantity: 1,
-      price: property.price
+      unit_price: parseInt(property.price)
 
     }
     console.log(preferenceData);

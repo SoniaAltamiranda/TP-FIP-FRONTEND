@@ -21,7 +21,7 @@ function FeaturedPosts() {
               <div className="person-image-container">
                 <div className="person-image relative">
                   <img
-                    src={property.images[0]}
+                    src={property.images && property.images[0]}
                     alt="Property Image"
                     className="object-cover w-full h-40 rounded-t-lg rounded-b-lg"
                   />
