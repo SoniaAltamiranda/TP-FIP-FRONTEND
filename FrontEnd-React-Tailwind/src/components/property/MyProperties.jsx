@@ -53,47 +53,56 @@ function MyProperties({ user }) {
     fetchProperties();
   }, [user]);
 
-  // const handleDelete = async (id_property) => {
-  //   try {
-  //     const token = localStorage.getItem("token");
-  //     const payload = jwtDecode(token);
+  //--------------DELETE---------------------------
 
-  //     const response = await fetch(
-  //       `http://localhost:3000/property/${payload.sub}`,
-  //       {
-  //         method: "DELETE",
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       }
-  //     );
-  //     if (response.ok) {
-        
-  //       setProperties(
-  //         properties.filter((property) => property.id !== id_property)
-  //       );
-  //       Swal.fire({
-  //         title: "¡Propiedad Eliminada!",
-  //         text: "La propiedad ha sido eliminada exitosamente.",
-  //         icon: "success",
-  //       });
-  //     } else {
-  //       // Manejar errores en la eliminación
-  //       Swal.fire({
-  //         title: "Error",
-  //         text: "Hubo un error al eliminar la propiedad. Por favor, inténtalo de nuevo más tarde.",
-  //         icon: "error",
-  //       });
-  //     }
-  //   } catch (error) {
-  //     console.error("Error al eliminar la propiedad:", error);
-  //     Swal.fire({
-  //       title: "Error",
-  //       text: "Hubo un error al eliminar la propiedad. Por favor, inténtalo de nuevo más tarde.",
-  //       icon: "error",
-  //     });
-  //   }
-  // };
+  const handleDelete = async (id_property) => {
+   
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: "Esta acción no se puede deshacer.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const token = localStorage.getItem("token");
+          const response = await fetch(`http://localhost:3000/property/${id_property}`, {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+  
+          if (response.ok) {
+            
+            setProperties(properties.filter((property) => property.id !== id_property));
+            Swal.fire({
+              title: "¡Propiedad Eliminada!",
+              text: "La propiedad ha sido eliminada exitosamente.",
+              icon: "success",
+            });
+          } else {
+         
+            throw new Error("Error al eliminar la propiedad");
+          }
+        } catch (error) {
+          console.error("Error al eliminar la propiedad:", error);
+          Swal.fire({
+            title: "Error",
+            text: "Hubo un error al eliminar la propiedad. Por favor, inténtalo de nuevo más tarde.",
+            icon: "error",
+          });
+        }
+      }
+    });
+  };
+  
+  
+  //--------------EDIT---------------------------
 
   const handleEditClick = (property) => {
     setIsEditing(true);
@@ -140,40 +149,8 @@ function MyProperties({ user }) {
     }
   };
 
-  const handleDelete = async (propertyId) => {
-    try {
-      const response = await fetch(
-        `http://localhost:3000/property/${propertyId}`,
-        {
-          method: "DELETE",
-        }
-      );
-
-      if (response.ok) {
-        // Si la eliminación es exitosa, actualizar el estado de las propiedades
-        const updatedProperties = properties.filter(
-          (property) => property.id_property !== propertyId
-        );
-        setProperties(updatedProperties);
-
-        Swal.fire({
-          title: "Éxito",
-          text: "El inmueble se ha eliminado correctamente",
-          icon: "success",
-        });
-      } else {
-        // Manejar errores en la eliminación
-        throw new Error("Error al eliminar la propiedad");
-      }
-    } catch (error) {
-      console.error("Error al eliminar la propiedad:", error);
-      Swal.fire({
-        title: "Error",
-        text: "Error al eliminar la propiedad",
-        icon: "error",
-      });
-    }
-  };
+ 
+ 
 
   const handleDragOver = (e) => {
     e.preventDefault();

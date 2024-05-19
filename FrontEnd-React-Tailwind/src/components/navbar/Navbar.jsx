@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser, faHome, faClipboardList, faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import { faUser, faHome, faClipboardList, faEnvelope, faPeopleGroup } from "@fortawesome/free-solid-svg-icons";
 
 const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -70,7 +70,7 @@ const Navbar = () => {
             <FontAwesomeIcon icon={faEnvelope} size="lg" className="mr-2" /> Contacto
           </NavLink>
           <NavLink to="/aboutUs" activeClassName="active">
-            <FontAwesomeIcon icon={faEnvelope} size="lg" className="mr-2" /> Sobre nosotros
+            <FontAwesomeIcon icon={faPeopleGroup } size="lg" className="mr-2" /> Sobre nosotros
           </NavLink>
         </div>
       </div>
