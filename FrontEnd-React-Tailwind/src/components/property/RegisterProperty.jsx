@@ -13,7 +13,7 @@ function RegisterProperty() {
     type: "",
     address: "",
     url_iframe: "",
-    id_location: 0,
+    id_location: 1,
     id_booking: 0,
   });
 

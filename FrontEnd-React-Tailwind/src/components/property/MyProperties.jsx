@@ -254,7 +254,7 @@ function MyProperties({ user }) {
                     ${property.price}
                   </span>
                 </p>
-                <p className="mb-2">Ubicación: {property.location}</p>
+                <p className="mb-2">Ubicación: {property.location.country}</p>
                 <div className="text-center mt-4">
                   <button
                     onClick={() => handleEditClick(property)}
@@ -347,7 +347,7 @@ function MyProperties({ user }) {
                   type="text"
                   id="location"
                   name="location"
-                  value={propertyToEdit.location}
+                  value={propertyToEdit.location.country}
                   onChange={(e) =>
                     setPropertyToEdit({
                       ...propertyToEdit,

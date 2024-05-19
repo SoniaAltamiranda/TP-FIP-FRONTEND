@@ -1,9 +1,12 @@
 
 import { createContext, useEffect, useState } from "react";
 export const propertiesContext = createContext();
+
 export const PropertiesProvider = ({ children }) => {
+
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
+
   const url = "http://localhost:3000/property";
   useEffect(() => {
     const fetchData = async () => {
@@ -24,6 +27,7 @@ export const PropertiesProvider = ({ children }) => {
     };
     fetchData();
   }, []);
+  
   if (loading) {
     return <p>Cargando productos...</p>;
   }

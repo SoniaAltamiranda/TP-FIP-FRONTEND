@@ -93,7 +93,7 @@ function PropertyDetails() {
                   ${property.price}
                 </span>
               </p>
-              <p className="mb-2">Location: {property.location}</p>
+              <p className="mb-2">Location: {property.location.country}, {property.location.state}, {property.location.city}</p>
               {!userLoggedIn && (
                 <>
                   <p className="mb-2">

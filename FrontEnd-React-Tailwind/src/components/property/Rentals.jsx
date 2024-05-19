@@ -6,7 +6,6 @@ function PermanentRentals() {
 
   const properties = useContext(propertiesContext);
 
-
   return (
     <div className="bg-gray-100">
       <Navbar className="fixed top-0 left-0 right-0" />
