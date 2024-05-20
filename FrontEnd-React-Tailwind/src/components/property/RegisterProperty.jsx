@@ -13,7 +13,7 @@ function RegisterProperty() {
     type: "",
     address: "",
     url_iframe: "",
-    id_location: 0,
+    id_location: 2,
     id_booking: 0,
   });
 
@@ -25,17 +25,15 @@ function RegisterProperty() {
         setPropertyData({ ...propertyData, id_user: payload.sub });
       } catch (error) {
         console.error("Error al obtener el id_user del token:", error);
-      }
+      }                                  
     };
     getTokenAndSetUserId();
   }, []);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {                                         
     e.preventDefault();
-    
 
     try {
-      
       const token = localStorage.getItem("token");
 
       const parsedRooms = parseInt(propertyData.rooms);

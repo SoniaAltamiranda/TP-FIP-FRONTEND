@@ -7,7 +7,7 @@ import Navbar from "../navbar/Navbar";
 
 function PermanentRentals() {
 
-  const properties = useContext(propertiesContext);
+const properties = useContext(propertiesContext);
 
   return (
     <div className="bg-gray-100">
@@ -20,7 +20,7 @@ function PermanentRentals() {
             <div key={property.id}>
               <div className="bg-white shadow-lg rounded-lg overflow-hidden h-[470px]">
                 <img
-                  src={`${property.images[0]}`}
+                  src={`${property.image && property.images[0]}`}
                   alt="Imagen de propiedad"
                   className="w-full h-[200px] object-cover"
                 />
