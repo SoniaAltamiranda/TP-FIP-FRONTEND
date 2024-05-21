@@ -25,17 +25,16 @@ function RegisterProperty() {
         setPropertyData({ ...propertyData, id_user: payload.sub });
       } catch (error) {
         console.error("Error al obtener el id_user del token:", error);
-      }
+      }                                  
     };
     getTokenAndSetUserId();
   }, []);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {                                         
     e.preventDefault();
     
 
     try {
-      
       const token = localStorage.getItem("token");
 
       const parsedRooms = parseInt(propertyData.rooms);

@@ -12,7 +12,7 @@ function FeaturedPosts() {
       <div className="flex-1">
         <h1 className="text-2xl font-semibold text-center mb-4">Destacados</h1>
         <hr className="mb-4" />
-        {featuredProperties.map((property) => (
+        {featuredProperties.map((property ) => (
           <div
             key={property.id}
             className="flex p-4 border rounded-lg shadow-md mb-4"
@@ -21,7 +21,7 @@ function FeaturedPosts() {
               <div className="person-image-container">
                 <div className="person-image relative">
                   <img
-                    src={property.images && property.images[0]}
+                    src={property.image && property.images[0]}
                     alt="Property Image"
                     className="object-cover w-full h-40 rounded-t-lg rounded-b-lg"
                   />
