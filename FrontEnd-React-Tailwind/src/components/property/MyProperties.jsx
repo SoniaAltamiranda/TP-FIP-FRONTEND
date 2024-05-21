@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
+import { jwtDecode } from "jwt-decode";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 
@@ -10,10 +11,12 @@ function MyProperties({ user }) {
   const [propertyToEdit, setPropertyToEdit] = useState(null);
   const [propertyImages, setPropertyImages] = useState([]);
 
+  const token = localStorage.getItem("token");
+  const payload = jwtDecode(token);
+
   useEffect(() => {
     async function fetchProperties() {
       try {
-        const token = localStorage.getItem("token");
         if (!token) {
           throw new Error("No se encontró el token de autenticación.");
         }
@@ -70,7 +73,7 @@ function MyProperties({ user }) {
       if (result.isConfirmed) {
         try {
           const token = localStorage.getItem("token");
-          const response = await fetch(`http://localhost:3000/property/${id_property}`, {
+          const response = await fetch(`http://localhost:3000/property/${payload.sub}`, {
             method: "DELETE",
             headers: {
               Authorization: `Bearer ${token}`,
@@ -111,12 +114,14 @@ function MyProperties({ user }) {
 
   const handleUpdate = async (updatedProperty) => {
     try {
+      console.log(updatedProperty);
       const response = await fetch(
-        `http://localhost:3000/property/${updatedProperty.id}`,
+        `http://localhost:3000/property/${updatedProperty.id_property}`,
         {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
           },
           body: JSON.stringify(updatedProperty),
         }
