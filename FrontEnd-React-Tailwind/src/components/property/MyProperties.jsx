@@ -8,7 +8,8 @@ function MyProperties({ user }) {
   const [isEditing, setIsEditing] = useState(false);
   const [propertyToEdit, setPropertyToEdit] = useState({});
   const [propertyImages, setPropertyImages] = useState([]);
-
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [locationsData, setLocationsData] = useState([]);
   useEffect(() => {
     async function fetchProperties() {
       try {
@@ -40,12 +41,32 @@ function MyProperties({ user }) {
 
         const propertiesData = await response.json();
         setProperties(propertiesData);
+
+        // Obtener las ubicaciones asociadas con las propiedades
+        const locationIds = propertiesData.map(
+          (property) => property.id_location
+        );
+        const locationsResponse = await fetch(
+          `http://localhost:3000/location?ids=${locationIds.join(",")}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!locationsResponse.ok) {
+          throw new Error("Error al cargar las ubicaciones.");
+        }
+        const locations = await locationsResponse.json();
+        setLocationsData(locations);
       } catch (error) {
         console.error("Error al cargar las propiedades:", error);
         Swal.fire({
           title: "Error",
-          text:
-            "Hubo un error al cargar las propiedades. Por favor, inténtalo de nuevo más tarde.",
+          text: "Hubo un error al cargar las propiedades. Por favor, inténtalo de nuevo más tarde.",
           icon: "error",
         });
       }
@@ -95,8 +116,7 @@ function MyProperties({ user }) {
           console.error("Error al eliminar la propiedad:", error);
           Swal.fire({
             title: "Error",
-            text:
-              "Hubo un error al eliminar la propiedad. Por favor, inténtalo de nuevo más tarde.",
+            text: "Hubo un error al eliminar la propiedad. Por favor, inténtalo de nuevo más tarde.",
             icon: "error",
           });
         }
@@ -105,44 +125,53 @@ function MyProperties({ user }) {
   };
 
   //--------------EDIT---------------------------
-
   const handleEditClick = (property) => {
-    setPropertyToEdit(property); 
+    setPropertyToEdit(property);
     setIsEditing(true);
+    setSelectedLocation(property.id_location);
   };
 
   const handleUpdate = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`http://localhost:3000/property/${propertyToEdit.id_property}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(propertyToEdit),
-      });
+      const response = await fetch(
+        `http://localhost:3000/property/${propertyToEdit.id_property}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(propertyToEdit),
+        }
+      );
   
       if (response.ok) {
-       
         setIsEditing(false);
         const updatedProperties = properties.map((prop) =>
-          prop.id_property === propertyToEdit.id_property ? propertyToEdit : prop
+          prop.id_property === propertyToEdit.id_property
+            ? propertyToEdit
+            : prop
         );
         setProperties(updatedProperties);
   
-   
         Swal.fire({
           title: "Éxito",
           text: "La propiedad se ha actualizado correctamente",
           icon: "success",
         });
       } else {
+        console.error(
+          "Error en la respuesta:",
+          response.status,
+          response.statusText
+        );
+        const responseData = await response.json();
+        console.error("Datos de la respuesta:", responseData);
   
         throw new Error("Error al actualizar la propiedad");
       }
     } catch (error) {
- 
       console.error("Error al actualizar la propiedad:", error);
       Swal.fire({
         title: "Error",
@@ -151,7 +180,50 @@ function MyProperties({ user }) {
       });
     }
   };
-
+  
+  const handleUpdateLocation = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `http://localhost:3000/location/${propertyToEdit.id_location}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(propertyToEdit.location), // Usar la ubicación de la propiedad
+        }
+      );
+  
+      if (response.ok) {
+        setIsEditing(false);
+        Swal.fire({
+          title: "Éxito",
+          text: "La ubicación se ha actualizado correctamente",
+          icon: "success",
+        });
+      } else {
+        console.error(
+          "Error en la respuesta:",
+          response.status,
+          response.statusText
+        );
+        const responseData = await response.json();
+        console.error("Datos de la respuesta:", responseData);
+  
+        throw new Error("Error al actualizar la ubicación");
+      }
+    } catch (error) {
+      console.error("Error al actualizar la ubicación:", error);
+      Swal.fire({
+        title: "Error",
+        text: "Hubo un error al actualizar la ubicación. Por favor, inténtalo de nuevo más tarde.",
+        icon: "error",
+      });
+    }
+  };
+  
 
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -187,7 +259,7 @@ function MyProperties({ user }) {
       images: updatedImages,
     });
   };
-
+ 
   return (
     <div className="mt-20 bg-opacity-50 rounded-lg">
       <p className="font-bold text-gray-800 text-3xl text-center border-b border-gray-600 mb-4">
@@ -225,14 +297,14 @@ function MyProperties({ user }) {
                   Ambientes:{" "}
                   <span className="text-gray-500">{property.rooms}</span>
                 </p>
-
                 <p className="mb-2">
                   Precio:{" "}
                   <span style={{ fontWeight: "bold", color: "#555" }}>
                     ${property.price}
                   </span>
                 </p>
-                <p className="mb-2">Ubicación: {property.location}</p>
+                Location: {property.location.city}, {property.location.state},{" "}
+                {property.location.country}
                 <div className="text-center mt-4">
                   <button
                     onClick={() => handleEditClick(property)}
@@ -253,6 +325,8 @@ function MyProperties({ user }) {
             </div>
           </div>
         ))}
+
+       {/* ``` form de editar propiedades``` */}
 
       {isEditing && propertyToEdit && (
         <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-900 bg-opacity-50">
@@ -316,28 +390,29 @@ function MyProperties({ user }) {
                   </option>
                 </select>
               </div>
-              <div className="mb-2">
-                <label
-                  htmlFor="location"
-                  className="block text-gray-800 font-bold mb-1"
-                >
-                  Ubicacion:
-                </label>
-                <input
-                  type="text"
+              {locationsData.length === 0 ? (
+                <p>Cargando ubicaciones...</p>
+              ) : (
+                <select
                   id="location"
-                  name="location"
-                  value={propertyToEdit.location}
-                  onChange={(e) =>
-                    setPropertyToEdit({
-                      ...propertyToEdit,
-                      location: e.target.value,
-                    })
-                  }
+                  name="id_location"
+                  value={selectedLocation} 
+                  onChange={(e) => setSelectedLocation(e.target.value)} 
                   className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
                   required
-                />
-              </div>
+                >
+                  <option value="">Seleccionar ubicación</option>
+                  {locationsData.map((location) => (
+                    <option
+                      key={location.id_location}
+                      value={location.id_location}
+                    >
+                      {`${location.city}, ${location.state}, ${location.country}`}
+                    </option>
+                  ))}
+                </select>
+              )}
+
               <div className="mb-2">
                 <label
                   htmlFor="rooms"
@@ -500,5 +575,3 @@ function MyProperties({ user }) {
 }
 
 export default MyProperties;
-
-

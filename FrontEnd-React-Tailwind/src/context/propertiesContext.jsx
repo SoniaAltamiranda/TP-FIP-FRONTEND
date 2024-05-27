@@ -15,6 +15,7 @@ export const PropertiesProvider = ({ children }) => {
 
         if (response.ok) {
           const data = await response.json();
+          console.log(data);
           setProperties(data);
           setLoading(false);
         } else {

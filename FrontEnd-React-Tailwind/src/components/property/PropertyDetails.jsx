@@ -127,8 +127,10 @@
 
 // export default PropertyDetails;
 
-import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+// Componente    <Route path="/rentals/:id" element={<PropertyDetails />} />
+
+import React, { useState, useEffect } from "react";
+import { useLocation, useParams } from "react-router-dom";
 import { initMercadoPago, Wallet } from "@mercadopago/sdk-react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -139,17 +141,39 @@ function PropertyDetails() {
   });
 
   const location = useLocation();
-  const { property } = location.state;
+  const { id } = useParams();
+  const [property, setProperty] = useState(location.state?.property);
   const [userLoggedIn, setUserLoggedIn] = useState(false);
   const [preferenceId, setPreferenceId] = useState(null);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [open, setOpen] = useState(false);
-  console.log(property);
+
+  useEffect(() => {
+    if (!property) {
+      // Fetch the property data using the id from the URL
+      const fetchProperty = async () => {
+        try {
+          const response = await fetch(
+            `http://localhost:3000/properties/${id}`
+          );
+          if (response.ok) {
+            const data = await response.json();
+            setProperty(data);
+          } else {
+            throw new Error("Failed to fetch property data");
+          }
+        } catch (error) {
+          console.error("Error fetching property:", error);
+        }
+      };
+      fetchProperty();
+    }
+  }, [id, property]);
 
   const handleBuy = async () => {
     if (!userLoggedIn) {
-      // window.location.href='/login'; 
+      // window.location.href='/login';
       return;
     }
     if (!startDate || !endDate) {
@@ -203,6 +227,10 @@ function PropertyDetails() {
     }
   };
 
+  if (!property) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="container mx-auto p-4 mt-16 text-gray-600">
       <div className="text-center">
@@ -244,7 +272,10 @@ function PropertyDetails() {
                   ${property.price}
                 </span>
               </p>
-              <p className="mb-2">Location: {property.location}</p>
+              <p className="mb-2">
+                Location: {property.location.city}, {property.location.state},{" "}
+                {property.location.country}
+              </p>
               {!userLoggedIn && (
                 <>
                   <p className="mb-2">
@@ -264,8 +295,14 @@ function PropertyDetails() {
                     Seleccionar Fecha
                   </button>
                   {open && (
-                    <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
-                      <div className="bg-white p-8 rounded shadow-md">
+                    <div
+                      className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50"
+                      onClick={() => setOpen(false)} // Close modal when clicking outside
+                    >
+                      <div
+                        className="bg-white p-8 rounded shadow-md"
+                        onClick={(e) => e.stopPropagation()} // Prevent modal close when clicking inside
+                      >
                         <p>Selecciona las fechas</p>
                         <DatePicker
                           selected={startDate}
@@ -310,12 +347,13 @@ function PropertyDetails() {
                   )}
                 </>
               )}
-              <div className="">
-                <iframe
-                  src={property.url_iframe}
-                  className="w-full h-600"
-                ></iframe>
-              </div>
+
+              {/*   VER ESTE PROBLEMA
+              
+              <iframe
+               src={property.url_iframe}
+                  className="w-full h-600" 
+                ></iframe>*/}
             </div>
           </div>
         </div>
@@ -325,4 +363,3 @@ function PropertyDetails() {
 }
 
 export default PropertyDetails;
-

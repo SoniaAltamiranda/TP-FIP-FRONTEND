@@ -14,7 +14,7 @@ function FeaturedPosts() {
         <hr className="mb-4" />
         {featuredProperties.map((property ) => (
           <div
-            key={property.id}
+            key={property.id_property}
             className="flex p-4 border rounded-lg shadow-md mb-4"
           >
             <div className="w-1/4">
@@ -33,7 +33,7 @@ function FeaturedPosts() {
               <p className="text-gray-600 mb-4">{property.description}</p>
               <div className="text-center">
                 <Link
-                  to={`/rentals/${property.id}`}
+                  to={`/rentals/${property.id_property}`}
                   state={{ property }}
                   className="inline-block bg-gray-700 hover:bg-gray-800 text-white py-2 px-4 rounded-full"
                 >

@@ -13,35 +13,58 @@ function RegisterProperty() {
     type: "",
     address: "",
     url_iframe: "",
-    id_location: 2,
-    id_booking: 0,
+      id_booking: 0,
+    locations : [], 
   });
 
   useEffect(() => {
     const getTokenAndSetUserId = async () => {
       try {
         const token = localStorage.getItem("token");
+      
         const payload = jwtDecode(token);
+      
         setPropertyData({ ...propertyData, id_user: payload.sub });
+       
       } catch (error) {
         console.error("Error al obtener el id_user del token:", error);
-      }                                  
+      }
     };
     getTokenAndSetUserId();
+    fetchLocations();
   }, []);
+
+  const fetchLocations = async () => {
+    try {
+      
+      const response = await fetch("http://localhost:3000/location");
+      const locations = await response.json();
+      setPropertyData({ ...propertyData, locations });
+      console.log(locations);
+    } catch (error) {
+      console.error("Error al obtener las ubicaciones:", error);
+    }
+  };
+  console.log(propertyData);
 
   const handleSubmit = async (e) => {                                         
     e.preventDefault();
 
     try {
       const token = localStorage.getItem("token");
+      const payload = jwtDecode(token);
 
+      const locationId = parseInt(propertyData.id_location);
+      const userId = parseInt(propertyData.id_user);
+      console.log(userId);
       const parsedRooms = parseInt(propertyData.rooms);
       const parsedPrice = parseInt(propertyData.price);
       const dataToSend = {
         ...propertyData,
+        id_user : payload.sub,
         rooms: parsedRooms,
         price: parsedPrice,
+        id_location: locationId
       };
 
       const response = await fetch("http://localhost:3000/property", {
@@ -71,12 +94,18 @@ function RegisterProperty() {
       });
     }
   };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setPropertyData({ ...propertyData, [name]: value });
+    if (name === "id_location") {
+      
+      const locationId = parseInt(value);
+     
+      setPropertyData({ ...propertyData, id_location: locationId });
+    } else {
+      
+      setPropertyData({ ...propertyData, [name]: value });
+    }
   };
-
   const handleDragOver = (e) => {
     e.preventDefault();
   };
@@ -85,14 +114,18 @@ function RegisterProperty() {
     e.preventDefault();
     const files = e.dataTransfer.files;
     const imageUrls = [...propertyData.images];
-
+  
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
-      const imageUrl = URL.createObjectURL(file);
-      imageUrls.push(imageUrl);
+      convertToBase64(file, (base64String) => {
+        imageUrls.push(base64String);
+        setPropertyData({
+          ...propertyData,
+          images: imageUrls,
+        });
+      });
     }
   };
-
   const handleFileSelect = (e) => {
     const files = e.target.files;
     const imageUrls = [...propertyData.images];
@@ -185,20 +218,26 @@ function RegisterProperty() {
           </div>
           <div className="mb-2">
             <label
-              htmlFor="title"
+              htmlFor="location"
               className="block text-gray-800 text-sm font-bold mb-1"
             >
               Ubicación:
             </label>
-            <input
-              type="text"
+            <select
               id="location"
-              name="location"
-              value={propertyData.location}
+              name="id_location" 
+              value={propertyData.id_location}
               onChange={handleChange}
               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
               required
-            />
+            >
+              <option value="">Seleccionar ubicación</option>
+              {propertyData.locations.map((location) => (
+                <option key={location.id_location} value={location.id_location}>
+                  {`${location.city}, ${location.state}, ${location.country}`}
+                </option>
+              ))}
+            </select>
           </div>
           <div className="mb-2">
             <label
