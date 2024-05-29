@@ -76,7 +76,6 @@ function RegisterProperty() {
 
   async function uploadImagesToImgur(images) {
     const imageUrls = [];
-    const imgurClientId = '69a5b5c9805dbf8';
     for (const image of images) {
       const formData = new FormData();
       for (const image of images) {
@@ -91,7 +90,7 @@ function RegisterProperty() {
         const response = await fetch("https://api.imgur.com/3/image", {
           method: "POST",
           headers: {
-            Authorization: `Client-ID ${imgurClientId}`,
+            Authorization: 'Client-ID 83323e63212094a',
           },
           body: formData
         });
