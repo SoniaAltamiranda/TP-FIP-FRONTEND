@@ -88,11 +88,12 @@ function RegisterProperty() {
 
       try {
         console.log(formData);
-        const response = await fetch("https://api.imgur.com/3/image", formData, {
+        const response = await fetch("https://api.imgur.com/3/image", {
           method: "POST",
           headers: {
             Authorization: `Client-ID ${imgurClientId}`,
           },
+          body: formData
         });
         console.log(response);
         const imageUrl = response.data.link;
