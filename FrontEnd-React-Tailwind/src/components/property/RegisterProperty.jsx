@@ -13,58 +13,37 @@ function RegisterProperty() {
     type: "",
     address: "",
     url_iframe: "",
-      id_booking: 0,
-    locations : [], 
+    id_location: 1,
+    id_booking: 0,
   });
 
   useEffect(() => {
     const getTokenAndSetUserId = async () => {
       try {
         const token = localStorage.getItem("token");
-      
         const payload = jwtDecode(token);
-      
         setPropertyData({ ...propertyData, id_user: payload.sub });
-       
       } catch (error) {
         console.error("Error al obtener el id_user del token:", error);
       }
     };
     getTokenAndSetUserId();
-    fetchLocations();
   }, []);
 
-  const fetchLocations = async () => {
-    try {
-      
-      const response = await fetch("http://localhost:3000/location");
-      const locations = await response.json();
-      setPropertyData({ ...propertyData, locations });
-      console.log(locations);
-    } catch (error) {
-      console.error("Error al obtener las ubicaciones:", error);
-    }
-  };
-  console.log(propertyData);
-
-  const handleSubmit = async (e) => {                                         
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
+      const uploadedImageUrls = await uploadImagesToImgur(propertyData.images);
+      const updatedPropertyData = { ...propertyData, images: uploadedImageUrls };
       const token = localStorage.getItem("token");
-      const payload = jwtDecode(token);
 
-      const locationId = parseInt(propertyData.id_location);
-      const userId = parseInt(propertyData.id_user);
-      console.log(userId);
       const parsedRooms = parseInt(propertyData.rooms);
       const parsedPrice = parseInt(propertyData.price);
       const dataToSend = {
         ...propertyData,
-        id_user : payload.sub,
         rooms: parsedRooms,
         price: parsedPrice,
-        id_location: locationId
       };
 
       const response = await fetch("http://localhost:3000/property", {
@@ -94,18 +73,43 @@ function RegisterProperty() {
       });
     }
   };
+
+  async function uploadImagesToImgur(images) {
+    const imageUrls = [];
+    const imgurClientId = '69a5b5c9805dbf8';
+    for (const image of images) {
+      const formData = new FormData();
+      for (const image of images) {
+        formData.append("image", image); // Append the actual image file
+      }
+      
+      formData.append("title", "Simple upload");
+      formData.append("description", "This is a simple image upload in Imgur");
+
+      try {
+        console.log(formData);
+        const response = await fetch("https://api.imgur.com/3/image", formData, {
+          method: "POST",
+          headers: {
+            Authorization: `Client-ID ${imgurClientId}`,
+          },
+        });
+        console.log(response);
+        const imageUrl = response.data.link;
+        imageUrls.push(imageUrl);
+      } catch (error) {
+        console.error("Error uploading image to Imgur:", error);
+      }
+    }
+
+    return imageUrls;
+  }
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === "id_location") {
-      
-      const locationId = parseInt(value);
-     
-      setPropertyData({ ...propertyData, id_location: locationId });
-    } else {
-      
-      setPropertyData({ ...propertyData, [name]: value });
-    }
+    setPropertyData({ ...propertyData, [name]: value });
   };
+
   const handleDragOver = (e) => {
     e.preventDefault();
   };
@@ -113,32 +117,26 @@ function RegisterProperty() {
   const handleDrop = (e) => {
     e.preventDefault();
     const files = e.dataTransfer.files;
-    const imageUrls = [...propertyData.images];
-  
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      convertToBase64(file, (base64String) => {
-        imageUrls.push(base64String);
-        setPropertyData({
-          ...propertyData,
-          images: imageUrls,
-        });
-      });
-    }
-  };
-  const handleFileSelect = (e) => {
-    const files = e.target.files;
-    const imageUrls = [...propertyData.images];
+    const updatedImages = [...propertyData.images];
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
-      const imageUrl = URL.createObjectURL(file);
-      imageUrls.push(imageUrl);
+      updatedImages.push(file);
+    }
+  };
+
+  const handleFileSelect = (e) => {
+    const files = e.target.files;
+    const updatedImages = [...propertyData.images];
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      updatedImages.push(file);
     }
 
     setPropertyData({
       ...propertyData,
-      images: imageUrls,
+      images: updatedImages,
     });
   };
 
@@ -218,26 +216,20 @@ function RegisterProperty() {
           </div>
           <div className="mb-2">
             <label
-              htmlFor="location"
+              htmlFor="title"
               className="block text-gray-800 text-sm font-bold mb-1"
             >
               Ubicación:
             </label>
-            <select
+            <input
+              type="text"
               id="location"
-              name="id_location" 
-              value={propertyData.id_location}
+              name="location"
+              value={propertyData.location}
               onChange={handleChange}
               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
               required
-            >
-              <option value="">Seleccionar ubicación</option>
-              {propertyData.locations.map((location) => (
-                <option key={location.id_location} value={location.id_location}>
-                  {`${location.city}, ${location.state}, ${location.country}`}
-                </option>
-              ))}
-            </select>
+            />
           </div>
           <div className="mb-2">
             <label
