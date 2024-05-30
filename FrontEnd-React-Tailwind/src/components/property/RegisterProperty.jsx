@@ -34,76 +34,74 @@ function RegisterProperty() {
     e.preventDefault();
 
     try {
-      const uploadedImageUrls = await uploadImagesToImgur(propertyData.images);
-      const updatedPropertyData = { ...propertyData, images: uploadedImageUrls };
-      const token = localStorage.getItem("token");
+        const uploadedImageUrls = await uploadImagesToImgur(propertyData.images); // Upload images and get URLs
+        const updatedPropertyData = { ...propertyData, images: uploadedImageUrls }; // Update propertyData with URLs
+        const token = localStorage.getItem("token");
 
-      const parsedRooms = parseInt(propertyData.rooms);
-      const parsedPrice = parseInt(propertyData.price);
-      const dataToSend = {
-        ...propertyData,
-        rooms: parsedRooms,
-        price: parsedPrice,
-      };
+        const parsedRooms = parseInt(propertyData.rooms);
+        const parsedPrice = parseInt(propertyData.price);
+        const dataToSend = {
+            ...updatedPropertyData,
+            rooms: parsedRooms,
+            price: parsedPrice,
+        };
 
-      const response = await fetch("http://localhost:3000/property", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(dataToSend),
-      });
+        const response = await fetch("http://localhost:3000/property", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(dataToSend),
+        });
 
-      const data = await response.json();
+        const data = await response.json();
 
-      console.log("Propiedad registrada:", data);
+        if (response.ok) {
+            console.log("Propiedad registrada:", data);
 
-      Swal.fire({
-        title: "¡Propiedad Registrada!",
-        text: "Tu propiedad ha sido registrada exitosamente.",
-        icon: "success",
-      });
+            Swal.fire({
+                title: "¡Propiedad Registrada!",
+                text: "Tu propiedad ha sido registrada exitosamente.",
+                icon: "success",
+            });
+        } else {
+            throw new Error(data.message || "Error al registrar la propiedad");
+        }
     } catch (error) {
-      console.error("Error al registrar la propiedad:", error);
-      Swal.fire({
-        title: "Error",
-        text: "Hubo un error al registrar la propiedad. Por favor, inténtalo de nuevo más tarde.",
-        icon: "error",
-      });
+        console.error("Error al registrar la propiedad:", error);
+        Swal.fire({
+            title: "Error",
+            text: "Hubo un error al registrar la propiedad. Por favor, inténtalo de nuevo más tarde.",
+            icon: "error",
+        });
     }
-  };
+};
 
   async function uploadImagesToImgur(images) {
     const imageUrls = [];
     for (const image of images) {
-      const formData = new FormData();
-      for (const image of images) {
+        const formData = new FormData();
         formData.append("image", image); // Append the actual image file
-      }
-      
-      formData.append("title", "Simple upload");
-      formData.append("description", "This is a simple image upload in Imgur");
-
-      try {
-        console.log(formData);
-        const response = await fetch("https://api.imgur.com/3/image", {
-          method: "POST",
-          headers: {
-            Authorization: 'Client-ID 83323e63212094a',
-          },
-          body: formData
-        });
-        console.log(response);
-        const imageUrl = response.data.link;
-        imageUrls.push(imageUrl);
-      } catch (error) {
-        console.error("Error uploading image to Imgur:", error);
-      }
+        
+        try {
+            const response = await fetch("https://api.imgur.com/3/image", {
+                method: "POST",
+                headers: {
+                    Authorization: 'Client-ID 83323e63212094a',
+                },
+                body: formData
+            });
+            const data = await response.json(); // Parse JSON response
+            const imageUrl = data.data.link; // Access the 'link' property in the 'data' object
+            imageUrls.push(imageUrl);
+        } catch (error) {
+            console.error("Error uploading image to Imgur:", error);
+        }
     }
 
     return imageUrls;
-  }
+}
 
   const handleChange = (e) => {
     const { name, value } = e.target;
