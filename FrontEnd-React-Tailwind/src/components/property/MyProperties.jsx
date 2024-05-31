@@ -114,16 +114,15 @@ function MyProperties({ user }) {
   const handleUpdate = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`http://localhost:3000/property/${updatedProperty.id}`,{
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`
-          },
-          body: JSON.stringify(updatedProperty),
-        }
-      );
-
+      const response = await fetch(`http://localhost:3000/property/${propertyToEdit.id_property}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(propertyToEdit),
+      });
+  
       if (response.ok) {
        
         setIsEditing(false);
@@ -233,7 +232,7 @@ function MyProperties({ user }) {
                     ${property.price}
                   </span>
                 </p>
-                <p className="mb-2">Ubicación: {property.location.country}</p>
+                <p className="mb-2">Ubicación: {property.location}</p>
                 <div className="text-center mt-4">
                   <button
                     onClick={() => handleEditClick(property)}
@@ -328,7 +327,7 @@ function MyProperties({ user }) {
                   type="text"
                   id="location"
                   name="location"
-                  value={propertyToEdit.location.country}
+                  value={propertyToEdit.location}
                   onChange={(e) =>
                     setPropertyToEdit({
                       ...propertyToEdit,

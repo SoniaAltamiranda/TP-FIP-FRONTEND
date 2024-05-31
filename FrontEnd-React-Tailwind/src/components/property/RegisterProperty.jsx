@@ -25,16 +25,17 @@ function RegisterProperty() {
         setPropertyData({ ...propertyData, id_user: payload.sub });
       } catch (error) {
         console.error("Error al obtener el id_user del token:", error);
-      }                                  
+      }
     };
     getTokenAndSetUserId();
   }, []);
 
-  const handleSubmit = async (e) => {                                         
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
 
     try {
+      const uploadedImageUrls = await uploadImage(propertyData.images);
+      const updatedPropertyData = { ...propertyData, images: uploadedImageUrls };
       const token = localStorage.getItem("token");
 
       const parsedRooms = parseInt(propertyData.rooms);
@@ -72,6 +73,42 @@ function RegisterProperty() {
       });
     }
   };
+  const [image, setImage] = useState("");
+  async function uploadToIBB(e) {
+    if (!e.target || !e.target.files) {
+      return; 
+    }
+  
+    const uploadedImageUrls = [];
+    for (const imageFile of e.target.files) {
+      const url = await uploadImage(imageFile);
+      uploadedImageUrls.push(url);
+    }
+  
+    return uploadedImageUrls; 
+  }
+  
+  async function uploadImage(imageFile) {
+    const url = "https://api.imgbb.com/1/upload?key=ee7e7c6513656059b26eb5b7359124e3";
+    const data = new FormData();
+    data.append("image", imageFile);
+    
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        body: data,
+      });
+  
+      if (!res.ok) {
+        throw new Error(`ImgBB API error: ${res.status}`);
+      }
+  
+      const resData = await res.json();
+      return resData.data.url; 
+    } catch (error) {
+      console.error("Error uploading image to ImgBB:", error);
+     
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -85,40 +122,14 @@ function RegisterProperty() {
   const handleDrop = (e) => {
     e.preventDefault();
     const files = e.dataTransfer.files;
-    const imageUrls = [...propertyData.images];
+    const updatedImages = [...propertyData.images];
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
-      const imageUrl = URL.createObjectURL(file);
-      imageUrls.push(imageUrl);
+      updatedImages.push(file);
     }
   };
 
-  const handleFileSelect = (e) => {
-    const files = e.target.files;
-    const imageUrls = [...propertyData.images];
-
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      const imageUrl = URL.createObjectURL(file);
-      imageUrls.push(imageUrl);
-    }
-
-    setPropertyData({
-      ...propertyData,
-      images: imageUrls,
-    });
-  };
-
-  const handleRemoveImage = (indexToRemove) => {
-    const updatedImages = propertyData.images.filter(
-      (_, index) => index !== indexToRemove
-    );
-    setPropertyData({
-      ...propertyData,
-      images: updatedImages,
-    });
-  };
 
   return (
     <div className="flex justify-center items-center h-auto">
@@ -295,7 +306,7 @@ function RegisterProperty() {
               id="imageUpload"
               name="imageUpload"
               multiple
-              onChange={handleFileSelect}
+              onChange={uploadToIBB}
               style={{ display: "none" }}
             />
           </div>
