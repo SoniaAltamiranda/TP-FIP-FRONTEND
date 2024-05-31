@@ -69,7 +69,7 @@ function RegisterProperty() {
           const response = await fetch("https://api.imgur.com/3/image", {
             method: "POST",
             headers: {
-              Authorization: `Client-ID 83323e63212094a`,
+              Authorization: `Client-ID 83323e63212094a`, //	83323e63212094a
             },
             body: formData,
             redirect: "follow"

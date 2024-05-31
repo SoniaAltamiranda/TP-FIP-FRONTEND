@@ -348,12 +348,12 @@ function PropertyDetails() {
                 </>
               )}
 
-              {/*   VER ESTE PROBLEMA
+            
               
               <iframe
                src={property.url_iframe}
                   className="w-full h-600" 
-                ></iframe>*/}
+                ></iframe>
             </div>
           </div>
         </div>

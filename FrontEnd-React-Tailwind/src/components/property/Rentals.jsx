@@ -21,7 +21,7 @@ const properties = useContext(propertiesContext);
             <div key={property.id}>
               <div className="bg-white shadow-lg rounded-lg overflow-hidden h-[470px]">
                 <img
-                  src={`${property.image && property.images[0]}`}
+                  src={`${property.images[0]}`}
                   alt="Imagen de propiedad"
                   className="w-full h-[200px] object-cover"
                 />
