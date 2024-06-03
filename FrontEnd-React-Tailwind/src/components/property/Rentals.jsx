@@ -2,9 +2,13 @@ import { useContext } from "react";
 import { propertiesContext } from "../../context/propertiesContext";
 import { Link } from "react-router-dom";
 import Navbar from "../navbar/Navbar";
-function PermanentRentals() {
 
+ // Este es el componente de alquileres, GENERAL-    
+
+function PermanentRentals() {
+ 
 const properties = useContext(propertiesContext);
+
 
   return (
     <div className="bg-gray-100">
@@ -17,12 +21,10 @@ const properties = useContext(propertiesContext);
             <div key={property.id_property}>
               <div className="bg-white shadow-lg rounded-lg overflow-hidden h-[470px]">
                 <img
-                  
-                   src={property.images?.[0] || "placeholder.jpg"} // 
-                   alt="Imagen de propiedad"
-                   className="w-full h-[200px] object-cover"
-                 />
-        
+                  src={`${property.images[0]}`}
+                  alt="Imagen de propiedad"
+                  className="w-full h-[200px] object-cover"
+                />
                 <div className="p-4" style={{ fontFamily: 'Roboto, sans-serif' }}>
                   <h4 className="text-2xl font-semibold mb-2 text-gray-500">{property.title}</h4>
                   <p className="text-gray-600 text-sm">{property.description}</p>

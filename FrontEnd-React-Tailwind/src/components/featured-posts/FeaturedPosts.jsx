@@ -14,14 +14,14 @@ function FeaturedPosts() {
         <hr className="mb-4" />
         {featuredProperties.map((property ) => (
           <div
-            key={property.id}
+            key={property.id_property}
             className="flex p-4 border rounded-lg shadow-md mb-4"
           >
             <div className="w-1/4">
               <div className="person-image-container">
                 <div className="person-image relative">
                   <img
-                    src={property.image && property.images[0]}
+                    src={property.images[0]}
                     alt="Property Image"
                     className="object-cover w-full h-40 rounded-t-lg rounded-b-lg"
                   />
@@ -33,7 +33,7 @@ function FeaturedPosts() {
               <p className="text-gray-600 mb-4">{property.description}</p>
               <div className="text-center">
                 <Link
-                  to={`/rentals/${property.id}`}
+                  to={`/rentals/${property.id_property}`}
                   state={{ property }}
                   className="inline-block bg-gray-700 hover:bg-gray-800 text-white py-2 px-4 rounded-full"
                 >
