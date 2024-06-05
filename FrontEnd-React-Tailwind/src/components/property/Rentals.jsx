@@ -3,12 +3,11 @@ import { propertiesContext } from "../../context/propertiesContext";
 import { Link } from "react-router-dom";
 import Navbar from "../navbar/Navbar";
 
- // Este es el componente de alquileres, GENERAL-    
+
 
 function PermanentRentals() {
- 
-const properties = useContext(propertiesContext);
 
+const properties = useContext(propertiesContext);
 
   return (
     <div className="bg-gray-100">
@@ -17,11 +16,11 @@ const properties = useContext(propertiesContext);
         <br />
         <h1 className="text-3xl font-semibold text-center mb-8">Alquileres Permanentes</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {properties && properties.map((property) => (
-            <div key={property.id_property}>
+          {properties.map((property) => (
+            <div key={property.id}>
               <div className="bg-white shadow-lg rounded-lg overflow-hidden h-[470px]">
                 <img
-                  src={`${property.images[0]}`}
+                  src={`${property.image && property.images[0]}`}
                   alt="Imagen de propiedad"
                   className="w-full h-[200px] object-cover"
                 />
@@ -30,7 +29,7 @@ const properties = useContext(propertiesContext);
                   <p className="text-gray-600 text-sm">{property.description}</p>
                   <div className="mt-4 text-center">
                     <Link
-                      to={`/rentals/${property.id_property}`}
+                      to={`/rentals/${property.id}`}
                       state={{ property }}
                       className="inline-block bg-gray-700 text-white py-2 px-4 rounded-full hover:bg-gray-800 mx-auto"
                     >
@@ -39,6 +38,7 @@ const properties = useContext(propertiesContext);
                   </div>
                 </div>
               </div>
+
             </div>
           ))}
         </div>
@@ -46,5 +46,6 @@ const properties = useContext(propertiesContext);
     </div>
   );
 }
+
 export default PermanentRentals;
 
