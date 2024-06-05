@@ -2,14 +2,22 @@ import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { ClipLoader } from "react-spinners";
+import { css } from "@emotion/react";
 
 function MyProperties({ user }) {
+  const override = css`
+    display: block;
+    margin: 0 auto;
+  `;
+  const [loading, setLoading] = useState(false);
   const [properties, setProperties] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [propertyToEdit, setPropertyToEdit] = useState({});
-  const [propertyImages, setPropertyImages] = useState([]);
+  const [propertyImages] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [locationsData, setLocationsData] = useState([]);
+
   useEffect(() => {
     async function fetchProperties() {
       try {
@@ -42,7 +50,7 @@ function MyProperties({ user }) {
         const propertiesData = await response.json();
         setProperties(propertiesData);
 
-        // Obtener las ubicaciones asociadas con las propiedades
+       
         const locationIds = propertiesData.map(
           (property) => property.id_location
         );
@@ -76,190 +84,192 @@ function MyProperties({ user }) {
 
   //--------------DELETE---------------------------
 
-  const handleDelete = async (id_property) => {
-    Swal.fire({
-      title: "¿Estás seguro?",
-      text: "Esta acción no se puede deshacer.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Sí, eliminar",
-      cancelButtonText: "Cancelar",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          const token = localStorage.getItem("token");
-          const response = await fetch(
-            `http://localhost:3000/property/${id_property}`,
-            {
-              method: "DELETE",
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
+  // const handleDelete = async (id_property) => {
+  //   Swal.fire({
+  //     title: "¿Estás seguro?",
+  //     text: "Esta acción no se puede deshacer.",
+  //     icon: "warning",
+  //     showCancelButton: true,
+  //     confirmButtonColor: "#3085d6",
+  //     cancelButtonColor: "#d33",
+  //     confirmButtonText: "Sí, eliminar",
+  //     cancelButtonText: "Cancelar",
+  //   }).then(async (result) => {
+  //     if (result.isConfirmed) {
+  //       try {
+  //         const token = localStorage.getItem("token");
+  //         const response = await fetch(
+  //           `http://localhost:3000/property/${id_property}`,
+  //           {
+  //             method: "DELETE",
+  //             headers: {
+  //               Authorization: `Bearer ${token}`,
+  //             },
+  //           }
+  //         );
 
-          if (response.ok) {
-            setProperties(
-              properties.filter((property) => property.id !== id_property)
-            );
-            Swal.fire({
-              title: "¡Propiedad Eliminada!",
-              text: "La propiedad ha sido eliminada exitosamente.",
-              icon: "success",
-            });
-          } else {
-            throw new Error("Error al eliminar la propiedad");
-          }
-        } catch (error) {
-          console.error("Error al eliminar la propiedad:", error);
-          Swal.fire({
-            title: "Error",
-            text: "Hubo un error al eliminar la propiedad. Por favor, inténtalo de nuevo más tarde.",
-            icon: "error",
-          });
-        }
-      }
-    });
-  };
+  //         if (response.ok) {
+  //           setProperties(
+  //             properties.filter((property) => property.id !== id_property)
+  //           );
+  //           Swal.fire({
+  //             title: "¡Propiedad Eliminada!",
+  //             text: "La propiedad ha sido eliminada exitosamente.",
+  //             icon: "success",
+  //           });
+  //         } else {
+  //           throw new Error("Error al eliminar la propiedad");
+  //         }
+  //       } catch (error) {
+  //         console.error("Error al eliminar la propiedad:", error);
+  //         Swal.fire({
+  //           title: "Error",
+  //           text: "Hubo un error al eliminar la propiedad. Por favor, inténtalo de nuevo más tarde.",
+  //           icon: "error",
+  //         });
+  //       }
+  //     }
+  //   });
+  // };
 
   //--------------EDIT---------------------------
-  const handleEditClick = (property) => {
-    setPropertyToEdit(property);
-    setIsEditing(true);
-    setSelectedLocation(property.id_location);
-  };
+  // const handleEditClick = (property) => {
+  //   setPropertyToEdit(property);
+  //   setIsEditing(true);
+  //   setSelectedLocation(property.id_location);
+  // };
 
-  const handleUpdate = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(
-        `http://localhost:3000/property/${propertyToEdit.id_property}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(propertyToEdit),
-        }
-      );
-  
-      if (response.ok) {
-        setIsEditing(false);
-        const updatedProperties = properties.map((prop) =>
-          prop.id_property === propertyToEdit.id_property
-            ? propertyToEdit
-            : prop
-        );
-        setProperties(updatedProperties);
-  
-        Swal.fire({
-          title: "Éxito",
-          text: "La propiedad se ha actualizado correctamente",
-          icon: "success",
-        });
-      } else {
-        console.error(
-          "Error en la respuesta:",
-          response.status,
-          response.statusText
-        );
-        const responseData = await response.json();
-        console.error("Datos de la respuesta:", responseData);
-  
-        throw new Error("Error al actualizar la propiedad");
-      }
-    } catch (error) {
-      console.error("Error al actualizar la propiedad:", error);
-      Swal.fire({
-        title: "Error",
-        text: "Hubo un error al actualizar la propiedad. Por favor, inténtalo de nuevo más tarde.",
-        icon: "error",
-      });
-    }
-  };
-  
-  const handleUpdateLocation = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(
-        `http://localhost:3000/location/${propertyToEdit.id_location}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(propertyToEdit.location), // Usar la ubicación de la propiedad
-        }
-      );
-  
-      if (response.ok) {
-        setIsEditing(false);
-        Swal.fire({
-          title: "Éxito",
-          text: "La ubicación se ha actualizado correctamente",
-          icon: "success",
-        });
-      } else {
-        console.error(
-          "Error en la respuesta:",
-          response.status,
-          response.statusText
-        );
-        const responseData = await response.json();
-        console.error("Datos de la respuesta:", responseData);
-  
-        throw new Error("Error al actualizar la ubicación");
-      }
-    } catch (error) {
-      console.error("Error al actualizar la ubicación:", error);
-      Swal.fire({
-        title: "Error",
-        text: "Hubo un error al actualizar la ubicación. Por favor, inténtalo de nuevo más tarde.",
-        icon: "error",
-      });
-    }
-  };
-  
+  // const handleUpdate = async () => {
+  //   try {
+  //     setLoading(true)
+  //     const token = localStorage.getItem("token");
+  //     const response = await fetch(
+  //       `http://localhost:3000/property/${propertyToEdit.id_property}`,
+  //       {
+  //         method: "PUT",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //         body: JSON.stringify(propertyToEdit),
+  //       }
+  //     );
 
-  const handleDragOver = (e) => {
-    e.preventDefault();
-  };
+  //     if (response.ok) {
+  //       setIsEditing(false);
+  //       const updatedProperties = properties.map((prop) =>
+  //         prop.id_property === propertyToEdit.id_property
+  //           ? propertyToEdit
+  //           : prop
+  //       );
+  //       setProperties(updatedProperties);
 
-  const handleDrop = (e) => {
-    e.preventDefault();
-    const files = Array.from(e.dataTransfer.files);
-  };
+  //       Swal.fire({
+  //         title: "Éxito",
+  //         text: "La propiedad se ha actualizado correctamente",
+  //         icon: "success",
+  //       });
+  //     } else {
+  //       console.error(
+  //         "Error en la respuesta:",
+  //         response.status,
+  //         response.statusText
+  //       );
+  //       const responseData = await response.json();
+  //       console.error("Datos de la respuesta:", responseData);
 
-  const handleFileSelect = (e) => {
-    const files = e.target.files;
-    const imageUrls = [...propertyToEdit.images];
+  //       throw new Error("Error al actualizar la propiedad");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error al actualizar la propiedad:", error);
+  //     Swal.fire({
+  //       title: "Error",
+  //       text: "Hubo un error al actualizar la propiedad. Por favor, inténtalo de nuevo más tarde.",
+  //       icon: "error",
+  //     });
+  //   }finally{
+  //     setLoading(false)
+  //   }
+  // };
 
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      const imageUrl = URL.createObjectURL(file);
-      imageUrls.push(imageUrl);
-    }
+  // const handleUpdateLocation = async () => {
+  //   try {
+  //     const token = localStorage.getItem("token");
+  //     const response = await fetch(
+  //       `http://localhost:3000/location/${propertyToEdit.id_location}`,
+  //       {
+  //         method: "PUT",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //         body: JSON.stringify(propertyToEdit.location), // Usar la ubicación de la propiedad
+  //       }
+  //     );
 
-    setPropertyToEdit({
-      ...propertyToEdit,
-      images: imageUrls,
-    });
-  };
+  //     if (response.ok) {
+  //       setIsEditing(false);
+  //       Swal.fire({
+  //         title: "Éxito",
+  //         text: "La ubicación se ha actualizado correctamente",
+  //         icon: "success",
+  //       });
+  //     } else {
+  //       console.error(
+  //         "Error en la respuesta:",
+  //         response.status,
+  //         response.statusText
+  //       );
+  //       const responseData = await response.json();
+  //       console.error("Datos de la respuesta:", responseData);
 
-  const handleRemoveImage = (indexToRemove) => {
-    const updatedImages = propertyToEdit.images.filter(
-      (_, index) => index !== indexToRemove
-    );
-    setPropertyToEdit({
-      ...propertyToEdit,
-      images: updatedImages,
-    });
-  };
- 
+  //       throw new Error("Error al actualizar la ubicación");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error al actualizar la ubicación:", error);
+  //     Swal.fire({
+  //       title: "Error",
+  //       text: "Hubo un error al actualizar la ubicación. Por favor, inténtalo de nuevo más tarde.",
+  //       icon: "error",
+  //     });
+  //   }
+  // };
+
+  // const handleDragOver = (e) => {
+  //   e.preventDefault();
+  // };
+
+  // const handleDrop = (e) => {
+  //   e.preventDefault();
+  //   const files = Array.from(e.dataTransfer.files);
+  // };
+
+  // const handleFileSelect = (e) => {
+  //   const files = e.target.files;
+  //   const imageUrls = [...propertyToEdit.images];
+
+  //   for (let i = 0; i < files.length; i++) {
+  //     const file = files[i];
+  //     const imageUrl = URL.createObjectURL(file);
+  //     imageUrls.push(imageUrl);
+  //   }
+
+  //   setPropertyToEdit({
+  //     ...propertyToEdit,
+  //     images: imageUrls,
+  //   });
+  // };
+
+  // const handleRemoveImage = (indexToRemove) => {
+  //   const updatedImages = propertyToEdit.images.filter(
+  //     (_, index) => index !== indexToRemove
+  //   );
+  //   setPropertyToEdit({
+  //     ...propertyToEdit,
+  //     images: updatedImages,
+  //   });
+  // };
+
   return (
     <div className="mt-20 bg-opacity-50 rounded-lg">
       <p className="font-bold text-gray-800 text-3xl text-center border-b border-gray-600 mb-4">
@@ -326,9 +336,9 @@ function MyProperties({ user }) {
           </div>
         ))}
 
-       {/* ``` form de editar propiedades``` */}
+      {/* ``` form de editar propiedades``` */}
 
-      {isEditing && propertyToEdit && (
+      {/* {isEditing && propertyToEdit && (
         <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-900 bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-md w-2/3">
             <form
@@ -396,8 +406,8 @@ function MyProperties({ user }) {
                 <select
                   id="location"
                   name="id_location"
-                  value={selectedLocation} 
-                  onChange={(e) => setSelectedLocation(e.target.value)} 
+                  value={selectedLocation}
+                  onChange={(e) => setSelectedLocation(e.target.value)}
                   className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
                   required
                 >
@@ -549,10 +559,19 @@ function MyProperties({ user }) {
                   </div>
                 </div>
               )}
-              <div className="flex justify-end">
+              <div className="flex justify-end items-center">
+                {loading && (
+                  <ClipLoader
+                    loading={loading}
+                    css={override}
+                    size={25}
+                    color={"#2A2A26 "}
+                  />
+                )}
                 <button
                   type="submit"
                   className="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2"
+                  disabled={loading}
                 >
                   Guardar Cambios
                 </button>
@@ -562,6 +581,7 @@ function MyProperties({ user }) {
                     setPropertyToEdit(null);
                   }}
                   className="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                  disabled={loading}
                 >
                   Cancelar
                 </button>
@@ -569,7 +589,7 @@ function MyProperties({ user }) {
             </form>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }

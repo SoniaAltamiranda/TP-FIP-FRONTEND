@@ -1,260 +1,399 @@
-// import { useState } from "react";
-// import Swal from 'sweetalert2';
+import { useState } from "react";
+import Swal from 'sweetalert2';
 
-// function ModifyProperty() {
-//   const [id, setId] = useState("");
-//   const [property, setProperty] = useState(null);
-//   const [isPropertyFound, setIsPropertyFound] = useState(false);
-//   const [isSuccess, setIsSuccess] = useState(false);
-//   const [isError, setIsError] = useState(false);
+function ModifyProperty() {
 
-//   const fetchPropertyById = async () => {
-//     try {
-//       const response = await fetch(`http://localhost:3000/property/${id}`);
-  
-//       if (response.ok) {
-//         const data = await response.json();
-//         setProperty(data);
-//         setIsPropertyFound(true);
-//         setIsSuccess(false);
-//         setIsError(false);
-//       } else {
-//         console.error("Error al obtener la propiedad por ID");
-//         setProperty(null);
-//         setIsPropertyFound(false);
-//         setIsError(true);
-  
-//         // Mostrar el SweetAlert
-//         Swal.fire({
-//           icon: 'error',
-//           title: 'Propiedad no encontrada',
-//           text: 'La propiedad con el ID indicado no existe.',
-//           showCancelButton: true,
-//           confirmButtonText: 'Reintentar',
-//           cancelButtonText: 'Salir',
-//         }).then((result) => {
-//           if (result.isConfirmed) {
-//             //Reintentar
-//           } else if (result.isDismissed) {
-//             window.location.href = "http://localhost:5173/user";
-//           }
-//         });
-//       }
-//     } catch (error) {
-//       console.error("Error al obtener la propiedad por ID:", error);
-//       setProperty(null);
-//       setIsPropertyFound(false);
-//       setIsError(true);
-//     }
-//   };
 
-//   const handleInputChange = (e) => {
-//     const { value } = e.target;
-//     setId(value);
-//   };
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     fetchPropertyById();
-//   };
-
-//   const handleSaveChanges = async () => {
-//     try {
-//       const response = await fetch(`http://localhost:3000/properties/${id}`, {
-//         method: "PUT",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify(property),
-//       });
-
-//       if (response.ok) {
-//         console.log("La propiedad se modificó con éxito.");
-//         setIsSuccess(true);
-//         setIsError(false);
-
-//         // Mostrar el SweetAlert de éxito
-//         Swal.fire({
-//           icon: 'success',
-//           title: 'Cambios realizados con éxito',
-//           showConfirmButton: false,
-//           html: '<button id="continueButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Continuar</button>',
-//           didOpen: () => {
-//             document.getElementById('continueButton').addEventListener('click', () => {
-//               window.location.href = "http://localhost:5173/user";
-//             });
-//           },
-//         });
-//       } else {
-//         console.error("Error al modificar la propiedad.");
-//         setIsError(true);
-//         setIsSuccess(false);
-//       }
-//     } catch (error) {
-//       console.error("Error de red:", error);
-//       setIsError(true);
-//       setIsSuccess(false);
-//     }
-//   };
+    const handleEditClick = (property) => {
+        setPropertyToEdit(property);
+        setIsEditing(true);
+        setSelectedLocation(property.id_location);
+      };
+    
+      const handleUpdate = async () => {
+        try {
+          setLoading(true)
+          const token = localStorage.getItem("token");
+          const response = await fetch(
+            `http://localhost:3000/property/${propertyToEdit.id_property}`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify(propertyToEdit),
+            }
+          );
+    
+          if (response.ok) {
+            setIsEditing(false);
+            const updatedProperties = properties.map((prop) =>
+              prop.id_property === propertyToEdit.id_property
+                ? propertyToEdit
+                : prop
+            );
+            setProperties(updatedProperties);
+    
+            Swal.fire({
+              title: "Éxito",
+              text: "La propiedad se ha actualizado correctamente",
+              icon: "success",
+            });
+          } else {
+            console.error(
+              "Error en la respuesta:",
+              response.status,
+              response.statusText
+            );
+            const responseData = await response.json();
+            console.error("Datos de la respuesta:", responseData);
+    
+            throw new Error("Error al actualizar la propiedad");
+          }
+        } catch (error) {
+          console.error("Error al actualizar la propiedad:", error);
+          Swal.fire({
+            title: "Error",
+            text: "Hubo un error al actualizar la propiedad. Por favor, inténtalo de nuevo más tarde.",
+            icon: "error",
+          });
+        }finally{
+          setLoading(false)
+        }
+      };
+    
+      const handleUpdateLocation = async () => {
+        try {
+          const token = localStorage.getItem("token");
+          const response = await fetch(
+            `http://localhost:3000/location/${propertyToEdit.id_location}`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify(propertyToEdit.location), // Usar la ubicación de la propiedad
+            }
+          );
+    
+          if (response.ok) {
+            setIsEditing(false);
+            Swal.fire({
+              title: "Éxito",
+              text: "La ubicación se ha actualizado correctamente",
+              icon: "success",
+            });
+          } else {
+            console.error(
+              "Error en la respuesta:",
+              response.status,
+              response.statusText
+            );
+            const responseData = await response.json();
+            console.error("Datos de la respuesta:", responseData);
+    
+            throw new Error("Error al actualizar la ubicación");
+          }
+        } catch (error) {
+          console.error("Error al actualizar la ubicación:", error);
+          Swal.fire({
+            title: "Error",
+            text: "Hubo un error al actualizar la ubicación. Por favor, inténtalo de nuevo más tarde.",
+            icon: "error",
+          });
+        }
+      };
+    
+      const handleDragOver = (e) => {
+        e.preventDefault();
+      };
+    
+      const handleDrop = (e) => {
+        e.preventDefault();
+        const files = Array.from(e.dataTransfer.files);
+      };
+    
+      const handleFileSelect = (e) => {
+        const files = e.target.files;
+        const imageUrls = [...propertyToEdit.images];
+    
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          const imageUrl = URL.createObjectURL(file);
+          imageUrls.push(imageUrl);
+        }
+    
+        setPropertyToEdit({
+          ...propertyToEdit,
+          images: imageUrls,
+        });
+      };
+    
+      const handleRemoveImage = (indexToRemove) => {
+        const updatedImages = propertyToEdit.images.filter(
+          (_, index) => index !== indexToRemove
+        );
+        setPropertyToEdit({
+          ...propertyToEdit,
+          images: updatedImages,
+        });
+      };
 
 //   return (
-//     <div className="flex justify-center items-center min-h-screen">
-//       <div className="w-3/4 p-2 bg-white rounded-lg shadow-md">
-//         <h1>Indique el ID del inmueble que desea editar:</h1>
-//         <form onSubmit={handleSubmit}>
-//           <div className="mb-2">
-//             <label htmlFor="id" className="block text-gray-800 font-bold mb-1">
-//               ID del Inmueble:
-//             </label>
-//             <input
-//               type="text"
-//               id="id"
-//               name="id"
-//               value={id}
-//               onChange={handleInputChange}
-//               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
-//               required
-//             />
-//           </div>
-//           <div className="text-center">
-//             <button
-//               type="submit"
-//               className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-//             >
-//               Buscar Propiedad
-//             </button>
-//           </div>
-//         </form>
-//       </div>
-//       {isPropertyFound && property && (
-//         <div className="w-3/4 p-2 bg-white rounded-lg shadow-md mt-4">
-//           <h2>Datos de la propiedad:</h2>
-//           <div className="mb-2">
-//             <label
-//               htmlFor="title"
-//               className="block text-gray-800 font-bold mb-1"
-//             >
-//               Título:
-//             </label>
-//             <input
-//               type="text"
-//               id="title"
-//               name="title"
-//               value={property.title}
-//               onChange={(e) =>
-//                 setProperty({ ...property, title: e.target.value })
-//               }
-//               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
-//               required
-//             />
-//           </div>
-//           <div className="mb-2">
-//             <label
-//               htmlFor="type"
-//               className="block text-gray-800 font-bold mb-1"
-//             >
-//               Tipo de Alquiler:
-//             </label>
-//             <input
-//               type="text"
-//               id="type"
-//               name="type"
-//               value={property.type}
-//               onChange={(e) =>
-//                 setProperty({ ...property, type: e.target.value })
-//               }
-//               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
-//               required
-//             />
-//           </div>
-//           <div className="mb-2">
-//             <label
-//               htmlFor="rooms"
-//               className="block text-gray-800 font-bold mb-1"
-//             >
-//               Ambientes:
-//             </label>
-//             <input
-//               type="number"
-//               id="rooms"
-//               name="rooms"
-//               value={property.rooms}
-//               onChange={(e) =>
-//                 setProperty({ ...property, rooms: parseInt(e.target.value) })
-//               }
-//               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
-//               required
-//             />
-//           </div>
-//           <div className="mb-2">
-//             <label
-//               htmlFor="description"
-//               className="block text-gray-800 font-bold mb-1"
-//             >
-//               Descripcion:
-//             </label>
-//             <input
-//               type="text"
-//               id="description"
-//               name="description"
-//               value={property.description}
-//               onChange={(e) =>
-//                 setProperty({ ...property, description: e.target.value })
-//               }
-//               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
-//               required
-//             />
-//           </div>
-//           <div className="mb-2">
-//             <label
-//               htmlFor="price"
-//               className="block text-gray-800 font-bold mb-1"
-//             >
-//               Precio:
-//             </label>
-//             <input
-//               type="number"
-//               id="price"
-//               name="price"
-//               value={property.price}
-//               onChange={(e) =>
-//                 setProperty({ ...property, price: parseInt(e.target.value) })
-//               }
-//               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
-//               required
-//             />
-//           </div>
-//           <div className="mb-2">
-//             <label
-//               htmlFor="images"
-//               className="block text-gray-800 font-bold mb-1"
-//             >
-//               Imagenes:
-//             </label>
-//             <input
-//               type="text"
-//               id="images"
-//               name="images"
-//               value={property.images}
-//               onChange={(e) =>
-//                 setProperty({ ...property, images: e.target.value })
-//               }
-//               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
-//               required
-//             />
-//           </div>
-//           <button
-//             onClick={handleSaveChanges}
-//             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-//           >
-//             Enviar Cambios
-//           </button>
-//           {isSuccess && <p>Los cambios se realizaron exitosamente.</p>}
-//           {isError && <p>No se pudieron realizar los cambios.</p>}
-//         </div>
-//       )}
-//     </div>
-//   );
-// }
+//     {isEditing && propertyToEdit && (
+    <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-900 bg-opacity-50">
+    <div className="bg-white p-6 rounded-lg shadow-md w-2/3">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleUpdate(propertyToEdit.id_property);
+        }}
+        encType="multipart/form-data"
+        className="space-y-4"
+      >
+        <h2 className="text-2xl font-bold">Datos de la propiedad:</h2>
+        <div>
+          <label
+            htmlFor="title"
+            className="block text-gray-800 font-bold mb-1"
+          >
+            Título:
+          </label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            value={propertyToEdit.title}
+            onChange={(e) =>
+              setPropertyToEdit({
+                ...propertyToEdit,
+                title: e.target.value,
+              })
+            }
+            className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
+            required
+          />
+        </div>
+        <div>
+          <label
+            htmlFor="type"
+            className="block text-gray-800 font-bold mb-1"
+          >
+            Tipo de Alquiler:
+          </label>
+          <select
+            type="text"
+            id="type"
+            name="type"
+            value={propertyToEdit.type}
+            onChange={(e) =>
+              setPropertyToEdit({
+                ...propertyToEdit,
+                type: e.target.value,
+              })
+            }
+            className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
+            required
+          >
+            <option value="">Seleccionar tipo de alquiler</option>
+            <option value="Alquiler temporal">Alquiler temporal</option>
+            <option value="Alquiler a largo plazo">
+              Alquiler a largo plazo
+            </option>
+          </select>
+        </div>
+        {locationsData.length === 0 ? (
+          <p>Cargando ubicaciones...</p>
+        ) : (
+          <select
+            id="location"
+            name="id_location"
+            value={selectedLocation}
+            onChange={(e) => setSelectedLocation(e.target.value)}
+            className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
+            required
+          >
+            <option value="">Seleccionar ubicación</option>
+            {locationsData.map((location) => (
+              <option
+                key={location.id_location}
+                value={location.id_location}
+              >
+                {`${location.city}, ${location.state}, ${location.country}`}
+              </option>
+            ))}
+          </select>
+        )}
 
-// export default ModifyProperty;
+        <div className="mb-2">
+          <label
+            htmlFor="rooms"
+            className="block text-gray-800 font-bold mb-1"
+          >
+            Ambientes:
+          </label>
+          <input
+            type="number"
+            id="rooms"
+            name="rooms"
+            value={propertyToEdit.rooms}
+            onChange={(e) =>
+              setPropertyToEdit({
+                ...propertyToEdit,
+                rooms: parseInt(e.target.value),
+              })
+            }
+            className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
+            required
+          />
+        </div>
+        <div className="mb-2">
+          <label
+            htmlFor="description"
+            className="block text-gray-800 font-bold mb-1"
+          >
+            Descripcion:
+          </label>
+          <textarea
+            type="text"
+            id="description"
+            name="description"
+            value={propertyToEdit.description}
+            onChange={(e) =>
+              setPropertyToEdit({
+                ...propertyToEdit,
+                description: e.target.value,
+              })
+            }
+            className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline h-auto resize-none block"
+            required
+          />
+        </div>
+        <div className="mb-2">
+          <label
+            htmlFor="price"
+            className="block text-gray-800 font-bold mb-1"
+          >
+            Precio - $:
+          </label>
+          <input
+            type="number"
+            id="price"
+            name="price"
+            value={propertyToEdit.price}
+            onChange={(e) =>
+              setPropertyToEdit({
+                ...propertyToEdit,
+                price: parseInt(e.target.value),
+              })
+            }
+            className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
+            required
+          />
+        </div>
+        <div className="mb-2">
+          <label
+            htmlFor="imageUpload"
+            className="block text-gray-800 font-bold mb-2"
+          >
+            Imágenes:
+          </label>
+          <div
+            id="imageDropArea"
+            className="w-full px-3 py-3 border rounded-lg focus:outline-none focus:shadow-outline transition-colors ease-in-out duration-300 hover:bg-blue-200"
+            onDragOver={handleDragOver}
+            onDrop={handleDrop}
+          >
+            <div
+              className="flex flex-wrap gap-4"
+              style={{ maxWidth: "300px" }}
+            >
+              {propertyToEdit.images.map((imageUrl, index) => (
+                <div key={index} className="relative">
+                  <img
+                    src={imageUrl}
+                    alt={`Image ${index}`}
+                    className="max-w-18 h-auto mb-2 rounded-lg"
+                    style={{ maxWidth: "100px", maxHeight: "100px" }}
+                  />
+                  <button
+                    className="absolute top-0 right-0 p-1 bg-gray-500 text-white rounded-full"
+                    onClick={() => handleRemoveImage(index)}
+                  >
+                    X
+                  </button>
+                </div>
+              ))}
+            </div>
+            <label htmlFor="imageUpload">
+              Arrastra y suelta imágenes aquí
+            </label>
+          </div>
+          <input
+            type="file"
+            id="imageUpload"
+            accept="image/*"
+            style={{ display: "none" }}
+            onChange={(e) => handleFileSelect(e)}
+          />
+        </div>
+        {propertyImages.length > 0 && (
+          <div className="mb-2">
+            <label className="block text-gray-800 font-bold mb-2">
+              Imágenes cargadas:
+            </label>
+            <div className="flex flex-wrap">
+              {propertyImages.map((imageUrl, index) => (
+                <div key={index} className="relative w-1/4 p-2">
+                  <img
+                    src={imageUrl}
+                    alt={`Imagen ${index + 1}`}
+                    className="w-full h-auto rounded"
+                  />
+                  <button
+                    className="absolute top-0 right-0 p-1 text-red-500 hover:text-red-700 cursor-pointer"
+                    onClick={() => handleRemoveImage(index)}
+                  >
+                    Eliminar
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        <div className="flex justify-end items-center">
+          {loading && (
+            <ClipLoader
+              loading={loading}
+              css={override}
+              size={25}
+              color={"#2A2A26 "}
+            />
+          )}
+          <button
+            type="submit"
+            className="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2"
+            disabled={loading}
+          >
+            Guardar Cambios
+          </button>
+          <button
+            onClick={() => {
+              setIsEditing(false);
+              setPropertyToEdit(null);
+            }}
+            className="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            disabled={loading}
+          >
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+
+export default ModifyProperty;

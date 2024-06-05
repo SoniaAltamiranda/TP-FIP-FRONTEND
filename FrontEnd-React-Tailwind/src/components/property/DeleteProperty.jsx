@@ -1,71 +1,58 @@
-// import { useState } from "react";
-// import Swal from "sweetalert2";
+import { useState } from "react";
+ import Swal from "sweetalert2";
 
-// function DeleteProperty() {
-//   const [id, setId] = useState("");
-//   const [message, setMessage] = useState("");
-//   const [showRetry, setShowRetry] = useState(false);
+function DeleteProperty() {
+  const [id, setId] = useState("");
+  
 
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-
-//     try {
-//       const response = await fetch(`http://localhost:3000/property/${id_pro}`, {
-//         method: "DELETE",
-//       });
-
-//       if (response.ok) {
-//         setMessage("El inmueble se ha eliminado correctamente");
-//         showSuccessAlert();
-//       } else {
-//         setMessage("Error al eliminar el inmueble");
-//         setShowRetry(true);
-//         showErrorAlert();
-//       }
-//     } catch (error) {
-//       console.error("Error al eliminar el inmueble:", error);
-//       setMessage("Error al eliminar el inmueble");
-//       setShowRetry(true);
-//       showErrorAlert();
-//     }
-//   };
-
-//   const showSuccessAlert = () => {
-//     Swal.fire({
-//       title: "Éxito",
-//       text: "El inmueble se ha eliminado correctamente",
-//       icon: "success",
-//       confirmButtonText: "OK",
-//     }).then(() => {
-//       window.location.href = "http://localhost:5173/user";
-//     });
-//   };
-
-//   const showErrorAlert = () => {
-//     Swal.fire({
-//       title: "Error",
-//       text: "Error al eliminar el inmueble",
-//       icon: "error",
-//       showCancelButton: true, 
-//       confirmButtonText: "Reintentar",
-//       cancelButtonText: "Salir", 
-//     }).then((result) => {
-//       if (result.isConfirmed) {
-        
-//         handleRetry();
-//       } else {
-        
-//         window.location.href = "http://localhost:5173/user";
-//       }
-//     });
-//   };
-
-//   const handleRetry = () => {
-//     setMessage("");
-//     setShowRetry(false);
-//     setId("");
-//   };
-
+const handleDelete = async (id_property) => {
+    Swal.fire({
+        title: "¿Estás seguro?",
+        text: "Esta acción no se puede deshacer.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            const token = localStorage.getItem("token");
+            const response = await fetch(
+              `http://localhost:3000/property/${id_property}`,
+              {
+                method: "DELETE",
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
+  
+            if (response.ok) {
+              setProperties(
+                properties.filter((property) => property.id !== id_property)
+              );
+              Swal.fire({
+                title: "¡Propiedad Eliminada!",
+                text: "La propiedad ha sido eliminada exitosamente.",
+                icon: "success",
+              });
+            } else {
+              throw new Error("Error al eliminar la propiedad");
+            }
+          } catch (error) {
+            console.error("Error al eliminar la propiedad:", error);
+            Swal.fire({
+              title: "Error",
+              text: "Hubo un error al eliminar la propiedad. Por favor, inténtalo de nuevo más tarde.",
+              icon: "error",
+            });
+          }
+        }
+      });
+    };
+  
 //   return (
 //     <div className="flex justify-center items-center min-h-screen">
 //       <div className="w-3/4 p-2 bg-white rounded-lg shadow-md">
