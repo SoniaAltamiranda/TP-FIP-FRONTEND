@@ -9,7 +9,6 @@ function RegisterProperty() {
     display: block;
     margin: 0 auto;
   `;
-
   const [loading, setLoading] = useState(false);
   const [propertyData, setPropertyData] = useState({
     title: "",
@@ -24,7 +23,6 @@ function RegisterProperty() {
     id_booking: 0,
     locations: [],
   });
-
   useEffect(() => {
     const getTokenAndSetUserId = async () => {
       try {
@@ -38,7 +36,6 @@ function RegisterProperty() {
     getTokenAndSetUserId();
     fetchLocations();
   }, []);
-
   const fetchLocations = async () => {
     try {
       const response = await fetch("http://localhost:3000/location");
@@ -48,11 +45,9 @@ function RegisterProperty() {
       console.error("Error al obtener las ubicaciones:", error);
     }
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
     try {
       const token = localStorage.getItem("token");
       const payload = jwtDecode(token);
@@ -60,7 +55,6 @@ function RegisterProperty() {
       const userId = parseInt(propertyData.id_user);
       const parsedRooms = parseInt(propertyData.rooms);
       const parsedPrice = parseInt(propertyData.price);
-
       const uploadedImages = await Promise.all(
         propertyData.images.map(async (imageFile, index) => {
           const formData = new FormData();
@@ -77,7 +71,6 @@ function RegisterProperty() {
             body: formData,
             redirect: "follow",
           });
-
           const result = await response.json();
           if (result.success) {
             return result.data.link;
@@ -86,7 +79,6 @@ function RegisterProperty() {
           }
         })
       );
-
       const dataToSend = {
         ...propertyData,
         id_user: payload.sub,
@@ -95,7 +87,6 @@ function RegisterProperty() {
         id_location: locationId,
         images: uploadedImages,
       };
-
       const response = await fetch("http://localhost:3000/property", {
         method: "POST",
         headers: {
@@ -104,10 +95,8 @@ function RegisterProperty() {
         },
         body: JSON.stringify(dataToSend),
       });
-
       const data = await response.json();
       console.log("Propiedad registrada:", data);
-
       Swal.fire({
         title: "¡Propiedad Registrada!",
         text: "Tu propiedad ha sido registrada exitosamente.",
@@ -124,7 +113,6 @@ function RegisterProperty() {
       setLoading(false);
     }
   };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "id_location") {
@@ -134,7 +122,6 @@ function RegisterProperty() {
       setPropertyData((prevData) => ({ ...prevData, [name]: value }));
     }
   };
-
   const handleFileSelect = (e) => {
     const files = e.target.files;
     const imageFiles = Array.from(files);
@@ -143,7 +130,6 @@ function RegisterProperty() {
       images: imageFiles,
     }));
   };
-
   const handleRemoveImage = (indexToRemove) => {
     const updatedImages = propertyData.images.filter(
       (_, index) => index !== indexToRemove
@@ -153,15 +139,12 @@ function RegisterProperty() {
       images: updatedImages,
     }));
   };
-
   const handleDragOver = (e) => {
     e.preventDefault();
   };
-
   const handleDrop = (e) => {
     e.preventDefault();
   };
-
   return (
     <div className="flex justify-center items-center h-auto">
       <div className="max-w-md p-4 bg-white rounded-lg shadow-md mt-20">

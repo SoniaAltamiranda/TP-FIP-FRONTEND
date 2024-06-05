@@ -20,7 +20,7 @@ function Footer() {
           </div>
         </div>
       </div>
-      <div className="footer-icons">
+   {/*   <div className="footer-icons">
         <a href="https://www.facebook.com" className="icon-container">
           <i className="fab fa-facebook-f"></i>
         </a>
@@ -33,7 +33,7 @@ function Footer() {
         <a href="https://www.twitter.com" className="icon-container">
           <i className="fab fa-twitter"></i>
         </a>
-      </div>
+  </div> */}
     </footer>
   );
 }
