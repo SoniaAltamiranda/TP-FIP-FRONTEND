@@ -26,7 +26,7 @@ function BookingForm({ property, open, onClose, onBookingSuccess }) {
       setTotalPrice(0);
     }
   }, [startDate, endDate, property.price]);
-
+ 
   const handleBuy = async () => {
     if (!startDate || !endDate) {
       console.error("Start date and end date must be selected");
@@ -160,7 +160,7 @@ function BookingForm({ property, open, onClose, onBookingSuccess }) {
               <Wallet
                 initialization={{ preferenceId }}
                 customization={{ texts: { valueProp: "smart_option" } }}
-              />
+              /> 
             </div>
           )}
         </div>

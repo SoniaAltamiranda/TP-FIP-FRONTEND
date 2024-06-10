@@ -74,7 +74,7 @@ function DeleteUser() {
     <div className="flex items-center justify-center h-screen">
       <div className="border-1 border-black p-6 rounded-lg shadow-lg bg-gray-100 w-96">
         <div className="mb-6 flex justify-center">
-          <h1 className="font-bold text-gray-700 text-xl">Borrar Usuario</h1>
+          <h1 className="font-bold text-gray-700 text-xl">Eliminar mi cuenta</h1>
         </div>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">

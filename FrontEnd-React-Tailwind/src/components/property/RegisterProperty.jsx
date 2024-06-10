@@ -1,3 +1,7 @@
+//firebase hosting:disable && firebase hosting:enable   BORRAR CACHE FIREBASE
+
+
+
 import React, { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import Swal from "sweetalert2";
@@ -20,7 +24,6 @@ function RegisterProperty() {
     type: "",
     address: "",
     url_iframe: "",
-    id_booking: 0,
     locations: [],
   });
   useEffect(() => {
