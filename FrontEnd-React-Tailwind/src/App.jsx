@@ -27,7 +27,11 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/rentals" element={<Rentals />} />
         <Route path="/rentals/:id" element={<PropertyDetails />} />
-        <Route path="/user" element={isAuthenticated ? <User /> : <Navigate to="/login" />} />
+        <Route
+  path="/user"
+  element={isAuthenticated ? <User /> : <Navigate to="/login" />}
+/>
+
         
       </Routes>
       <Footer />

@@ -14,7 +14,7 @@ function EditUser({ user }) {
   
     password: user.password,
     
-    phone: user.phone,
+  
   });
   function handleChange(e) {
     const { name, value } = e.target;
@@ -45,7 +45,7 @@ function EditUser({ user }) {
   }
   function handleSubmit(e) {
     e.preventDefault();
-    fetch(`http://localhost:3000/user/${user.id}`, {
+    fetch(`http://localhost:3000/user/${user.id_user}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -119,19 +119,7 @@ function EditUser({ user }) {
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
           />
         </div>
-        <div className="mb-4">
-          <label htmlFor="phone" className="block text-sm font-medium">
-            Teléfono:
-          </label>
-          <input
-            type="text"
-            id="phone"
-            name="phone"
-            value={userData.phone}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
-          />
-        </div>
+        
         <div className="flex space-x-4">
         
         <button

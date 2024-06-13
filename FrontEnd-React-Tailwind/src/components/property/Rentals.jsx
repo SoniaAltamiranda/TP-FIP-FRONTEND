@@ -1,22 +1,30 @@
-import { useContext } from "react";
+import { useState, useContext } from "react";
 import { propertiesContext } from "../../context/propertiesContext";
 import { Link } from "react-router-dom";
 import Navbar from "../navbar/Navbar";
-
-
+import RentalFilter from "../rentals/Rental.Filter";
 
 function PermanentRentals() {
+  const [filter, setFilter] = useState("");
+  const properties = useContext(propertiesContext);
 
-const properties = useContext(propertiesContext);
+  const filteredProperties = properties.filter((property) => {
+    if (filter === "") {
+      return true;
+    } else {
+      return property.type === filter;
+    }
+  });
 
   return (
     <div className="bg-gray-100">
       <Navbar className="fixed top-0 left-0 right-0" />
       <div className="mt-20 container mx-auto">
         <br />
-        <h1 className="text-3xl font-semibold text-center mb-8">Alquileres Permanentes</h1>
+        <h1 className="text-3xl font-semibold text-center mb-8">Alquileres</h1>
+        <RentalFilter onChange={(e) => setFilter(e.target.value)} />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {properties.map((property) => (
+          {filteredProperties.map((property) => (
             <div key={property.id}>
               <div className="bg-white shadow-lg rounded-lg overflow-hidden h-[470px]">
                 <img
@@ -24,12 +32,19 @@ const properties = useContext(propertiesContext);
                   alt="Imagen de propiedad"
                   className="w-full h-[200px] object-cover"
                 />
-                <div className="p-4" style={{ fontFamily: 'Roboto, sans-serif' }}>
-                  <h4 className="text-2xl font-semibold mb-2 text-gray-500">{property.title}</h4>
-                  <p className="text-gray-600 text-sm">{property.description}</p>
+                <div
+                  className="p-4"
+                  style={{ fontFamily: "Roboto, sans-serif" }}
+                >
+                  <h2 className="text-xl font-semibold mb-2">
+                    {property.title}
+                  </h2>
+                  <p className="text-gray-600">{property.description}</p>
+                  <p className="text-gray-600">Precio: ${property.price}</p>
+                  <p className="text-gray-600">Tipo: {property.type}</p>
                   <div className="mt-4 text-center">
                     <Link
-                      to={`/rentals/${property.id}`}
+                      to={`/rentals/${property.id_property}`}
                       state={{ property }}
                       className="inline-block bg-gray-700 text-white py-2 px-4 rounded-full hover:bg-gray-800 mx-auto"
                     >
@@ -38,7 +53,6 @@ const properties = useContext(propertiesContext);
                   </div>
                 </div>
               </div>
-
             </div>
           ))}
         </div>
@@ -48,4 +62,3 @@ const properties = useContext(propertiesContext);
 }
 
 export default PermanentRentals;
-

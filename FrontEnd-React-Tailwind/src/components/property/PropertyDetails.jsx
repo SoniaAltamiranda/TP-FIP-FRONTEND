@@ -128,6 +128,7 @@
 // export default PropertyDetails;
 
 // Componente    <Route path="/rentals/:id" element={<PropertyDetails />} />
+
 import React, { useState, useEffect } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import "react-datepicker/dist/react-datepicker.css";

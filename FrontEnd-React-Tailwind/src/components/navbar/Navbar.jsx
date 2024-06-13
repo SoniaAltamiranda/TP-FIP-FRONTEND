@@ -33,6 +33,8 @@ const Navbar = () => {
     setIsLoggedIn(!!token);
   }, [location.pathname]);
 
+
+
   return (
     <nav
       className={`fixed top-0 left-0 right-0 transition-transform transform ${
@@ -72,6 +74,7 @@ const Navbar = () => {
           <NavLink to="/aboutUs" activeClassName="active">
             <FontAwesomeIcon icon={faPeopleGroup } size="lg" className="mr-2" /> Sobre nosotros
           </NavLink>
+          
         </div>
       </div>
     </nav>
