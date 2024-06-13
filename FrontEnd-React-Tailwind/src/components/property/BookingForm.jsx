@@ -3,7 +3,7 @@ import { initMercadoPago, Wallet } from "@mercadopago/sdk-react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-function BookingForm({ property, open, onClose, onBookingSuccess }) {
+function BookingForm({ property, open, onClose  }) {
   initMercadoPago("APP_USR-d8001b82-36a4-4f76-bf0e-f88f96b549ae", {
     locale: "es-AR",
   });
@@ -28,7 +28,7 @@ function BookingForm({ property, open, onClose, onBookingSuccess }) {
   }, [startDate, endDate, property.price]);
 
   const handleBuy = async () => {
-    if (!startDate || !endDate) {
+    if (!startDate || !endDate) { 
       console.error("Start date and end date must be selected");
       return;
     }
@@ -60,8 +60,7 @@ function BookingForm({ property, open, onClose, onBookingSuccess }) {
       if (!res.ok) {
         throw new Error("Failed to create booking");
       }
-      console.log("Booking created successfully");
-      onBookingSuccess();
+      
     } catch (error) {
       console.error("Error creating booking:", error);
     } finally {
@@ -75,7 +74,7 @@ function BookingForm({ property, open, onClose, onBookingSuccess }) {
       quantity: totalDays,
       unit_price: parseInt(property.price),
     };
-
+  
     try {
       const response = await fetch("http://localhost:3000/mercado_pago/create_preference", {
         method: "POST",
@@ -118,7 +117,7 @@ function BookingForm({ property, open, onClose, onBookingSuccess }) {
               selectsStart
               startDate={startDate}
               endDate={endDate}
-              minDate={new Date()} // Avoid selecting past dates
+              minDate={new Date()} 
               className="w-full border rounded px-2 py-1"
             />
           </div>
@@ -144,7 +143,7 @@ function BookingForm({ property, open, onClose, onBookingSuccess }) {
             <button
               onClick={onClose}
               className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-            >
+            > 
               Cancelar
             </button>
             <button
@@ -170,6 +169,8 @@ function BookingForm({ property, open, onClose, onBookingSuccess }) {
 }
 
 export default BookingForm;
+
+
 
 
 

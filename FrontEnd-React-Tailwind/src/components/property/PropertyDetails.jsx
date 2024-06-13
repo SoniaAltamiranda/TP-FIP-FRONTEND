@@ -213,7 +213,7 @@ function PropertyDetails() {
                     .
                   </p>
                   <button
-                    onClick={() => setOpen(true)} // Open modal on button click
+                    onClick={() => setOpen(true)} 
                     className="w-full bg-gray-700 text-white py-2 rounded-md hover:bg-gray-800 focus:outline-none focus:ring focus:ring-blue-200"
                   >
                     Seleccionar Fecha
@@ -222,8 +222,8 @@ function PropertyDetails() {
                     <BookingForm
                       property={property}
                       open={open}
-                      onClose={() => setOpen(false)} // Close modal function
-                      onBookingSuccess={() => console.log('Booking successful!')}
+                      onClose={() => setOpen(false)} 
+                     
                     />
                   )}
                 </>
