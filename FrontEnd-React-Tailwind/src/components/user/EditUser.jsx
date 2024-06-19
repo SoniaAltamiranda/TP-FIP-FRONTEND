@@ -45,7 +45,7 @@ function EditUser({ user }) {
   }
   function handleSubmit(e) {
     e.preventDefault();
-    fetch(`http://localhost:3000/user/${user.id_user}`, {
+    fetch(`https://app-911c1751-2ae2-4279-bd11-cb475df87978.cleverapps.io/user/${user.id_user}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

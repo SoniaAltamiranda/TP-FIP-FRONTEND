@@ -13,6 +13,7 @@ function User() {
   const [userData, setUserData] = useState(null);
   const [shownComponent, setShownComponent] = useState("");
   const [menuExpanded, setMenuExpanded] = useState(false);
+  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 768);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -21,7 +22,7 @@ function User() {
         const payload = jwtDecode(token);
 
         const response = await fetch(
-          `http://localhost:3000/user/${payload.sub}`,
+          `https://app-911c1751-2ae2-4279-bd11-cb475df87978.cleverapps.io/user/${payload.sub}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -71,14 +72,12 @@ function User() {
 
   return (
     <div className="h-screen flex flex-col md:flex-row">
-      <div
-        className={`relative bg-gray-200 text-blue p-6 transition-all duration-500 ${
-          menuExpanded ? "w-full md:w-1/4" : "w-full md:w-16"
-        }`}
-      >
+     
+      <div className={`bg-gray-200 text-blue p-6 transition-all duration-500 ${menuExpanded ? "w-full md:w-1/4" : "w-full md:w-16"} ${isSmallScreen ? "mt-6" : ""}`}>
+
         <div className="relative flex items-center justify-center h-full">
           <button
-            className="absolute top-4 right-4 md:top-20 md:right-0 md:mr-2 md:mt-2 text-blue focus:outline-none"
+            className="absolute top-20 right-4 md:top-20 md:right-0 md:mr-2 md:mt-2 text-blue focus:outline-none"
             onClick={() => setMenuExpanded(!menuExpanded)}
           >
             <FontAwesomeIcon
@@ -94,7 +93,7 @@ function User() {
               ) : (
                 <>
                   <div>
-                    <h1 className="w-full flex justify-center items-center text-xl md:text-3xl font-bold text-gray-800 mb-4 md:mb-8">
+                    <h1 className="w-full  flex justify-center items-center text-xl md:text-3xl font-bold text-gray-800 mb-4 md:mb-8">
                       ALQUILAFÁCIL.COM
                     </h1>
                     <hr />
@@ -146,7 +145,9 @@ function User() {
           )}
         </div>
       </div>
-      <div className="flex-grow flex flex-col items-center justify-center p-4 md:p-8 mb-16 md:mb-0">
+      
+    
+      <div className={`flex-grow flex flex-col items-center justify-center p-4 md:p-8 ${menuExpanded ? 'mt-0 md:mt-0' : 'mt-16 md:mt-0'} overflow-y-auto`}>
         {shownComponent === "" ? (
           <div className="text-center">
             <h1 className="text-2xl md:text-4xl font-bold">
@@ -162,18 +163,11 @@ function User() {
             <RegisterProperty user={userData} />
           </div>
         )}
-     {shownComponent === "My Properties" && (
-          <div className="flex-grow w-full max-w-4xl overflow-hidden">
-            <div className="h-full flex flex-col">
-              <div className="flex-grow overflow-y-auto">
-                <MyProperties user={userData} />
-              </div>
-            </div>
+        {shownComponent === "My Properties" && (
+          <div className="w-full max-w-4xl overflow-y-auto">
+            <MyProperties user={userData} />
           </div>
         )}
-
-
-      
         {shownComponent === "Editar Usuario" && (
           <div className="w-full max-w-4xl">
             <EditUser user={userData} />

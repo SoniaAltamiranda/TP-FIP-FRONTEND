@@ -11,7 +11,7 @@ function BookingForm({ property, open, onClose, onBookingSuccess }) {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [preferenceId, setPreferenceId] = useState(null);
-  const [isBooking, setIsBooking] = useState(false);
+ 
   const [totalDays, setTotalDays] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
 
@@ -33,7 +33,6 @@ function BookingForm({ property, open, onClose, onBookingSuccess }) {
       return;
     }
 
-    setIsBooking(true);
 
     const id = await createPreference();
     if (id) {
@@ -50,7 +49,7 @@ function BookingForm({ property, open, onClose, onBookingSuccess }) {
         id_preference: id,
       };
       console.log(bookingData);
-      const res = await fetch("http://localhost:3000/booking", {
+      const res = await fetch("https://app-911c1751-2ae2-4279-bd11-cb475df87978.cleverapps.io/booking", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -64,9 +63,7 @@ function BookingForm({ property, open, onClose, onBookingSuccess }) {
       onBookingSuccess();
     } catch (error) {
       console.error("Error creating booking:", error);
-    } finally {
-      setIsBooking(false);
-    }
+    } 
   };
 
   const createPreference = async () => {
@@ -118,7 +115,7 @@ function BookingForm({ property, open, onClose, onBookingSuccess }) {
               selectsStart
               startDate={startDate}
               endDate={endDate}
-              minDate={new Date()} // Avoid selecting past dates
+              minDate={new Date()} 
               className="w-full border rounded px-2 py-1"
             />
           </div>
@@ -149,10 +146,10 @@ function BookingForm({ property, open, onClose, onBookingSuccess }) {
             </button>
             <button
               onClick={handleBuy}
-              className={`px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 ${isBooking && 'cursor-not-allowed'}`}
-              disabled={isBooking}
-            >
-              {isBooking ? 'Procesando...' : 'Reservar'}
+              className={'px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600' }
+               >
+                Reservar
+  
             </button>
           </div>
           {preferenceId && (

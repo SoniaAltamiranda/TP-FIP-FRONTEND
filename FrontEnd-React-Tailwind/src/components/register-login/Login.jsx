@@ -12,31 +12,29 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError(null); 
 
     try {
       const userData = { email, password };
 
-      const response = await fetch("http://localhost:3000/auth/login", {
-        
-
+      const response = await fetch("https://app-911c1751-2ae2-4279-bd11-cb475df87978.cleverapps.io/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(userData),
-
       });
 
       if (!response.ok) {
-        throw new Error("Error en la solicitud de inicio de sesión");
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Error en la solicitud de inicio de sesión");
       }
 
       const data = await response.json();
       const authToken = data.token;
-      console.log(authToken);
-      
-      login(authToken);
-      
+
+      login(authToken); 
+
     } catch (error) {
       setError(error.message);
       console.error("Error en la solicitud de inicio de sesión:", error);
@@ -52,22 +50,23 @@ function Login() {
     } else if (name === "password") {
       setPassword(value);
     }
-
-    
   };
+
   return (
-    <div className="bg-gradient-to-b from-gray-100 to-gray-400 min-h-screen flex items-center justify-center">
-      <div className="text-center mb-8 mr-2">
-        <h1 className="text-6xl text-gray-700 font-extrabold mb-2">
-          ALQUILAFÁCIL.COM
-        </h1>
-        <hr className="w-1/4 border-t-2 border-gray-700 mx-auto mb-4" />
-        <p className="text-lg text-gray-700">
-          La forma más conveniente de alquilar lo que necesitas.
-        </p>
+    <div className="bg-gradient-to-b from-gray-100 to-gray-400 min-h-screen flex flex-col md:flex-row items-center justify-center">
+      
+      <div className="text-center md:text-left mb-10 mx-2 md:flex md:items-center">
+        <div>
+          <h1 className="text-4xl md:text-6xl text-gray-700 font-extrabold mb-2">ALQUILAFÁCIL.COM</h1>
+          <hr className="w-1/4 md:w-1/6 border-t-2 border-gray-700 mx-auto mb-4" />
+          <p className="text-base text-center md:text-lg text-gray-700">
+            La forma más conveniente de alquilar lo que necesitas.
+          </p>
+        </div>
       </div>
-      <div className="border-2 border-gray-300 p-4 rounded-lg shadow-lg w-80">
-        <h1 className="text-xl font-semibold text-center mb-4">Iniciar sesión</h1>
+  
+      <div className="border-2 border-gray-300 p-10 rounded-lg shadow-lg max-w-sm w-full mx-10 md:mx-0 md:max-w-s md:self-center">
+        <h1 className="text-xl md:text-2xl font-semibold text-center mb-4">Iniciar sesión</h1>
         {error && <div className="text-red-500 mb-4">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
@@ -75,7 +74,7 @@ function Login() {
               Email:
             </label>
             <input
-              type="text"
+              type="email"
               id="email"
               name="email"
               value={email}
@@ -108,11 +107,13 @@ function Login() {
             </button>
           </div>
         </form>
-        <div className="mb-4 text-center">
-          ¿No estás registrado?{" "}
-          <Link to="/register" className="text-blue-500 hover:underline">
-            Regístrate aquí
-          </Link>
+        <div className="text-center md:text-left">
+          <p className="text-sm text-gray-600">
+            ¿No estás registrado?{" "}
+            <Link to="/register" className="text-blue-500 hover:underline">
+              Regístrate aquí
+            </Link>
+          </p>
         </div>
       </div>
     </div>
