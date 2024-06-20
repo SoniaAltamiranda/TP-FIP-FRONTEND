@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
+import API_URL from "../../configAPIclever/Url_apiClever";
 
 function Register() {
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ function Register() {
     }
   
     try {
-      const response = await fetch('https://app-911c1751-2ae2-4279-bd11-cb475df87978.cleverapps.io/auth/register', {
+      const response = await fetch(`${API_URL}/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

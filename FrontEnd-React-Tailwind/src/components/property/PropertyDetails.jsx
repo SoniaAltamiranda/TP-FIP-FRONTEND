@@ -2,6 +2,7 @@
 
 // Componente    <Route path="/rentals/:id" element={<PropertyDetails />} />
 import React, { useState, useEffect } from "react";
+import API_URL from "../../configAPIclever/Url_apiClever";
 import { useLocation, useParams } from "react-router-dom";
 import "react-datepicker/dist/react-datepicker.css";
 import BookingForm from "./BookingForm";
@@ -18,7 +19,7 @@ function PropertyDetails() {
     if (!property) {
       const fetchProperty = async () => {
         try {
-          const response = await fetch(`http://localhost:3000/properties/${id}`);
+          const response = await fetch(`${API_URL}/properties/${id}`);
           if (response.ok) {
             const data = await response.json();
             console.log("Datos de la propiedad:", data); 
@@ -45,7 +46,7 @@ function PropertyDetails() {
 
   const fetchOwnerEmail = async (userId) => {
     try {
-      const response = await fetch(`http://localhost:3000/user/${userId}`);
+      const response = await fetch(`${API_URL}/user/${userId}`);
       if (response.ok) {
         const data = await response.json();
         console.log("Datos del propietario:", data); 

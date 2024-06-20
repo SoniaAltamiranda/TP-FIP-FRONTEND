@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import API_URL from "../../configAPIclever/Url_apiClever";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 
 function MyProperties({ user }) {
@@ -21,16 +22,13 @@ function MyProperties({ user }) {
 
         const userId = user.id_user;
 
-        const response = await fetch(
-          `https://app-911c1751-2ae2-4279-bd11-cb475df87978.cleverapps.io/property?userId=${userId}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await fetch(`${API_URL}/property?userId=${userId}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         if (!response.ok) throw new Error("Error al cargar las propiedades.");
         const propertiesData = await response.json();
@@ -40,7 +38,7 @@ function MyProperties({ user }) {
           (property) => property.id_location
         );
         const locationsResponse = await fetch(
-          `https://app-911c1751-2ae2-4279-bd11-cb475df87978.cleverapps.io/location?ids=${locationIds.join(",")}`,
+          `${API_URL}/location?ids=${locationIds.join(",")}`,
           {
             method: "GET",
             headers: {
@@ -80,15 +78,12 @@ function MyProperties({ user }) {
       if (result.isConfirmed) {
         try {
           const token = localStorage.getItem("token");
-          const response = await fetch(
-            `https://app-911c1751-2ae2-4279-bd11-cb475df87978.cleverapps.io/property/${id_property}`,
-            {
-              method: "DELETE",
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
+          const response = await fetch(`${API_URL}/property/${id_property}`, {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
 
           if (response.ok) {
             setProperties(
@@ -140,7 +135,7 @@ function MyProperties({ user }) {
       console.log("Propiedad actualizada:", updatedProperty);
 
       const response = await fetch(
-        `https://app-911c1751-2ae2-4279-bd11-cb475df87978.cleverapps.io/property/${propertyToEdit.id_property}`,
+        `${API_URL}/property/${propertyToEdit.id_property}`,
         {
           method: "PUT",
           headers: {

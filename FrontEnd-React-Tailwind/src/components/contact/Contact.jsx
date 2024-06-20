@@ -124,7 +124,7 @@ function Contact() {
             Contáctanos
           </h1>
           <p className="text-gray-700">
-            Escribe tu mensaje y nos pondremos en contacto contigo pronto.
+            Escribe tu mensaje y nos pondremos en contacto contigo.
           </p>
           <form onSubmit={handleSubmit}>
             <div className="mb-2">

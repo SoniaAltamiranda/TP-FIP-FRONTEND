@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { initMercadoPago, Wallet } from "@mercadopago/sdk-react";
+import API_URL from '../../configAPIclever/Url_apiClever';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -49,7 +50,7 @@ function BookingForm({ property, open, onClose, onBookingSuccess }) {
         id_preference: id,
       };
       console.log(bookingData);
-      const res = await fetch("https://app-911c1751-2ae2-4279-bd11-cb475df87978.cleverapps.io/booking", {
+      const res = await fetch(`${API_URL}/booking"`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

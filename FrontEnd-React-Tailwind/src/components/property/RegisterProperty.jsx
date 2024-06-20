@@ -1,8 +1,7 @@
 //firebase hosting:disable && firebase hosting:enable   BORRAR CACHE FIREBASE
 
-
-
 import React, { useState, useEffect } from "react";
+import API_URL from "../../configAPIclever/Url_apiClever";
 import { jwtDecode } from "jwt-decode";
 import Swal from "sweetalert2";
 import { ClipLoader } from "react-spinners";
@@ -41,7 +40,7 @@ function RegisterProperty() {
   }, []);
   const fetchLocations = async () => {
     try {
-      const response = await fetch("https://app-911c1751-2ae2-4279-bd11-cb475df87978.cleverapps.io/location");
+      const response = await fetch(`${API_URL}/location`);
       const locations = await response.json();
       setPropertyData((prevData) => ({ ...prevData, locations }));
     } catch (error) {
@@ -69,7 +68,7 @@ function RegisterProperty() {
           const response = await fetch("https://api.imgur.com/3/image", {
             method: "POST",
             headers: {
-              Authorization: `Client-ID 83323e63212094a`, 
+              Authorization: `Client-ID 83323e63212094a`,
             },
             body: formData,
             redirect: "follow",
@@ -90,7 +89,7 @@ function RegisterProperty() {
         id_location: locationId,
         images: uploadedImages,
       };
-      const response = await fetch("https://app-911c1751-2ae2-4279-bd11-cb475df87978.cleverapps.io/property", {
+      const response = await fetch(`${API_URL}/property`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -130,9 +129,10 @@ function RegisterProperty() {
     const imageFiles = Array.from(files);
     setPropertyData((prevData) => ({
       ...prevData,
-      images: imageFiles,
+      images: [...prevData.images, ...imageFiles],
     }));
   };
+
   const handleRemoveImage = (indexToRemove) => {
     const updatedImages = propertyData.images.filter(
       (_, index) => index !== indexToRemove
@@ -142,6 +142,7 @@ function RegisterProperty() {
       images: updatedImages,
     }));
   };
+
   const handleDragOver = (e) => {
     e.preventDefault();
   };
@@ -360,4 +361,3 @@ function RegisterProperty() {
 }
 
 export default RegisterProperty;
-

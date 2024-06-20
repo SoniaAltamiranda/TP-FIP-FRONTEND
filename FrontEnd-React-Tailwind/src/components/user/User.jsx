@@ -7,6 +7,7 @@ import DeleteUser from "./DeleteUser";
 import Swal from "sweetalert2";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight, faChevronLeft } from "@fortawesome/free-solid-svg-icons";
+import API_URL from "../../configAPIclever/Url_apiClever";
 
 function User() {
   const [loading, setLoading] = useState(true);
@@ -22,7 +23,7 @@ function User() {
         const payload = jwtDecode(token);
 
         const response = await fetch(
-          `https://app-911c1751-2ae2-4279-bd11-cb475df87978.cleverapps.io/user/${payload.sub}`,
+          `${API_URL}/user/${payload.sub}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
