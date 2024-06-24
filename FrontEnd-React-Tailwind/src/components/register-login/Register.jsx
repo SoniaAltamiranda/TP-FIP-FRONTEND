@@ -31,7 +31,7 @@ function Register() {
     }
   
     try {
-      const response = await fetch('http://localhost:3000/auth/register', {
+      const response = await fetch('https://app-911c1751-2ae2-4279-bd11-cb475df87978.cleverapps.io/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

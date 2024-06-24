@@ -3,7 +3,7 @@ import { initMercadoPago, Wallet } from "@mercadopago/sdk-react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-function BookingForm({ property, open, onClose  }) {
+function BookingForm({ property, open, onClose }) {
   initMercadoPago("APP_USR-d8001b82-36a4-4f76-bf0e-f88f96b549ae", {
     locale: "es-AR",
   });
@@ -11,7 +11,6 @@ function BookingForm({ property, open, onClose  }) {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [preferenceId, setPreferenceId] = useState(null);
-  const [isBooking, setIsBooking] = useState(false);
   const [totalDays, setTotalDays] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
 
@@ -26,14 +25,12 @@ function BookingForm({ property, open, onClose  }) {
       setTotalPrice(0);
     }
   }, [startDate, endDate, property.price]);
- 
+
   const handleBuy = async () => {
-    if (!startDate || !endDate) { 
+    if (!startDate || !endDate) {
       console.error("Start date and end date must be selected");
       return;
     }
-
-    setIsBooking(true);
 
     const id = await createPreference();
     if (id) {
@@ -50,7 +47,7 @@ function BookingForm({ property, open, onClose  }) {
         id_preference: id,
       };
       console.log(bookingData);
-      const res = await fetch("http://localhost:3000/booking", {
+      const res = await fetch("https://app-911c1751-2ae2-4279-bd11-cb475df87978.cleverapps.io/booking", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -60,11 +57,8 @@ function BookingForm({ property, open, onClose  }) {
       if (!res.ok) {
         throw new Error("Failed to create booking");
       }
-      
     } catch (error) {
       console.error("Error creating booking:", error);
-    } finally {
-      setIsBooking(false);
     }
   };
 
@@ -74,16 +68,16 @@ function BookingForm({ property, open, onClose  }) {
       quantity: totalDays,
       unit_price: parseInt(property.price),
     };
-  
+
     try {
-      const response = await fetch("http://localhost:3000/mercado_pago/create_preference", {
+      const response = await fetch("https://app-911c1751-2ae2-4279-bd11-cb475df87978.cleverapps.io/mercado_pago/create_preference", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(preferenceData),
       });
-
+      
       if (!response.ok) {
         throw new Error("Error creating preference: " + response.status);
       }
@@ -117,7 +111,7 @@ function BookingForm({ property, open, onClose  }) {
               selectsStart
               startDate={startDate}
               endDate={endDate}
-              minDate={new Date()} 
+              minDate={new Date()}
               className="w-full border rounded px-2 py-1"
             />
           </div>
@@ -143,15 +137,14 @@ function BookingForm({ property, open, onClose  }) {
             <button
               onClick={onClose}
               className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-            > 
+            >
               Cancelar
             </button>
             <button
               onClick={handleBuy}
-              className={`px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 ${isBooking && 'cursor-not-allowed'}`}
-              disabled={isBooking}
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
             >
-              {isBooking ? 'Procesando...' : 'Reservar'}
+              Reservar
             </button>
           </div>
           {preferenceId && (
@@ -159,7 +152,7 @@ function BookingForm({ property, open, onClose  }) {
               <Wallet
                 initialization={{ preferenceId }}
                 customization={{ texts: { valueProp: "smart_option" } }}
-              /> 
+              />
             </div>
           )}
         </div>
@@ -169,6 +162,7 @@ function BookingForm({ property, open, onClose  }) {
 }
 
 export default BookingForm;
+
 
 
 

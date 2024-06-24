@@ -22,7 +22,7 @@
 //     }
 //     console.log(preferenceData);
 //     try {
-//       const response = await fetch('http://localhost:3000/mercado_pago/create_preference', {
+//       const response = await fetch('https://app-911c1751-2ae2-4279-bd11-cb475df87978.cleverapps.io/mercado_pago/create_preference', {
 //         method: 'POST',
 //         headers: {
 //           'Content-Type': 'application/json'
@@ -145,7 +145,7 @@ function PropertyDetails() {
     if (!property) {
       const fetchProperty = async () => {
         try {
-          const response = await fetch(`http://localhost:3000/properties/${id}`);
+          const response = await fetch(`https://app-911c1751-2ae2-4279-bd11-cb475df87978.cleverapps.io/properties/${id}`);
           if (response.ok) {
             const data = await response.json();
             setProperty(data);

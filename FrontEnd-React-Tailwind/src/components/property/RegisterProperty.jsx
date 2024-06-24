@@ -1,7 +1,3 @@
-//firebase hosting:disable && firebase hosting:enable   BORRAR CACHE FIREBASE
-
-
-
 import React, { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import Swal from "sweetalert2";
@@ -24,6 +20,7 @@ function RegisterProperty() {
     type: "",
     address: "",
     url_iframe: "",
+    id_booking: 0,
     locations: [],
   });
   useEffect(() => {
@@ -41,7 +38,7 @@ function RegisterProperty() {
   }, []);
   const fetchLocations = async () => {
     try {
-      const response = await fetch("http://localhost:3000/location");
+      const response = await fetch("https://app-911c1751-2ae2-4279-bd11-cb475df87978.cleverapps.io/location");
       const locations = await response.json();
       setPropertyData((prevData) => ({ ...prevData, locations }));
     } catch (error) {
@@ -65,11 +62,10 @@ function RegisterProperty() {
           formData.append("type", "image");
           formData.append("title", `iMAGE ${index + 1}`);
           formData.append("description", `Description for image ${index + 1}`);
-
           const response = await fetch("https://api.imgur.com/3/image", {
             method: "POST",
             headers: {
-              Authorization: `Client-ID 83323e63212094a`, 
+              Authorization: `Client-ID 83323e63212094a`, //  83323e63212094a
             },
             body: formData,
             redirect: "follow",
@@ -90,7 +86,7 @@ function RegisterProperty() {
         id_location: locationId,
         images: uploadedImages,
       };
-      const response = await fetch("http://localhost:3000/property", {
+      const response = await fetch("https://app-911c1751-2ae2-4279-bd11-cb475df87978.cleverapps.io/property", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -358,6 +354,4 @@ function RegisterProperty() {
     </div>
   );
 }
-
 export default RegisterProperty;
-

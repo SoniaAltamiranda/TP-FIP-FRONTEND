@@ -19,7 +19,7 @@ function DeleteUser() {
     e.preventDefault();
     const { name, password } = formData;
     
-    const BASE_URL = "http://localhost:3000/user/";
+    const BASE_URL = "https://app-911c1751-2ae2-4279-bd11-cb475df87978.cleverapps.io/user/";
 
     try {
       const response = await fetch(

@@ -7,7 +7,7 @@ export const PropertiesProvider = ({ children }) => {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const url = "http://localhost:3000/property";
+  const url = "https://app-911c1751-2ae2-4279-bd11-cb475df87978.cleverapps.io/property";
   useEffect(() => {
     const fetchData = async () => {
       try {

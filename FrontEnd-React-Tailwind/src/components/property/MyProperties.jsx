@@ -19,7 +19,7 @@ function MyProperties({ user }) {
 
         const userId = user.id_user;
 
-        const response = await fetch(`http://localhost:3000/property?userId=${userId}`, {
+        const response = await fetch(`https://app-911c1751-2ae2-4279-bd11-cb475df87978.cleverapps.io/property?userId=${userId}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -32,7 +32,7 @@ function MyProperties({ user }) {
         setProperties(propertiesData);
 
         const locationIds = propertiesData.map((property) => property.id_location);
-        const locationsResponse = await fetch(`http://localhost:3000/location?ids=${locationIds.join(",")}`, {
+        const locationsResponse = await fetch(`https://app-911c1751-2ae2-4279-bd11-cb475df87978.cleverapps.io/location?ids=${locationIds.join(",")}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -69,7 +69,7 @@ function MyProperties({ user }) {
       if (result.isConfirmed) {
         try {
           const token = localStorage.getItem("token");
-          const response = await fetch(`http://localhost:3000/property/${id_property}`, {
+          const response = await fetch(`https://app-911c1751-2ae2-4279-bd11-cb475df87978.cleverapps.io/property/${id_property}`, {
             method: "DELETE",
             headers: {
               Authorization: `Bearer ${token}`,
@@ -100,7 +100,7 @@ function MyProperties({ user }) {
 
   const handleEditClick = (property) => {
     setPropertyToEdit(property);
-    setSelectedLocation(property.id_location); // Asegúrate de establecer la ubicación seleccionada
+    setSelectedLocation(property.id_location); 
     setIsEditing(true);
   };
 
@@ -112,7 +112,7 @@ function MyProperties({ user }) {
         rooms: Number(propertyToEdit.rooms),
         price: Number(propertyToEdit.price), };
     
-      const response = await fetch(`http://localhost:3000/property/${propertyToEdit.id_property}`, {
+      const response = await fetch(`https://app-911c1751-2ae2-4279-bd11-cb475df87978.cleverapps.io/property/${propertyToEdit.id_property}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

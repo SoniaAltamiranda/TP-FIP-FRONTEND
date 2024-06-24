@@ -21,7 +21,7 @@ function User() {
         const payload = jwtDecode(token);
 
         const response = await fetch(
-          `http://localhost:3000/user/${payload.sub}`,
+          `https://app-911c1751-2ae2-4279-bd11-cb475df87978.cleverapps.io/user/${payload.sub}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
