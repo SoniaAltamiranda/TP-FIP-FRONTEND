@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import API_URL from "../../configAPIclever/Url_apiClever";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 
 function MyProperties({ user }) {
@@ -14,12 +15,14 @@ function MyProperties({ user }) {
     async function fetchProperties() {
       try {
         const token = localStorage.getItem("token");
-        if (!token) throw new Error("No se encontró el token de autenticación.");
-        if (!user || !user.id_user) throw new Error("No se proporcionó un usuario válido.");
+        if (!token)
+          throw new Error("No se encontró el token de autenticación.");
+        if (!user || !user.id_user)
+          throw new Error("No se proporcionó un usuario válido.");
 
         const userId = user.id_user;
 
-        const response = await fetch(`https://app-911c1751-2ae2-4279-bd11-cb475df87978.cleverapps.io/property?userId=${userId}`, {
+        const response = await fetch(`${API_URL}/property?userId=${userId}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -31,16 +34,22 @@ function MyProperties({ user }) {
         const propertiesData = await response.json();
         setProperties(propertiesData);
 
-        const locationIds = propertiesData.map((property) => property.id_location);
-        const locationsResponse = await fetch(`https://app-911c1751-2ae2-4279-bd11-cb475df87978.cleverapps.io/location?ids=${locationIds.join(",")}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const locationIds = propertiesData.map(
+          (property) => property.id_location
+        );
+        const locationsResponse = await fetch(
+          `${API_URL}/location?ids=${locationIds.join(",")}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-        if (!locationsResponse.ok) throw new Error("Error al cargar las ubicaciones.");
+        if (!locationsResponse.ok)
+          throw new Error("Error al cargar las ubicaciones.");
         const locations = await locationsResponse.json();
         setLocationsData(locations);
       } catch (error) {
@@ -69,7 +78,7 @@ function MyProperties({ user }) {
       if (result.isConfirmed) {
         try {
           const token = localStorage.getItem("token");
-          const response = await fetch(`https://app-911c1751-2ae2-4279-bd11-cb475df87978.cleverapps.io/property/${id_property}`, {
+          const response = await fetch(`${API_URL}/property/${id_property}`, {
             method: "DELETE",
             headers: {
               Authorization: `Bearer ${token}`,
@@ -77,7 +86,11 @@ function MyProperties({ user }) {
           });
 
           if (response.ok) {
-            setProperties(properties.filter((property) => property.id_property !== id_property));
+            setProperties(
+              properties.filter(
+                (property) => property.id_property !== id_property
+              )
+            );
             Swal.fire({
               title: "¡Propiedad Eliminada!",
               text: "La propiedad ha sido eliminada exitosamente.",
@@ -99,31 +112,49 @@ function MyProperties({ user }) {
   };
 
   const handleEditClick = (property) => {
+    console.log("Propiedad a editar:", property);
     setPropertyToEdit(property);
-    setSelectedLocation(property.id_location); 
+    setSelectedLocation(property.id_location);
+    console.log("Ubicación seleccionada:", property.id_location);
     setIsEditing(true);
   };
+
+  console.log("Ubicación seleccionada en handleUpdate:", selectedLocation);
 
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
       const token = localStorage.getItem("token");
-      const updatedProperty = { ...propertyToEdit,  id_location: Number(selectedLocation),
+      const updatedProperty = {
+        ...propertyToEdit,
+        id_location: Number(selectedLocation),
         rooms: Number(propertyToEdit.rooms),
-        price: Number(propertyToEdit.price), };
-    
-      const response = await fetch(`https://app-911c1751-2ae2-4279-bd11-cb475df87978.cleverapps.io/property/${propertyToEdit.id_property}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(updatedProperty),
-      });
+        price: Number(propertyToEdit.price),
+      };
+
+      console.log("Propiedad actualizada:", updatedProperty);
+
+      const response = await fetch(
+        `${API_URL}/property/${propertyToEdit.id_property}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(updatedProperty),
+        }
+      );
 
       if (response.ok) {
         setIsEditing(false);
-        setProperties(properties.map((prop) => (prop.id_property === propertyToEdit.id_property ? updatedProperty : prop)));
+        setProperties(
+          properties.map((prop) =>
+            prop.id_property === propertyToEdit.id_property
+              ? updatedProperty
+              : prop
+          )
+        );
         Swal.fire({
           title: "Éxito",
           text: "La propiedad se ha actualizado correctamente",
@@ -131,7 +162,11 @@ function MyProperties({ user }) {
         });
       } else {
         const responseData = await response.json();
-        console.error("Error en la respuesta:", response.status, response.statusText);
+        console.error(
+          "Error en la respuesta:",
+          response.status,
+          response.statusText
+        );
         console.error("Datos de la respuesta:", responseData);
         throw new Error("Error al actualizar la propiedad");
       }
@@ -146,7 +181,7 @@ function MyProperties({ user }) {
   };
 
   return (
-    <div className="mt-20 bg-opacity-50 rounded-lg">
+    <div className="bg-gradient-to-b from-gray-100 to-gray-400 mt-90 bg-opacity-50 container mx-auto rounded-lg p-4 md:p-8 overflow-auto">
       <p className="font-bold text-gray-800 text-3xl text-center border-b border-gray-600 mb-4">
         Mis Propiedades
       </p>
@@ -156,7 +191,9 @@ function MyProperties({ user }) {
         .map((property, index) => (
           <div
             key={property.id_property}
-            className={`rounded-md overflow-hidden shadow-md mb-4 ${index > 0 ? "border-t border-gray-300 pt-4" : ""} bg-gray-300 bg-opacity-50 rounded-lg `}
+            className={`rounded-md overflow-hidden shadow-md mb-4 ${
+              index > 0 ? "border-t border-gray-300 pt-4" : ""
+            } bg-gray-300 bg-opacity-50 rounded-lg `}
             style={{ maxWidth: "1000px", minWidth: "300px" }}
           >
             <div className="flex p-6">
@@ -188,6 +225,21 @@ function MyProperties({ user }) {
                 </p>
                 Location: {property.location.city}, {property.location.state},{" "}
                 {property.location.country}
+                <p className="mb-2">
+                  Tipo de Alquiler:{" "}
+                  <span className="text-gray-500">
+                    {property.type}
+                    <option value="">Seleccionar tipo de alquiler</option>
+                    <option value="Alquiler temporal">Alquiler temporal</option>
+                    <option value="Alquiler a largo plazo">
+                      Alquiler a largo plazo
+                    </option>
+                  </span>
+                </p>
+                <p className="mb-2">
+                  Ambientes:{" "}
+                  <span className="text-gray-500">{property.rooms}</span>
+                </p>
                 <div className="text-center mt-4">
                   <button
                     onClick={() => handleEditClick(property)}
@@ -212,10 +264,17 @@ function MyProperties({ user }) {
       {isEditing && propertyToEdit && (
         <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-900 bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-md w-2/3">
-            <form onSubmit={handleUpdate} encType="multipart/form-data" className="space-y-4">
+            <form
+              onSubmit={handleUpdate}
+              encType="multipart/form-data"
+              className="space-y-4"
+            >
               <h2 className="text-2xl font-bold">Datos de la propiedad:</h2>
               <div>
-                <label htmlFor="title" className="block text-gray-800 font-bold mb-1">
+                <label
+                  htmlFor="title"
+                  className="block text-gray-800 font-bold mb-1"
+                >
                   Título:
                 </label>
                 <input
@@ -224,13 +283,19 @@ function MyProperties({ user }) {
                   name="title"
                   value={propertyToEdit.title}
                   onChange={(e) =>
-                    setPropertyToEdit({ ...propertyToEdit, title: e.target.value })
+                    setPropertyToEdit({
+                      ...propertyToEdit,
+                      title: e.target.value,
+                    })
                   }
                   className="border border-gray-400 p-2 rounded w-full"
                 />
               </div>
               <div>
-                <label htmlFor="description" className="block text-gray-800 font-bold mb-1">
+                <label
+                  htmlFor="description"
+                  className="block text-gray-800 font-bold mb-1"
+                >
                   Descripción:
                 </label>
                 <input
@@ -239,13 +304,19 @@ function MyProperties({ user }) {
                   name="description"
                   value={propertyToEdit.description}
                   onChange={(e) =>
-                    setPropertyToEdit({ ...propertyToEdit, description: e.target.value })
+                    setPropertyToEdit({
+                      ...propertyToEdit,
+                      description: e.target.value,
+                    })
                   }
                   className="border border-gray-400 p-2 rounded w-full"
                 />
               </div>
               <div>
-                <label htmlFor="rooms" className="block text-gray-800 font-bold mb-1">
+                <label
+                  htmlFor="rooms"
+                  className="block text-gray-800 font-bold mb-1"
+                >
                   Ambientes:
                 </label>
                 <input
@@ -254,13 +325,19 @@ function MyProperties({ user }) {
                   name="rooms"
                   value={propertyToEdit.rooms}
                   onChange={(e) =>
-                    setPropertyToEdit({ ...propertyToEdit, rooms: e.target.value })
+                    setPropertyToEdit({
+                      ...propertyToEdit,
+                      rooms: e.target.value,
+                    })
                   }
                   className="border border-gray-400 p-2 rounded w-full"
                 />
               </div>
               <div>
-                <label htmlFor="price" className="block text-gray-800 font-bold mb-1">
+                <label
+                  htmlFor="price"
+                  className="block text-gray-800 font-bold mb-1"
+                >
                   Precio:
                 </label>
                 <input
@@ -269,13 +346,19 @@ function MyProperties({ user }) {
                   name="price"
                   value={propertyToEdit.price}
                   onChange={(e) =>
-                    setPropertyToEdit({ ...propertyToEdit, price: e.target.value })
+                    setPropertyToEdit({
+                      ...propertyToEdit,
+                      price: e.target.value,
+                    })
                   }
                   className="border border-gray-400 p-2 rounded w-full"
                 />
               </div>
               <div>
-                <label htmlFor="location" className="block text-gray-800 font-bold mb-1">
+                <label
+                  htmlFor="location"
+                  className="block text-gray-800 font-bold mb-1"
+                >
                   Ubicación:
                 </label>
                 <select
@@ -286,7 +369,10 @@ function MyProperties({ user }) {
                   className="border border-gray-400 p-2 rounded w-full"
                 >
                   {locationsData.map((location) => (
-                    <option key={location.id_location} value={location.id_location}>
+                    <option
+                      key={location.id_location}
+                      value={location.id_location}
+                    >
                       {location.city}, {location.state}, {location.country}
                     </option>
                   ))}

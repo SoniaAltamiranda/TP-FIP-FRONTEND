@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { initMercadoPago, Wallet } from "@mercadopago/sdk-react";
+import API_URL from '../../configAPIclever/Url_apiClever';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -11,6 +12,7 @@ function BookingForm({ property, open, onClose }) {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [preferenceId, setPreferenceId] = useState(null);
+ 
   const [totalDays, setTotalDays] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
 
@@ -32,6 +34,7 @@ function BookingForm({ property, open, onClose }) {
       return;
     }
 
+
     const id = await createPreference();
     if (id) {
       setPreferenceId(id);
@@ -47,7 +50,7 @@ function BookingForm({ property, open, onClose }) {
         id_preference: id,
       };
       console.log(bookingData);
-      const res = await fetch("https://app-911c1751-2ae2-4279-bd11-cb475df87978.cleverapps.io/booking", {
+      const res = await fetch(`${API_URL}/booking"`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -59,7 +62,7 @@ function BookingForm({ property, open, onClose }) {
       }
     } catch (error) {
       console.error("Error creating booking:", error);
-    }
+    } 
   };
 
   const createPreference = async () => {
@@ -111,7 +114,7 @@ function BookingForm({ property, open, onClose }) {
               selectsStart
               startDate={startDate}
               endDate={endDate}
-              minDate={new Date()}
+              minDate={new Date()} 
               className="w-full border rounded px-2 py-1"
             />
           </div>
@@ -142,9 +145,10 @@ function BookingForm({ property, open, onClose }) {
             </button>
             <button
               onClick={handleBuy}
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-            >
-              Reservar
+              className={'px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600' }
+               >
+                Reservar
+  
             </button>
           </div>
           {preferenceId && (

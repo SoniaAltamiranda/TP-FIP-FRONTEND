@@ -1,7 +1,6 @@
 import { useState, useContext } from "react";
 import { propertiesContext } from "../../context/propertiesContext";
 import { Link } from "react-router-dom";
-import Navbar from "../navbar/Navbar";
 import RentalFilter from "../rentals/Rental.Filter";
 
 function PermanentRentals() {
@@ -18,7 +17,7 @@ function PermanentRentals() {
 
   return (
     <div className="bg-gray-100">
-      <Navbar className="fixed top-0 left-0 right-0" />
+    
       <div className="mt-20 container mx-auto">
         <br />
         <h1 className="text-3xl font-semibold text-center mb-8">Alquileres</h1>
