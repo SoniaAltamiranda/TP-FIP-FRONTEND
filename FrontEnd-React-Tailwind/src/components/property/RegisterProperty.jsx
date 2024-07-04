@@ -23,6 +23,7 @@ function RegisterProperty() {
     type: "",
     address: "",
     url_iframe: "",
+    status : "not reserved",
     locations: [],
   });
   useEffect(() => {

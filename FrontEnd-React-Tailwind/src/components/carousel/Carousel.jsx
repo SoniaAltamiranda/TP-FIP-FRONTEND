@@ -7,7 +7,7 @@ const CarouselComponent = () => {
   return (
     <div className="h-full w-full flex items-center justify-center">
       
-      <div className="w-full md:w-4/5 lg:w-3/5 h-full flex items-center justify-center">
+      <div className="w-4/5  h-4/5 flex items-center justify-center">
         <Carousel
           showStatus={false}
           showThumbs={false}
@@ -23,7 +23,7 @@ const CarouselComponent = () => {
                 className="w-full h-full object-cover"
               />
               <div className="absolute bottom-2 left-2 text-white p-8 title-fade-in">
-                <p className="text-6xl">casa</p>
+                
               </div>
             </div>
           ))}

@@ -1,3 +1,4 @@
+Home.jsx
 import CarouselComponent from "../carousel/Carousel";
 import FeaturedPosts from "../featured-posts/FeaturedPosts";
 

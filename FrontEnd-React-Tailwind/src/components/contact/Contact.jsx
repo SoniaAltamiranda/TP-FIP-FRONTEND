@@ -1,5 +1,6 @@
-
 import { useState, useEffect } from "react";
+import {jwtDecode} from "jwt-decode"; 
+import API_URL from '../../configAPIclever/Url_apiClever';
 
 function Contact() {
   const [formData, setFormData] = useState({
@@ -15,6 +16,53 @@ function Contact() {
     message: "",
   });
 
+  const [userData, setUserData] = useState(null); // Aquí se almacenará la información del usuario autenticado
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem("token"); // Obtiene el token JWT del almacenamiento local
+        const payload = jwtDecode(token); // Decodifica el token JWT para obtener los datos del usuario
+
+        const response = await fetch(
+          `${API_URL}/user/${payload.sub}`, // Endpoint para obtener los datos del usuario
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // Incluye el token JWT en la cabecera de autorización
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Error al obtener los datos del usuario");
+        }
+
+        const data = await response.json(); // Convierte la respuesta a JSON
+        setUserData(data); // Almacena los datos del usuario en el estado
+        setLoading(false); // Cambia el estado de carga a false
+      } catch (error) {
+        console.error("Error:", error); // Manejo de errores
+        setLoading(false); // Cambia el estado de carga a false
+      }
+    };
+
+    fetchUserData(); // Llama a la función para obtener los datos del usuario al cargar el componente
+  }, []);
+
+  useEffect(() => {
+    // Cuando se obtengan los datos del usuario, prellenar automáticamente los campos del formulario
+    if (userData) {
+      setFormData({
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        email: userData.email,
+        phoneNumber: "", // Puedes decidir si prellenar el número de teléfono si está disponible
+        message: "",
+      });
+    }
+  }, [userData]); // Se ejecutará cada vez que cambie userData
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -23,58 +71,19 @@ function Contact() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (
-      !formData.firstName ||
-      !formData.lastName ||
-      !formData.email ||
-      !formData.phoneNumber ||
-      !formData.message
-    ) {
-      setNotification({
-        type: "error",
-        message: "Todos los campos son obligatorios.",
-      });
-      return;
-    }
-
-    const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
-    if (!emailPattern.test(formData.email)) {
-      setNotification({
-        type: "error",
-        message: "Correo electrónico inválido.",
-      });
-      return;
-    }
-
-    const namePattern = /^[A-Za-z]+$/;
-    if (
-      !namePattern.test(formData.firstName) ||
-      !namePattern.test(formData.lastName)
-    ) {
-      setNotification({
-        type: "error",
-        message: "Nombre y apellido solo pueden contener letras.",
-      });
-      return;
-    }
-
-    const phonePattern = /^\d+$/;
-    if (!phonePattern.test(formData.phoneNumber)) {
-      setNotification({
-        type: "error",
-        message: "Número de teléfono solo puede contener números.",
-      });
-      return;
-    }
-
-    setTimeout(() => {
+    // Aquí va la lógica para enviar el formulario
+    try {
+      // Lógica para enviar el formulario
+      console.log("Formulario enviado:", formData);
+      // Aquí puedes llamar a la función sendEmail(formData) o realizar la lógica de envío adecuada
       setNotification({
         type: "success",
         message: "¡Tu consulta se ha enviado exitosamente!",
       });
+      // Reinicia el estado del formulario después del envío exitoso
       setFormData({
         firstName: "",
         lastName: "",
@@ -82,14 +91,17 @@ function Contact() {
         phoneNumber: "",
         message: "",
       });
-
-      setTimeout(() => {
-        setNotification({ type: "", message: "" });
-      }, 2000);
-    }, 5000);
+    } catch (error) {
+      console.error("Error al enviar el formulario:", error);
+      setNotification({
+        type: "error",
+        message: "Hubo un problema al enviar la consulta. Por favor, inténtalo nuevamente.",
+      });
+    }
   };
 
   useEffect(() => {
+    // Limpiar la notificación después de 2 segundos
     const notificationTimeout = setTimeout(() => {
       setNotification({ type: "", message: "" });
     }, 2000);
@@ -97,18 +109,19 @@ function Contact() {
     return () => {
       clearTimeout(notificationTimeout);
     };
-  }, [notification]);
+  }, [notification]); // Se ejecutará cada vez que cambie notification
 
   return (
     <div
       id="contact"
-      className="w-1/4 mx-auto p-10 flex flex-col mt-20" style={{ width: '70%' }}
-      >
+      className="w-full mx-auto p-10 flex flex-col mt-20"
+      style={{ maxWidth: '800px' }}
+    >
       <div
         id="contact-page"
-        className="border-2 border-gray-300 p-2 rounded-md shadow-md w-full flex"
+        className="border-2 border-gray-300 p-2 rounded-md shadow-md w-full flex flex-col md:flex-row"
       >
-        <div id="contact-content" className="w-1/2 p-2 flex flex-col" style={{ width: '50%' }}>
+        <div id="contact-content" className="w-full md:w-1/2 p-2 flex flex-col">
           {notification.type === "success" && (
             <div className="message success-message text-center">
               {notification.message}
@@ -169,24 +182,7 @@ function Contact() {
                 required
               />
             </div>
-            <div className="mb-4">
-              <label
-                htmlFor="phoneNumber"
-                className="block text-sm font-medium"
-              >
-                Teléfono:
-              </label>
-              <input
-                type="tel"
-                id="phoneNumber"
-                name="phoneNumber"
-                value={formData.phoneNumber}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
-                required
-              />
-            </div>
-            <div className="mb-4">
+               <div className="mb-4">
               <label htmlFor="message" className="block text-sm font-medium">
                 Consulta:
               </label>
@@ -202,7 +198,7 @@ function Contact() {
             <div className="mb-4 flex justify-center">
               <button
                 type="submit"
-                className="w-full bg-gray-700 text-white py-2 rounded-md hover-bg-gray-800 focus:outline-none focus:ring focus:ring-blue-200"
+                className="w-full bg-gray-700 text-white py-2 rounded-md hover:bg-gray-800 focus:outline-none focus:ring focus:ring-blue-200"
               >
                 Enviar
               </button>
@@ -211,12 +207,12 @@ function Contact() {
         </div>
         <div
           id="contact-image"
-          className="w-1/2"
+          className="w-full md:w-1/2"
           style={{
             backgroundImage: `url("https://cdn.pixabay.com/photo/2015/02/02/11/08/office-620817_1280.jpg")`,
             backgroundSize: "cover",
             backgroundPosition: "center",
-            height: "95vh",
+            height: "300px", // Ajusta la altura según sea necesario
             flex: "1",
             position: "relative",
           }}
