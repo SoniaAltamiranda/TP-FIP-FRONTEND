@@ -1,10 +1,6 @@
-//   initMercadoPago('APP_USR-54003e8a-4ee5-4796-a64b-bd2701051885'
-
-// Componente    <Route path="/rentals/:id" element={<PropertyDetails />} />
 import React, { useState, useEffect } from "react";
 import API_URL from "../../configAPIclever/Url_apiClever";
 import { useLocation, useParams } from "react-router-dom";
-import "react-datepicker/dist/react-datepicker.css";
 import BookingForm from "./BookingForm";
 
 function PropertyDetails() {
@@ -14,48 +10,97 @@ function PropertyDetails() {
   const [ownerEmail, setOwnerEmail] = useState(null);
   const [userLoggedIn, setUserLoggedIn] = useState(false);
   const [open, setOpen] = useState(false);
+  const [reservationSuccess, setReservationSuccess] = useState(false);
+  const [reservations, setReservations] = useState([]);
 
   useEffect(() => {
     if (!property) {
-      const fetchProperty = async () => {
-        try {
-          const response = await fetch(`${API_URL}/properties/${id}`);
-          if (response.ok) {
-            const data = await response.json();
-            console.log("Datos de la propiedad:", data); 
-            setProperty(data);
-            if (data.id_user) {
-              fetchOwnerEmail(data.id_user);
-            } else {
-              console.error("No se encontró id_user en los datos de la propiedad");
-            }
-          } else {
-            throw new Error("Fallo al obtener los datos de la propiedad");
-          }
-        } catch (error) {
-          console.error("Error al obtener la propiedad:", error);
-        }
-      };
       fetchProperty();
     } else if (property.id_user) {
-      fetchOwnerEmail(property.id_user); 
+      fetchOwnerEmail(property.id_user);
     } else {
       console.error("No se encontró id_user en los datos de la propiedad");
     }
+
+    fetchReservations();
   }, [id, property]);
+
+  const fetchProperty = async () => {
+    try {
+      const response = await fetch(`${API_URL}/property/${id}`);
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Datos de la propiedad:", data);
+        setProperty(data);
+        if (data.id_user) {
+          fetchOwnerEmail(data.id_user);
+        } else {
+          console.error("No se encontró id_user en los datos de la propiedad");
+        }
+      } else {
+        throw new Error("Fallo al obtener los datos de la propiedad");
+      }
+    } catch (error) {
+      console.error("Error al obtener la propiedad:", error);
+    }
+  };
 
   const fetchOwnerEmail = async (userId) => {
     try {
       const response = await fetch(`${API_URL}/user/${userId}`);
       if (response.ok) {
         const data = await response.json();
-        console.log("Datos del propietario:", data); 
+        console.log("Datos del propietario:", data);
         setOwnerEmail(data.email);
       } else {
         throw new Error("Fallo al obtener los datos del propietario");
       }
     } catch (error) {
       console.error("Error al obtener los datos del propietario:", error);
+    }
+  };
+
+  const fetchReservations = async () => {
+    try {
+      const response = await fetch(`${API_URL}/booking?propertyId=${id}`);
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Datos de las reservas:", data);
+        setReservations(data);
+      } else {
+        throw new Error("Fallo al obtener las reservas de la propiedad");
+      }
+    } catch (error) {
+      console.error("Error al obtener las reservas:", error);
+    }
+  };
+
+  const deleteReservation = async (reservationId) => {
+    try {
+      const response = await fetch(`${API_URL}/booking/${reservationId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.ok) {
+        // Eliminar la reserva de la lista en el frontend
+        const updatedReservations = reservations.filter(
+          (reservation) => reservation.id_booking !== reservationId
+        );
+        setReservations(updatedReservations);
+        console.log(`Reserva ${reservationId} eliminada correctamente.`);
+      } else {
+        throw new Error("Fallo al eliminar la reserva");
+      }
+    } catch (error) {
+      console.error("Error al eliminar la reserva:", error);
+    }
+  };
+
+  const handleDeleteReservation = (reservationId) => {
+    if (window.confirm("¿Estás seguro que deseas eliminar esta reserva?")) {
+      deleteReservation(reservationId);
     }
   };
 
@@ -90,7 +135,8 @@ function PropertyDetails() {
                 {property?.title}
               </h2>
               <p className="mb-2">
-                Habitaciones: <span className="text-gray-500">{property?.rooms}</span>
+                Habitaciones:{" "}
+                <span className="text-gray-500">{property?.rooms}</span>
               </p>
               <p className="mb-2">Descripción: {property?.description}</p>
               <p className="mb-2">
@@ -100,9 +146,31 @@ function PropertyDetails() {
                 </span>
               </p>
               <p className="mb-2">
-                Ubicación: {property?.location.city}, {property?.location.state},{" "}
-                {property?.location.country}
+                Ubicación: {property?.location.city}, {property?.location.state}, {property?.location.country}
               </p>
+              <p className="mb-2">
+                Estado de la Propiedad:{" "}
+                <span className="text-gray-500">{property?.status}</span>
+              </p>
+              
+              <p className="mb-2">
+                Fechas Reservadas:{" "}
+                <span className="text-gray-500">
+                  {reservations.map((reservation) => (
+                    <span key={reservation.id_booking}>
+                      {new Date(reservation.date_init).toLocaleDateString()} - {new Date(reservation.date_finish).toLocaleDateString()}
+                      <button
+                        onClick={() => handleDeleteReservation(reservation.id_booking)}
+                        className="ml-2 bg-red-500 text-white py-1 px-3 rounded-md hover:bg-red-700 focus:outline-none focus:ring focus:ring-red-200"
+                      >
+                        Eliminar
+                      </button>
+                      <br />
+                    </span>
+                  ))}
+                </span>
+              </p>
+              
               {ownerEmail ? (
                 <>
                   <p className="mb-2">
@@ -121,15 +189,8 @@ function PropertyDetails() {
               )}
               {!userLoggedIn && (
                 <>
-                  {/* <p className="mb-2">
-                    Para obtener más información, por favor{" "}
-                    <a href="/Login" className="text-blue-500 hover:underline">
-                      HAZ CLICK AQUÍ
-                    </a>
-                    .
-                  </p> */}
                   <button
-                    onClick={() => setOpen(true)} 
+                    onClick={() => setOpen(true)}
                     className="w-full bg-gray-700 text-white py-2 rounded-md hover:bg-gray-800 focus:outline-none focus:ring focus:ring-blue-200"
                   >
                     Seleccionar Fecha
@@ -138,10 +199,10 @@ function PropertyDetails() {
                     <BookingForm
                       property={property}
                       open={open}
-                      onClose={() => setOpen(false)} 
-                      onBookingSuccess={() =>
-                        console.log("¡Reserva exitosa!")
-                      }
+                      onClose={() => setOpen(false)}
+                      onBookingSuccess={() => {
+                        console.log("¡Reserva exitosa!");
+                      }}
                     />
                   )}
                 </>

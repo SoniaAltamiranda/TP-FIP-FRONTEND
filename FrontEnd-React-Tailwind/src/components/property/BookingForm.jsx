@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { initMercadoPago, Wallet } from "@mercadopago/sdk-react";
-import API_URL from '../../configAPIclever/Url_apiClever';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -12,9 +11,10 @@ function BookingForm({ property, open, onClose }) {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [preferenceId, setPreferenceId] = useState(null);
- 
+  const [isBooking, setIsBooking] = useState(false);
   const [totalDays, setTotalDays] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
+  const [reservedDates, setReservedDates] = useState([]);
 
   useEffect(() => {
     if (startDate && endDate) {
@@ -64,7 +64,9 @@ function BookingForm({ property, open, onClose }) {
       }
     } catch (error) {
       console.error("Error creating booking:", error);
-    } 
+    } finally {
+      setIsBooking(false);
+    }
   };
 
  const createPreference = async () => {
@@ -116,11 +118,12 @@ function BookingForm({ property, open, onClose }) {
             <label className="block mb-2">Fecha de inicio</label>
             <DatePicker
               selected={startDate}
-              onChange={(date) => setStartDate(date)}
+              onChange={date => setStartDate(date)}
               selectsStart
               startDate={startDate}
               endDate={endDate}
-              minDate={new Date()} 
+              minDate={new Date()}
+              filterDate={date => !isDateReserved(date)}
               className="w-full border rounded px-2 py-1"
             />
           </div>
@@ -128,11 +131,12 @@ function BookingForm({ property, open, onClose }) {
             <label className="block mb-2">Fecha de fin</label>
             <DatePicker
               selected={endDate}
-              onChange={(date) => setEndDate(date)}
+              onChange={date => setEndDate(date)}
               selectsEnd
               startDate={startDate}
               endDate={endDate}
               minDate={startDate}
+              filterDate={date => !isDateReserved(date)}
               className="w-full border rounded px-2 py-1"
             />
           </div>
@@ -151,10 +155,10 @@ function BookingForm({ property, open, onClose }) {
             </button>
             <button
               onClick={handleBuy}
-              className={'px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600' }
-               >
-                Reservar
-  
+              className={`px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 ${isBooking && 'cursor-not-allowed'}`}
+              disabled={isBooking}
+            >
+              {isBooking ? 'Procesando...' : 'Reservar'}
             </button>
           </div>
           {preferenceId && (
@@ -163,6 +167,7 @@ function BookingForm({ property, open, onClose }) {
                 initialization={{ preferenceId }}
                 customization={{ texts: { valueProp: "smart_option" } }}
               />
+              
             </div>
           )}
         </div>

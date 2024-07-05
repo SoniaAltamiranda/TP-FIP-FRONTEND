@@ -48,8 +48,15 @@ function User() {
   }, []);
 
   const handleShowComponent = (component) => {
-    setShownComponent(component);
+    // Si se selecciona una nueva opción del menú, cerrar el menú lateral
     setMenuExpanded(false);
+
+    // Si ya se está mostrando un componente, limpiar el componente mostrado
+    if (shownComponent === component) {
+      setShownComponent("");
+    } else {
+      setShownComponent(component);
+    }
   };
 
   const handleLogout = () => {
@@ -171,7 +178,7 @@ function User() {
         )}
         {shownComponent === "Editar Usuario" && (
           <div className="w-full max-w-4xl">
-            <EditUser user={userData} />
+            <EditUser user={userData} onClose={() => setShownComponent("")} />
           </div>
         )}
         {shownComponent === "Eliminar Usuario" && (

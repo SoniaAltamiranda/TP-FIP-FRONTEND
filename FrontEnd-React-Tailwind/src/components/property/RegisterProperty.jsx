@@ -23,7 +23,7 @@ function RegisterProperty() {
     type: "",
     address: "",
     url_iframe: "",
-    id_booking: 0,
+    status : "not reserved",
     locations: [],
   });
 

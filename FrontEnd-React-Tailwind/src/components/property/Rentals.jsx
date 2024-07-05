@@ -5,7 +5,10 @@ import RentalFilter from "../rentals/Rental.Filter";
 
 function PermanentRentals() {
   const [filter, setFilter] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
   const properties = useContext(propertiesContext);
+  const propertiesPerPage = 3; 
+
 
   const filteredProperties = properties.filter((property) => {
     if (filter === "") {
@@ -15,15 +18,24 @@ function PermanentRentals() {
     }
   });
 
+  const indexOfLastProperty = currentPage * propertiesPerPage;
+  const indexOfFirstProperty = indexOfLastProperty - propertiesPerPage;
+  const currentProperties = filteredProperties.slice(
+    indexOfFirstProperty,
+    indexOfLastProperty
+  );
+
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
   return (
     <div className="bg-gray-100">
-    
+      <br />
       <div className="mt-20 container mx-auto">
-        <br />
         <h1 className="text-3xl font-semibold text-center mb-8">Alquileres</h1>
         <RentalFilter onChange={(e) => setFilter(e.target.value)} />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredProperties.map((property) => (
+          {currentProperties.map((property) => (
             <div key={property.id}>
               <div className="bg-white shadow-lg rounded-lg overflow-hidden h-[470px]">
                 <img
@@ -31,13 +43,8 @@ function PermanentRentals() {
                   alt="Imagen de propiedad"
                   className="w-full h-[200px] object-cover"
                 />
-                <div
-                  className="p-4"
-                  style={{ fontFamily: "Roboto, sans-serif" }}
-                >
-                  <h2 className="text-xl font-semibold mb-2">
-                    {property.title}
-                  </h2>
+                <div className="p-4">
+                  <h2 className="text-xl font-semibold mb-2">{property.title}</h2>
                   <p className="text-gray-600">{property.description}</p>
                   <p className="text-gray-600">Precio: ${property.price}</p>
                   <p className="text-gray-600">Tipo: {property.type}</p>
@@ -54,6 +61,26 @@ function PermanentRentals() {
               </div>
             </div>
           ))}
+        </div>
+
+       
+        <div className="flex justify-center items-center mt-4">
+          {currentPage > 1 && (
+            <button
+              className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
+              onClick={() => paginate(currentPage - 1)}
+            >
+              {"< "}
+            </button>
+          )}
+          {currentProperties.length === propertiesPerPage && (
+            <button
+              className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
+              onClick={() => paginate(currentPage + 1)}
+            >
+              {" >"}
+            </button>
+          )}
         </div>
       </div>
     </div>
