@@ -8,7 +8,7 @@ function BookingForm({ property, open, onClose }) {
   initMercadoPago("APP_USR-d8001b82-36a4-4f76-bf0e-f88f96b549ae", {
     locale: "es-AR",
   });
-
+  const token = localStorage.getItem("token");
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [preferenceId, setPreferenceId] = useState(null);
@@ -34,11 +34,12 @@ function BookingForm({ property, open, onClose }) {
       return;
     }
 
-
     const id = await createPreference();
     if (id) {
       setPreferenceId(id);
     }
+    
+
     try {
       const date = new Date();
       const bookingData = {
@@ -50,10 +51,11 @@ function BookingForm({ property, open, onClose }) {
         id_preference: id,
       };
       console.log(bookingData);
-      const res = await fetch(`${API_URL}/booking"`, {
+      const res = await fetch(`${API_URL}/booking`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify(bookingData),
       });
@@ -65,31 +67,35 @@ function BookingForm({ property, open, onClose }) {
     } 
   };
 
-  const createPreference = async () => {
+ const createPreference = async () => {
     const preferenceData = {
       title: property.title,
       quantity: totalDays,
       unit_price: parseInt(property.price),
+      
     };
-
+  
     try {
-      const response = await fetch("https://app-911c1751-2ae2-4279-bd11-cb475df87978.cleverapps.io/mercado_pago/create_preference", {
+      const response = await fetch(`${API_URL}/mercado_pago/create_preference`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify(preferenceData),
       });
-      
+  
       if (!response.ok) {
         throw new Error("Error creating preference: " + response.status);
       }
+      console.log(response.status);
       const { id } = await response.json();
       return id;
     } catch (error) {
       console.error("Error creating preference:", error);
     }
   };
+
 
   if (!property) {
     return <div>Loading...</div>;

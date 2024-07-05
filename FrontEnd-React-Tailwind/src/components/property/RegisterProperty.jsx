@@ -26,6 +26,7 @@ function RegisterProperty() {
     id_booking: 0,
     locations: [],
   });
+
   useEffect(() => {
     const getTokenAndSetUserId = async () => {
       try {
@@ -39,6 +40,7 @@ function RegisterProperty() {
     getTokenAndSetUserId();
     fetchLocations();
   }, []);
+
   const fetchLocations = async () => {
     try {
       const response = await fetch(`${API_URL}/location`);
@@ -84,8 +86,8 @@ function RegisterProperty() {
       const dataToSend = {
         ...propertyData,
         id_user: payload.sub,
-        rooms: parsedRooms,
-        price: parsedPrice,
+        rooms: Number(parsedRooms),
+        price: Number(parsedPrice),
         id_location: locationId,
         images: uploadedImages,
       };
