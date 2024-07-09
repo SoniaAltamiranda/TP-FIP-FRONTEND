@@ -18,6 +18,23 @@ function Payments() {
             paymentData[key] = value;
         });
         setPaymentData(paymentData);
+        console.log(paymentData);
+
+        const fetchPaymentData = async () => {
+           // const data = {...paymentData, paymentData.payment_id,}
+            try {
+                const response = await fetch(`${API_URL}/payment`,  {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify(paymentData),
+                });
+            } catch(error) {
+                console.log(`Error al cargar los datos`);
+            }
+        }
         
         const fetchBookingData = async () => {
             try {
@@ -41,7 +58,7 @@ function Payments() {
                 console.error('Error fetching booking data:', error);
             }
         };
-        
+        fetchPaymentData();
         fetchBookingData();
     }, [properties]);
     
@@ -111,20 +128,7 @@ function Payments() {
     return (
         <div>
             <br /><br /><br /><br />
-            <h2>Payment Information</h2>
-            <ul>
-                {Object.entries(paymentData).map(([key, value]) => (
-                    <li key={key}>
-                        <strong>{key}:</strong> {value}
-                    </li>
-                ))}
-            </ul>
-            {property && (
-                <div>
-                    <h3>Property Information</h3>
-                    <p>{property.title}</p>
-                </div>
-            )}
+            <h4>dfghfhsftghdfgh</h4>
         </div>
     );
 }

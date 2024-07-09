@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { initMercadoPago, Wallet } from "@mercadopago/sdk-react";
 import DatePicker from "react-datepicker";
+import { jwtDecode } from "jwt-decode";
 import "react-datepicker/dist/react-datepicker.css";
+import API_URL from '../../configAPIclever/Url_apiClever';
 
 function BookingForm({ property, open, onClose }) {
   initMercadoPago("APP_USR-d8001b82-36a4-4f76-bf0e-f88f96b549ae", {
     locale: "es-AR",
   });
+
   const token = localStorage.getItem("token");
+  const payload = jwtDecode(token);
+  const userId = payload.sub;
+
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [preferenceId, setPreferenceId] = useState(null);
@@ -47,6 +53,7 @@ function BookingForm({ property, open, onClose }) {
         date_init: startDate.getTime(),
         date_finish: endDate.getTime(),
         id_property: property.id_property,
+        id_user: userId,
         status: true,
         id_preference: id,
       };
@@ -96,6 +103,10 @@ function BookingForm({ property, open, onClose }) {
     } catch (error) {
       console.error("Error creating preference:", error);
     }
+  };
+
+  const isDateReserved = date => {
+    return reservedDates.some(range => date >= range.start && date <= range.end);
   };
 
 
