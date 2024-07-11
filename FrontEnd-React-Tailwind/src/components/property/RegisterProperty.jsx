@@ -29,6 +29,7 @@ function ModifyProperty({ property, locationsData, setIsEditing }) {
     getTokenAndSetUserId();
   }, []);
 
+
   const fetchLocations = async () => {
     try {
       const response = await fetch(`${API_URL}/location`);
@@ -56,7 +57,6 @@ function ModifyProperty({ property, locationsData, setIsEditing }) {
           formData.append("type", "image");
           formData.append("title", `iMAGE ${index + 1}`);
           formData.append("description", `Description for image ${index + 1}`);
-
           const response = await fetch("https://api.imgur.com/3/image", {
             method: "POST",
             headers: {

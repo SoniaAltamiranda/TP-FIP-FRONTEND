@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { initMercadoPago, Wallet } from "@mercadopago/sdk-react";
 import DatePicker from "react-datepicker";
 import { jwtDecode } from "jwt-decode";
+
 import "react-datepicker/dist/react-datepicker.css";
 import API_URL from '../../configAPIclever/Url_apiClever';
 
@@ -13,6 +14,7 @@ function BookingForm({ property, open, onClose }) {
   const token = localStorage.getItem("token");
   const payload = jwtDecode(token);
   const userId = payload.sub;
+
 
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -46,6 +48,8 @@ function BookingForm({ property, open, onClose }) {
     }
     
 
+    
+
     try {
       const date = new Date();
       const bookingData = {
@@ -54,15 +58,18 @@ function BookingForm({ property, open, onClose }) {
         date_finish: endDate.getTime(),
         id_property: property.id_property,
         id_user: userId,
+        id_user: userId,
         status: true,
         id_preference: id,
       };
       console.log(bookingData);
+ 
       const res = await fetch(`${API_URL}/booking`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`
+         
         },
         body: JSON.stringify(bookingData),
       });
@@ -82,22 +89,28 @@ function BookingForm({ property, open, onClose }) {
       quantity: totalDays,
       unit_price: parseInt(property.price),
       
+      
     };
+  
   
     try {
       const response = await fetch(`${API_URL}/mercado_pago/create_preference`, {
+     
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`
+         
         },
         body: JSON.stringify(preferenceData),
       });
+  
   
       if (!response.ok) {
         throw new Error("Error creating preference: " + response.status);
       }
       console.log(response.status);
+    
       const { id } = await response.json();
       return id;
     } catch (error) {
@@ -108,6 +121,7 @@ function BookingForm({ property, open, onClose }) {
   const isDateReserved = date => {
     return reservedDates.some(range => date >= range.start && date <= range.end);
   };
+
 
 
   if (!property) {
@@ -179,12 +193,12 @@ function BookingForm({ property, open, onClose }) {
                 customization={{ texts: { valueProp: "smart_option" } }}
               />
               
+              
             </div>
           )}
         </div>
       </div>
     )
   );
-}
-
-export default BookingForm;
+ }
+ export default BookingForm;

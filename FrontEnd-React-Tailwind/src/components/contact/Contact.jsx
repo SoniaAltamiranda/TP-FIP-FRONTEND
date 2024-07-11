@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import API_URL from '../../configAPIclever/Url_apiClever';
+import emailjs from '@emailjs/browser';
 
 function Contact() {
   const [formData, setFormData] = useState({
@@ -59,8 +60,22 @@ function Contact() {
         message: "",
       });
     }
-  }, [userData]);
+  }, [userData]); // Se ejecutará cada vez que cambie userData
+
+  useEffect(() => {
+    
+    const publicKey = "6C5rvWwadEnRo92Kq"; 
+    emailjs.init(publicKey);
+
   
+    const notificationTimeout = setTimeout(() => {
+      setNotification({ type: "", message: "" });
+    }, 2000);
+
+    return () => {
+      clearTimeout(notificationTimeout);
+    };
+  }, []); // Se ejecuta solo una vez al montar el componente
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -70,46 +85,34 @@ function Contact() {
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-  
-    try {
-      const { firstName, lastName, email, message } = formData;
-  
-      const mailtoLink = `mailto:${email}?subject=Consulta&body=${encodeURIComponent(message)}`;
-  
-      window.location.href = mailtoLink;
-  
-      setNotification({
-        type: "success",
-        message: "¡Tu consulta se ha enviado exitosamente!",
-      });
-  
-      setFormData({
-        firstName: "",
-        lastName: "",
-        email: "",
-        message: "",
-      });
-    } catch (error) {
-      console.error("Error al enviar el formulario:", error);
-      setNotification({
-        type: "error",
-        message: "Hubo un problema al enviar la consulta. Por favor, inténtalo nuevamente.",
-      });
-    }
-  };
-  
-  useEffect(() => {
-    // Limpiar la notificación después de 2 segundos
-    const notificationTimeout = setTimeout(() => {
-      setNotification({ type: "", message: "" });
-    }, 2000);
 
-    return () => {
-      clearTimeout(notificationTimeout);
-    };
-  }, [notification]); // Se ejecutará cada vez que cambie notification
+    const serviceId = "service_yxt99lh"; // Reemplaza con tu service ID de EmailJS
+    const templateId = "template_3lq9a3o"; // Reemplaza con tu template ID de EmailJS
+
+    emailjs.sendForm(serviceId, templateId, e.target)
+      .then((result) => {
+        console.log(result.text);
+        setNotification({
+          type: 'success',
+          message: '¡Tu consulta se ha enviado exitosamente!',
+        });
+        setFormData({
+          firstName: '',
+          lastName: '',
+          email: '',
+          phoneNumber: '',
+          message: '',
+        });
+      }, (error) => {
+        console.error(error.text);
+        setNotification({
+          type: 'error',
+          message: 'Hubo un problema al enviar la consulta. Por favor, inténtalo nuevamente.',
+        });
+      });
+  };
 
   return (
     <div
@@ -182,7 +185,7 @@ function Contact() {
                 required
               />
             </div>
-               <div className="mb-4">
+            <div className="mb-4">
               <label htmlFor="message" className="block text-sm font-medium">
                 Consulta:
               </label>

@@ -18,20 +18,49 @@ function Payments() {
             paymentData[key] = value;
         });
         setPaymentData(paymentData);
-        
+        console.log(paymentData);
+
+        const dataToSend = {
+            payment_id: Number(paymentData.payment_id),
+            status: paymentData.status,
+            payment_type: paymentData.payment_type,
+            merchant_order_id: Number(paymentData.merchant_order_id),
+            id_preference: paymentData.preference_id,
+            processing_mode: paymentData.processing_mode
+        }
+
+        const fetchPaymentData = async () => {
+
+            try {
+                const response = await fetch(`${API_URL}/payment`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        //Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify(dataToSend),
+                });
+                if (response.ok) {
+                    console.log("Se guardaron los datos el pago");
+                }
+            } catch (error) {
+                console.log(`Error al cargar los datos` + error);
+            }
+        }
+
         const fetchBookingData = async () => {
             try {
                 const preferenceId = paymentData['preference_id'];
                 if (!preferenceId) return;
-                
+
                 const response = await fetch(`${API_URL}/booking/byPreference/${preferenceId}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch booking data');
                 }
-                
+
                 const data = await response.json();
                 setBookingData(data);
-                
+
                 if (data && data.id_property) {
                     setIdProperty(data.id_property);
                     const foundProperty = properties.find(property => property.id_property === data.id_property);
@@ -41,10 +70,10 @@ function Payments() {
                 console.error('Error fetching booking data:', error);
             }
         };
-        
+        fetchPaymentData();
         fetchBookingData();
     }, [properties]);
-    
+
     useEffect(() => {
         const updateBookingStatus = async (bookingId) => {
             const token = localStorage.getItem("token");
@@ -109,25 +138,48 @@ function Payments() {
     }, [paymentData.status, bookingData, idProperty, property, statusBooking, statusProperty]);
 
     return (
-        <div>
-            <br /><br /><br /><br />
-            <h2>Payment Information</h2>
-            <ul>
-                {Object.entries(paymentData).map(([key, value]) => (
-                    <li key={key}>
-                        <strong>{key}:</strong> {value}
-                    </li>
-                ))}
-            </ul>
-            {property && (
-                <div>
-                    <h3>Property Information prueba </h3>
-                    <p>{property.title}</p>
-                    <p>Gracias por confiar en nosotros {bookingData.userId}</p>
-                </div>
-            )}
+        <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 mt-28">
+            <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
+                {paymentData.status === "approved" ? (
+                    <div className="text-center">
+                        <img src="../public/images/lista-de-verificacion.png" alt="Pago aprovado" className="mx-auto mb-4 w-32 h-32" />
+                        <h2 className="text-2xl font-semibold mb-4">Su pago fue exitoso.!!!</h2>
+                        {bookingData && (
+                            <div>
+                                <div className="flex justify-center flex-wrap -m-2">
+                                    {property.images.map((image, index) => (
+                                        <div key={index} className="p-2 w-1/3">
+                                            <img src={image} alt={`Property image ${index + 1}`} className="w-full h-32 object-cover rounded" />
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="mb-4">
+                                    <h3 className="text-lg font-medium">Datos de la Reserva</h3>
+                                    <h5 className="text-md font-semibold">{property.title}</h5>
+                                    <p>Fecha de entrada: {new Date(bookingData.date_init).toLocaleDateString()}</p>
+                                    <p>Fecha de salida: {new Date(bookingData.date_finish).toLocaleDateString()}</p>
+                                </div>
+                                <div className="mb-4">
+                                    <h5 className="text-md font-semibold">Datos del Propietario</h5>
+                                    <p>Nombre: {property.user.name}</p>
+                                    <p>Email: {property.user.email}</p>
+                                </div>
+
+                            </div>
+                        )}
+                    </div>
+                ) : (
+                    <div>
+                        <img src="../public/images/rechazado.png" alt="Pago rechazado" className="mx-auto mb-4 w-32 h-32" />
+                        <h2 className="text-2xl font-semibold mb-4">Su pago fue rechazado.!!!</h2>
+                        <p>Por favor, intente nuevamente mas tarde o comuniquese con la entidad de pago que está seleccionando.</p>
+                        <p>Gracias!</p>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }
 
 export default Payments;
+

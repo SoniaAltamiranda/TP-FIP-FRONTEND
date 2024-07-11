@@ -1,6 +1,8 @@
+
 import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import API_URL from "../../configAPIclever/Url_apiClever";
 import ModifyProperty from "./ModifyProperty";
@@ -88,12 +90,12 @@ function MyProperties({ user }) {
     }
   };
 
-  const handleEditClick = (property) => {
-    setPropertyToEdit(property);
-    setSelectedLocation(property.id_location);
-    setIsEditing(true);
-    fetchReservations(property.id_property);
-  };
+    const handleEditClick = (property) => {
+        setPropertyToEdit(property);
+        setSelectedLocation(property.id_location);
+        setIsEditing(true);
+        fetchReservations(property.id_property);
+    };
 
   const handleDeleteClick = (property) => {
     setPropertyToDelete(property);
