@@ -26,6 +26,7 @@ function RegisterProperty() {
     status : "not reserved",
     locations: [],
   });
+
   useEffect(() => {
     const getTokenAndSetUserId = async () => {
       try {
@@ -39,6 +40,7 @@ function RegisterProperty() {
     getTokenAndSetUserId();
     fetchLocations();
   }, []);
+
   const fetchLocations = async () => {
     try {
       const response = await fetch(`${API_URL}/location`);
@@ -65,7 +67,6 @@ function RegisterProperty() {
           formData.append("type", "image");
           formData.append("title", `iMAGE ${index + 1}`);
           formData.append("description", `Description for image ${index + 1}`);
-
           const response = await fetch("https://api.imgur.com/3/image", {
             method: "POST",
             headers: {
@@ -85,8 +86,8 @@ function RegisterProperty() {
       const dataToSend = {
         ...propertyData,
         id_user: payload.sub,
-        rooms: parsedRooms,
-        price: parsedPrice,
+        rooms: Number(parsedRooms),
+        price: Number(parsedPrice),
         id_location: locationId,
         images: uploadedImages,
       };
@@ -360,5 +361,4 @@ function RegisterProperty() {
     </div>
   );
 }
-
 export default RegisterProperty;

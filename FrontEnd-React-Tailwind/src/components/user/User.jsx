@@ -8,6 +8,7 @@ import Swal from "sweetalert2";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight, faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 import API_URL from "../../configAPIclever/Url_apiClever";
+import MyBookings from "./MyBookings";
 
 function User() {
   const [loading, setLoading] = useState(true);
@@ -126,6 +127,14 @@ function User() {
                   <div className="my-2 md:my-4">
                     <button
                       className="w-full bg-gray-700 text-white py-2 md:py-4 rounded-md hover:bg-gray-600 focus:outline-none"
+                      onClick={() => handleShowComponent("Mis Reservas")}
+                    >
+                      Mis Reservas
+                    </button>
+                  </div>
+                  <div className="my-2 md:my-4">
+                    <button
+                      className="w-full bg-gray-700 text-white py-2 md:py-4 rounded-md hover:bg-gray-600 focus:outline-none"
                       onClick={() => handleShowComponent("Editar Usuario")}
                     >
                       Editar Mis Datos
@@ -174,6 +183,11 @@ function User() {
         {shownComponent === "My Properties" && (
           <div className="w-full max-w-4xl overflow-y-auto">
             <MyProperties user={userData} />
+          </div>
+        )}
+        {shownComponent === "Mis Reservas" && (
+          <div className="w-full max-w-4xl">
+            <MyBookings user={userData} />
           </div>
         )}
         {shownComponent === "Editar Usuario" && (

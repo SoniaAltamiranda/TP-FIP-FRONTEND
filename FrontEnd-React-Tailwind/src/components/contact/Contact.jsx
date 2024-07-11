@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import {jwtDecode} from "jwt-decode"; 
+import { jwtDecode } from "jwt-decode";
 import API_URL from '../../configAPIclever/Url_apiClever';
+import emailjs from '@emailjs/browser';
 
 function Contact() {
   const [formData, setFormData] = useState({
@@ -63,6 +64,21 @@ function Contact() {
     }
   }, [userData]); // Se ejecutará cada vez que cambie userData
 
+  useEffect(() => {
+    
+    const publicKey = "6C5rvWwadEnRo92Kq"; 
+    emailjs.init(publicKey);
+
+  
+    const notificationTimeout = setTimeout(() => {
+      setNotification({ type: "", message: "" });
+    }, 2000);
+
+    return () => {
+      clearTimeout(notificationTimeout);
+    };
+  }, []); // Se ejecuta solo una vez al montar el componente
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -71,45 +87,34 @@ function Contact() {
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Aquí va la lógica para enviar el formulario
-    try {
-      // Lógica para enviar el formulario
-      console.log("Formulario enviado:", formData);
-      // Aquí puedes llamar a la función sendEmail(formData) o realizar la lógica de envío adecuada
-      setNotification({
-        type: "success",
-        message: "¡Tu consulta se ha enviado exitosamente!",
+    const serviceId = "service_yxt99lh"; // Reemplaza con tu service ID de EmailJS
+    const templateId = "template_3lq9a3o"; // Reemplaza con tu template ID de EmailJS
+
+    emailjs.sendForm(serviceId, templateId, e.target)
+      .then((result) => {
+        console.log(result.text);
+        setNotification({
+          type: 'success',
+          message: '¡Tu consulta se ha enviado exitosamente!',
+        });
+        setFormData({
+          firstName: '',
+          lastName: '',
+          email: '',
+          phoneNumber: '',
+          message: '',
+        });
+      }, (error) => {
+        console.error(error.text);
+        setNotification({
+          type: 'error',
+          message: 'Hubo un problema al enviar la consulta. Por favor, inténtalo nuevamente.',
+        });
       });
-      // Reinicia el estado del formulario después del envío exitoso
-      setFormData({
-        firstName: "",
-        lastName: "",
-        email: "",
-        phoneNumber: "",
-        message: "",
-      });
-    } catch (error) {
-      console.error("Error al enviar el formulario:", error);
-      setNotification({
-        type: "error",
-        message: "Hubo un problema al enviar la consulta. Por favor, inténtalo nuevamente.",
-      });
-    }
   };
-
-  useEffect(() => {
-    // Limpiar la notificación después de 2 segundos
-    const notificationTimeout = setTimeout(() => {
-      setNotification({ type: "", message: "" });
-    }, 2000);
-
-    return () => {
-      clearTimeout(notificationTimeout);
-    };
-  }, [notification]); // Se ejecutará cada vez que cambie notification
 
   return (
     <div
@@ -182,7 +187,7 @@ function Contact() {
                 required
               />
             </div>
-               <div className="mb-4">
+            <div className="mb-4">
               <label htmlFor="message" className="block text-sm font-medium">
                 Consulta:
               </label>

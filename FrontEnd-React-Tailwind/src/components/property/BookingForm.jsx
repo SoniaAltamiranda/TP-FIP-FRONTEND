@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { initMercadoPago, Wallet } from "@mercadopago/sdk-react";
 import DatePicker from "react-datepicker";
+import { jwtDecode } from "jwt-decode";
 import "react-datepicker/dist/react-datepicker.css";
+import API_URL from '../../configAPIclever/Url_apiClever';
 
-function BookingForm({ property, open, onClose, onBookingSuccess }) {
+function BookingForm({ property, open, onClose }) {
   initMercadoPago("APP_USR-d8001b82-36a4-4f76-bf0e-f88f96b549ae", {
     locale: "es-AR",
   });
+
+  const token = localStorage.getItem("token");
+  const payload = jwtDecode(token);
+  const userId = payload.sub;
 
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -28,28 +34,18 @@ function BookingForm({ property, open, onClose, onBookingSuccess }) {
     }
   }, [startDate, endDate, property.price]);
 
-  useEffect(() => {
-    if (property && property.booking) {
-      const dates = property.booking.map(booking => ({
-        start: new Date(booking.date_init),
-        end: new Date(booking.date_finish)
-      }));
-      setReservedDates(dates);
-    }
-  }, [property]);
-
   const handleBuy = async () => {
     if (!startDate || !endDate) {
       console.error("Start date and end date must be selected");
       return;
     }
 
-    setIsBooking(true);
-
     const id = await createPreference();
     if (id) {
       setPreferenceId(id);
     }
+    
+
     try {
       const date = new Date();
       const bookingData = {
@@ -57,22 +53,22 @@ function BookingForm({ property, open, onClose, onBookingSuccess }) {
         date_init: startDate.getTime(),
         date_finish: endDate.getTime(),
         id_property: property.id_property,
+        id_user: userId,
         status: true,
         id_preference: id,
       };
       console.log(bookingData);
-      const res = await fetch("http://localhost:3000/booking", {
+      const res = await fetch(`${API_URL}/booking`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify(bookingData),
       });
       if (!res.ok) {
         throw new Error("Failed to create booking");
       }
-      console.log("Booking created successfully");
-      onBookingSuccess();
     } catch (error) {
       console.error("Error creating booking:", error);
     } finally {
@@ -80,25 +76,28 @@ function BookingForm({ property, open, onClose, onBookingSuccess }) {
     }
   };
 
-  const createPreference = async () => {
+ const createPreference = async () => {
     const preferenceData = {
       title: property.title,
       quantity: totalDays,
       unit_price: parseInt(property.price),
+      
     };
-
+  
     try {
-      const response = await fetch("http://localhost:3000/mercado_pago/create_preference", {
+      const response = await fetch(`${API_URL}/mercado_pago/create_preference`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify(preferenceData),
       });
-
+  
       if (!response.ok) {
         throw new Error("Error creating preference: " + response.status);
       }
+      console.log(response.status);
       const { id } = await response.json();
       return id;
     } catch (error) {
@@ -109,6 +108,7 @@ function BookingForm({ property, open, onClose, onBookingSuccess }) {
   const isDateReserved = date => {
     return reservedDates.some(range => date >= range.start && date <= range.end);
   };
+
 
   if (!property) {
     return <div>Loading...</div>;
@@ -178,6 +178,7 @@ function BookingForm({ property, open, onClose, onBookingSuccess }) {
                 initialization={{ preferenceId }}
                 customization={{ texts: { valueProp: "smart_option" } }}
               />
+              
             </div>
           )}
         </div>
@@ -187,3 +188,12 @@ function BookingForm({ property, open, onClose, onBookingSuccess }) {
 }
 
 export default BookingForm;
+
+
+
+
+
+
+
+
+

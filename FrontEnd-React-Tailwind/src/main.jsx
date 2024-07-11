@@ -6,15 +6,22 @@ import { BrowserRouter } from "react-router-dom";
 import { PropertiesProvider } from "../src/context/propertiesContext.jsx";
 // import { UsersProvider } from "../src/context/usersContext.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
+import { StrictMode } from 'react';
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-   <AuthProvider>
-      <PropertiesProvider>
-        {/* <UsersProvider> */}
+
+  <>
+    <StrictMode>
+      <AuthProvider>
+        <PropertiesProvider>
+          {/* <UsersProvider> */}
           <BrowserRouter>
+
             <App />
           </BrowserRouter>
-        {/* </UsersProvider> */}
-      </PropertiesProvider>
-   </AuthProvider>  
+          {/* </UsersProvider> */}
+        </PropertiesProvider>
+      </AuthProvider>
+    </StrictMode>
+  </>
 );
