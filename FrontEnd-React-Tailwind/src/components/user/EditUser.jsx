@@ -1,18 +1,18 @@
 import React, { useState } from "react";
 import Swal from "sweetalert2";
 import { useNavigate } from 'react-router-dom';
-import API_URL from "../../configAPIclever/Url_apiClever"; // Asegúrate de importar la URL correcta de tu API
+import API_URL from "../../configAPIclever/Url_apiClever";
 
 function EditUser({ user }) {
   const navigate = useNavigate();
   const [userData, setUserData] = useState({
     name: user.name,
-    lastname: user.lastname, // Asegúrate de tener este campo en el usuario
+    lastname: user.lastname, 
     email: user.email,
-    password: "",           // Campo para la contraseña actual
-    newPassword: "",        // Campo para la nueva contraseña
-    confirmNewPassword: "", // Campo para confirmar la nueva contraseña
-    username: user.username, // Asegúrate de tener este campo en el usuario
+    password: "",          
+    newPassword: "",        
+    confirmNewPassword: "", 
+    username: user.username,
   });
 
   function handleChange(e) {
@@ -43,7 +43,7 @@ function EditUser({ user }) {
   function handleSubmit(e) {
     e.preventDefault();
 
-    // Validación de la nueva contraseña
+
     if (userData.newPassword !== userData.confirmNewPassword) {
       Swal.fire({
         icon: 'error',
@@ -55,21 +55,21 @@ function EditUser({ user }) {
 
     const dataToSend = {
       name: userData.name,
-      lastname: userData.lastname, // Incluye este campo
+      lastname: userData.lastname, 
       email: userData.email,
       password: userData.password,
       newPassword: userData.newPassword,
-      username: userData.username, // Incluye este campo
+      username: userData.username, 
     };
 
-    // Obtén el token de donde lo estés almacenando (localStorage, contexto, etc.)
-    const token = localStorage.getItem('token'); // O de donde lo estés guardando
+   
+    const token = localStorage.getItem('token');
 
     fetch(`${API_URL}/user/${user.id_user}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`, // Incluye el token en el encabezado de autorización
+        'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify(dataToSend),
     })
@@ -79,7 +79,7 @@ function EditUser({ user }) {
             throw new Error(data.message || 'Error al actualizar usuario');
           });
         }
-        return response.json(); // Asegúrate de devolver la respuesta parseada como JSON
+        return response.json(); 
       })
       .then((responseData) => {
         Swal.fire({

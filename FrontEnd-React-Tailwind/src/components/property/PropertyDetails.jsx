@@ -86,35 +86,7 @@ function PropertyDetails() {
     }
   };
 
-  const deleteReservation = async (reservationId) => {
-    try {
-      const response = await fetch(`${API_URL}/booking/${reservationId}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization : `Bearer ${token}`
-        },
-      });
-      if (response.ok) {
-      
-        const updatedReservations = reservations.filter(
-          (reservation) => reservation.id_booking !== reservationId
-        );
-        setReservations(updatedReservations);
-        console.log(`Reserva ${reservationId} eliminada correctamente.`);
-      } else {
-        throw new Error("Fallo al eliminar la reserva");
-      }
-    } catch (error) {
-      console.error("Error al eliminar la reserva:", error);
-    }
-  };
 
-  const handleDeleteReservation = (reservationId) => {
-    if (window.confirm("¿Estás seguro que deseas eliminar esta reserva?")) {
-      deleteReservation(reservationId);
-    }
-  };
 
   const handleContactClick = () => {
     const mailtoLink = `mailto:${ownerEmail}?subject=Interesado%20en%20${property.title}&body=Hola,%0D%0A%0D%0AEstoy%20interesado%20en%20su%20propiedad%20${property.title}.%20Por%20favor,%20p%C3%B3ngase%20en%20contacto%20conmigo%20para%20obtener%20m%C3%A1s%20informaci%C3%B3n.%0D%0A%0D%0AGracias.`;
@@ -171,12 +143,7 @@ function PropertyDetails() {
                   {reservations.map((reservation) => (
                     <span key={reservation.id_booking}>
                       {new Date(reservation.date_init).toLocaleDateString()} - {new Date(reservation.date_finish).toLocaleDateString()}
-                      <button
-                        onClick={() => handleDeleteReservation(reservation.id_booking)}
-                        className="ml-2 bg-red-500 text-white py-1 px-3 rounded-md hover:bg-red-700 focus:outline-none focus:ring focus:ring-red-200"
-                      >
-                        Eliminar
-                      </button>
+                      
                       <br />
                     </span>
                   ))}

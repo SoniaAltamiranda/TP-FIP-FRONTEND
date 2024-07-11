@@ -11,6 +11,7 @@ import PropertyDetails from "./components/property/PropertyDetails";
 import Navbar from "./components/navbar/Navbar";
 import AboutUs from "./components/aboutUs/AboutUs";
 import { useAuth } from "./context/AuthContext";
+import Payments from "./components/property/Payments";
 
 
 const App = () => {
@@ -29,6 +30,7 @@ const App = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/rentals" element={<Rentals />} />
           <Route path="/rentals/:id" element={<PropertyDetails />} />
+          <Route path="/payments" element={<Payments />} />
           <Route path="/user" element={isAuthenticated ? <User /> : <Navigate to="/login" />} />
         </Routes>
         <Footer />

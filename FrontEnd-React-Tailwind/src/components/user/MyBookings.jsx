@@ -29,6 +29,31 @@ const MyBookings = ({ user }) => {
     fetchBookings();
   }, [user.id]);
 
+  const token = localStorage.getItem('token');
+
+  const deleteReservation = async (reservationId) => {
+    try {
+      const response = await fetch(`${API_URL}/booking/${reservationId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+      });
+      if (response.ok) {
+        const updatedBookings = bookings.filter(booking => booking.id_booking !== reservationId);
+        setBookings(updatedBookings);
+        console.log(`Reserva ${reservationId} eliminada correctamente.`);
+        Swal.fire('Reserva cancelada', 'La reserva ha sido cancelada correctamente.', 'success');
+      } else {
+        throw new Error("Fallo al eliminar la reserva");
+      }
+    } catch (error) {
+      console.error("Error al eliminar la reserva:", error);
+      Swal.fire('Error', 'Hubo un problema al intentar cancelar la reserva.', 'error');
+    }
+  };
+
   const handleCancelBooking = (bookingId) => {
     Swal.fire({
       title: '¿Estás seguro?',
@@ -41,8 +66,7 @@ const MyBookings = ({ user }) => {
       cancelButtonText: 'No'
     }).then((result) => {
       if (result.isConfirmed) {
-        // Aquí puedes realizar la lógica para cancelar la reserva, por ejemplo, hacer una solicitud a tu API
-        console.log('Reserva cancelada:', bookingId);
+        deleteReservation(bookingId);
       }
     });
   };
@@ -71,7 +95,7 @@ const MyBookings = ({ user }) => {
           </thead>
           <tbody>
             {bookings.map((booking) => (
-              <tr key={booking.id}>
+              <tr key={booking.id_booking}>
                 <td className="py-2 px-4 border-b border-gray-200">{booking.property.title}</td>
                 <td className="py-2 px-4 border-b border-gray-200">{new Date(booking.date_init).toLocaleDateString()}</td>
                 <td className="py-2 px-4 border-b border-gray-200">{new Date(booking.date_finish).toLocaleDateString()}</td>
@@ -81,7 +105,7 @@ const MyBookings = ({ user }) => {
                 <td className="py-2 px-4 border-b border-gray-200">
                   <button
                     className="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-700"
-                    onClick={() => handleCancelBooking(booking.id)}
+                    onClick={() => handleCancelBooking(booking.id_booking)}
                   >
                     Cancelar reserva
                   </button>
@@ -96,4 +120,3 @@ const MyBookings = ({ user }) => {
 };
 
 export default MyBookings;
-

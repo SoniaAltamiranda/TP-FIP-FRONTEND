@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { initMercadoPago, Wallet } from "@mercadopago/sdk-react";
 import DatePicker from "react-datepicker";
-import { jwtDecode } from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 
 import "react-datepicker/dist/react-datepicker.css";
 import API_URL from '../../configAPIclever/Url_apiClever';
@@ -14,7 +14,6 @@ function BookingForm({ property, open, onClose }) {
   const token = localStorage.getItem("token");
   const payload = jwtDecode(token);
   const userId = payload.sub;
-
 
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -36,6 +35,29 @@ function BookingForm({ property, open, onClose }) {
     }
   }, [startDate, endDate, property.price]);
 
+  useEffect(() => {
+    const fetchReservedDates = async () => {
+      try {
+        const response = await fetch(`${API_URL}/booking?propertyId=${property.id_property}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch reserved dates");
+        }
+        const data = await response.json();
+        const dates = data.map(booking => ({
+          start: new Date(booking.date_init),
+          end: new Date(booking.date_finish)
+        }));
+        setReservedDates(dates);
+      } catch (error) {
+        console.error("Error fetching reserved dates:", error);
+      }
+    };
+
+    if (property.id_property) {
+      fetchReservedDates();
+    }
+  }, [property.id_property]);
+
   const handleBuy = async () => {
     if (!startDate || !endDate) {
       console.error("Start date and end date must be selected");
@@ -46,9 +68,6 @@ function BookingForm({ property, open, onClose }) {
     if (id) {
       setPreferenceId(id);
     }
-    
-
-    
 
     try {
       const date = new Date();
@@ -58,18 +77,16 @@ function BookingForm({ property, open, onClose }) {
         date_finish: endDate.getTime(),
         id_property: property.id_property,
         id_user: userId,
-        id_user: userId,
         status: true,
         id_preference: id,
       };
       console.log(bookingData);
- 
+
       const res = await fetch(`${API_URL}/booking`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`
-         
         },
         body: JSON.stringify(bookingData),
       });
@@ -83,34 +100,28 @@ function BookingForm({ property, open, onClose }) {
     }
   };
 
- const createPreference = async () => {
+  const createPreference = async () => {
     const preferenceData = {
       title: property.title,
       quantity: totalDays,
       unit_price: parseInt(property.price),
-      
-      
     };
-  
-  
+
     try {
       const response = await fetch(`${API_URL}/mercado_pago/create_preference`, {
-     
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`
-         
         },
         body: JSON.stringify(preferenceData),
       });
-  
-  
+
       if (!response.ok) {
         throw new Error("Error creating preference: " + response.status);
       }
       console.log(response.status);
-    
+
       const { id } = await response.json();
       return id;
     } catch (error) {
@@ -121,8 +132,6 @@ function BookingForm({ property, open, onClose }) {
   const isDateReserved = date => {
     return reservedDates.some(range => date >= range.start && date <= range.end);
   };
-
-
 
   if (!property) {
     return <div>Loading...</div>;
@@ -192,13 +201,12 @@ function BookingForm({ property, open, onClose }) {
                 initialization={{ preferenceId }}
                 customization={{ texts: { valueProp: "smart_option" } }}
               />
-              
-              
             </div>
           )}
         </div>
       </div>
     )
   );
- }
- export default BookingForm;
+}
+
+export default BookingForm;

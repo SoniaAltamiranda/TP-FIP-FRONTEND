@@ -6,8 +6,8 @@ import { propertiesContext } from "../../context/propertiesContext";
 function FeaturedPosts() {
   const properties = useContext(propertiesContext);
   const [currentPage, setCurrentPage] = useState(1);
-  const propertiesPerPageLarge = 6; // Mostrar 6 propiedades por página en pantallas grandes
-  const propertiesPerPageSmall = 3; // Mostrar 3 propiedades por página en pantallas pequeñas
+  const propertiesPerPageLarge = 6;
+  const propertiesPerPageSmall = 3; 
 
 
   const propertiesPerPage = window.innerWidth >= 640 ? propertiesPerPageLarge : propertiesPerPageSmall;

@@ -8,6 +8,7 @@ function Contact() {
     firstName: "",
     lastName: "",
     email: "",
+    phoneNumber: "",
     message: "",
   });
 
@@ -22,45 +23,46 @@ function Contact() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const payload = jwtDecode(token);
-  
+        const token = localStorage.getItem("token"); 
+        const payload = jwtDecode(token); 
+
         const response = await fetch(
-          `${API_URL}/user/${payload.sub}`,
+          `${API_URL}/user/${payload.sub}`, 
           {
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${token}`, 
             },
           }
         );
-  
+
         if (!response.ok) {
           throw new Error("Error al obtener los datos del usuario");
         }
-  
-        const data = await response.json();
-        setUserData(data);
-        setLoading(false);
+
+        const data = await response.json(); 
+        setUserData(data); 
+        setLoading(false); 
       } catch (error) {
         console.error("Error:", error);
-        setLoading(false);
+        setLoading(false); 
       }
     };
-  
-    fetchUserData();
+
+    fetchUserData(); 
   }, []);
-  
 
   useEffect(() => {
+  
     if (userData) {
       setFormData({
         firstName: userData.firstName,
         lastName: userData.lastName,
         email: userData.email,
+        phoneNumber: "",
         message: "",
       });
     }
-  }, [userData]); // Se ejecutará cada vez que cambie userData
+  }, [userData]); 
 
   useEffect(() => {
     
@@ -75,7 +77,7 @@ function Contact() {
     return () => {
       clearTimeout(notificationTimeout);
     };
-  }, []); // Se ejecuta solo una vez al montar el componente
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -88,8 +90,8 @@ function Contact() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const serviceId = "service_yxt99lh"; // Reemplaza con tu service ID de EmailJS
-    const templateId = "template_3lq9a3o"; // Reemplaza con tu template ID de EmailJS
+    const serviceId = "service_yxt99lh"; 
+    const templateId = "template_3lq9a3o"; 
 
     emailjs.sendForm(serviceId, templateId, e.target)
       .then((result) => {
@@ -199,13 +201,13 @@ function Contact() {
               />
             </div>
             <div className="mb-4 flex justify-center">
-  <button
-    onClick={handleSubmit}
-    className="w-full bg-gray-700 text-white py-2 rounded-md hover:bg-gray-800 focus:outline-none focus:ring focus:ring-blue-200"
-  >
-    Enviar
-  </button>
-</div>
+              <button
+                type="submit"
+                className="w-full bg-gray-700 text-white py-2 rounded-md hover:bg-gray-800 focus:outline-none focus:ring focus:ring-blue-200"
+              >
+                Enviar
+              </button>
+            </div>
           </form>
         </div>
         <div

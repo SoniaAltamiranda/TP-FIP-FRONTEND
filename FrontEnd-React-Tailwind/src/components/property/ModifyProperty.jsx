@@ -12,7 +12,6 @@ function ModifyProperty({ property, locationsData, setIsEditing }) {
     try {
       const token = localStorage.getItem("token");
 
-      // Subir imágenes a Imgur
       const uploadedImages = await Promise.all(
         newImages.map(async (imageFile, index) => {
           const formData = new FormData();
@@ -42,7 +41,7 @@ function ModifyProperty({ property, locationsData, setIsEditing }) {
         })
       );
 
-      // Preparar datos para la actualización
+
       const updatedProperty = {
         ...propertyToEdit,
         id_location: Number(selectedLocation),

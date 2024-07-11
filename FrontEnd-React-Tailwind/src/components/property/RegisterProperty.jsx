@@ -1,57 +1,68 @@
+//firebase hosting:disable && firebase hosting:enable   BORRAR CACHE FIREBASE
 import React, { useState, useEffect } from "react";
 import API_URL from "../../configAPIclever/Url_apiClever";
 import { jwtDecode } from "jwt-decode";
 import Swal from "sweetalert2";
 import { ClipLoader } from "react-spinners";
 import { css } from "@emotion/react";
-
-function ModifyProperty({ property, locationsData, setIsEditing }) {
+function RegisterProperty() {
   const override = css`
     display: block;
     margin: 0 auto;
   `;
-
   const [loading, setLoading] = useState(false);
-  const [propertyToEdit, setPropertyToEdit] = useState(property);
-  const [selectedLocation, setSelectedLocation] = useState(property.id_location);
-  const [newImages, setNewImages] = useState([]);
+  const [propertyData, setPropertyData] = useState({
+    title: "",
+    description: "",
+    rooms: 0,
+    price: 0,
+    images: [],
+    rate: 0,
+    type: "",
+    address: "",
+    url_iframe: "",
+    status : "not reserved",
+    locations: [],
+  });
 
+
+    
+          
+  
   useEffect(() => {
     const getTokenAndSetUserId = async () => {
       try {
         const token = localStorage.getItem("token");
         const payload = jwtDecode(token);
-        setPropertyToEdit((prevData) => ({ ...prevData, id_user: payload.sub }));
+        setPropertyData((prevData) => ({ ...prevData, id_user: payload.sub }));
       } catch (error) {
         console.error("Error al obtener el id_user del token:", error);
       }
     };
     getTokenAndSetUserId();
+    fetchLocations();
   }, []);
-
-
   const fetchLocations = async () => {
     try {
       const response = await fetch(`${API_URL}/location`);
       const locations = await response.json();
-      setPropertyToEdit((prevData) => ({ ...prevData, locations }));
+      setPropertyData((prevData) => ({ ...prevData, locations }));
     } catch (error) {
       console.error("Error al obtener las ubicaciones:", error);
     }
   };
-
-  useEffect(() => {
-    fetchLocations();
-  }, []);
-
-  const handleUpdate = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
     try {
       const token = localStorage.getItem("token");
+      const payload = jwtDecode(token);
+      const locationId = parseInt(propertyData.id_location);
+      const userId = parseInt(propertyData.id_user);
+      const parsedRooms = parseInt(propertyData.rooms);
+      const parsedPrice = parseInt(propertyData.price);
       const uploadedImages = await Promise.all(
-        newImages.map(async (imageFile, index) => {
+        propertyData.images.map(async (imageFile, index) => {
           const formData = new FormData();
           formData.append("image", imageFile);
           formData.append("type", "image");
@@ -63,106 +74,87 @@ function ModifyProperty({ property, locationsData, setIsEditing }) {
               Authorization: `Client-ID 83323e63212094a`,
             },
             body: formData,
+            redirect: "follow",
           });
-
-          if (!response.ok) {
-            throw new Error(`Error al subir la imagen a Imgur: ${response.statusText}`);
-          }
-
           const result = await response.json();
           if (result.success) {
             return result.data.link;
           } else {
-            throw new Error("Error al obtener el enlace de la imagen");
+            throw new Error("Error al subir la imagen a Imgur");
           }
         })
       );
-
-      const updatedProperty = {
-        ...propertyToEdit,
-        id_location: Number(selectedLocation),
-        rooms: Number(propertyToEdit.rooms),
-        price: Number(propertyToEdit.price),
-        images: [...propertyToEdit.images, ...uploadedImages],
+      const dataToSend = {
+        ...propertyData,
+        id_user: payload.sub,
+        rooms: Number(parsedRooms),
+        price: Number(parsedPrice),
+        id_location: locationId,
+        images: uploadedImages,
       };
-
-      const response = await fetch(`${API_URL}/property/${propertyToEdit.id_property}`, {
-        method: "PUT",
+      const response = await fetch(`${API_URL}/property`, {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(updatedProperty),
+        body: JSON.stringify(dataToSend),
       });
-
-      if (response.ok) {
-        setIsEditing(false);
-        Swal.fire({
-          title: "Éxito",
-          text: "La propiedad se ha actualizado correctamente",
-          icon: "success",
-        });
-      } else {
-        const responseData = await response.json();
-        console.error("Error en la respuesta:", response.status, response.statusText);
-        console.error("Datos de la respuesta:", responseData);
-        throw new Error("Error al actualizar la propiedad");
-      }
+      const data = await response.json();
+      console.log("Propiedad registrada:", data);
+      Swal.fire({
+        title: "¡Propiedad Registrada!",
+        text: "Tu propiedad ha sido registrada exitosamente.",
+        icon: "success",
+      });
     } catch (error) {
-      console.error("Error al actualizar la propiedad:", error);
+      console.error("Error al registrar la propiedad:", error);
       Swal.fire({
         title: "Error",
-        text: "Hubo un error al actualizar la propiedad. Por favor, inténtalo de nuevo más tarde.",
+        text: "Hubo un error al registrar la propiedad. Por favor, inténtalo de nuevo más tarde.",
         icon: "error",
       });
     } finally {
       setLoading(false);
     }
   };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "id_location") {
-      setSelectedLocation(value);
+      const locationId = parseInt(value);
+      setPropertyData((prevData) => ({ ...prevData, id_location: locationId }));
     } else {
-      setPropertyToEdit((prevData) => ({ ...prevData, [name]: value }));
+      setPropertyData((prevData) => ({ ...prevData, [name]: value }));
     }
   };
-
   const handleFileSelect = (e) => {
     const files = e.target.files;
     const imageFiles = Array.from(files);
-    setNewImages(imageFiles);
-    setPropertyToEdit((prevData) => ({
+    setPropertyData((prevData) => ({
       ...prevData,
       images: [...prevData.images, ...imageFiles],
     }));
   };
-
   const handleRemoveImage = (indexToRemove) => {
-    const updatedImages = propertyToEdit.images.filter(
+    const updatedImages = propertyData.images.filter(
       (_, index) => index !== indexToRemove
     );
-    setPropertyToEdit((prevData) => ({
+    setPropertyData((prevData) => ({
       ...prevData,
       images: updatedImages,
     }));
   };
-
   const handleDragOver = (e) => {
     e.preventDefault();
   };
-
   const handleDrop = (e) => {
     e.preventDefault();
   };
-
   return (
-    <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-900 bg-opacity-50">
-      <div className="bg-white p-6 rounded-lg shadow-md w-full md:w-2/3">
-        <form onSubmit={handleUpdate} encType="multipart/form-data">
-          <h2 className="text-2xl font-bold">Datos de la propiedad:</h2>
-          <div className="mb-2">
+    <div className="flex justify-center items-center h-auto">
+      <div className="max-w-md p-4 bg-white rounded-lg shadow-md mt-20">
+        <form onSubmit={handleSubmit} encType="multipart/form-data">
+          <div className="">
             <label
               htmlFor="title"
               className="block text-gray-800 text-sm font-bold mb-1"
@@ -173,7 +165,7 @@ function ModifyProperty({ property, locationsData, setIsEditing }) {
               type="text"
               id="title"
               name="title"
-              value={propertyToEdit.title}
+              value={propertyData.title}
               onChange={handleChange}
               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
               required
@@ -191,7 +183,7 @@ function ModifyProperty({ property, locationsData, setIsEditing }) {
             <select
               id="type"
               name="type"
-              value={propertyToEdit.type}
+              value={propertyData.type}
               onChange={handleChange}
               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
               required
@@ -203,9 +195,9 @@ function ModifyProperty({ property, locationsData, setIsEditing }) {
               </option>
             </select>
           </div>
-          <div className="mb-2">
+          <div className="">
             <label
-              htmlFor="address"
+              htmlFor="title"
               className="block text-gray-800 text-sm font-bold mb-1"
             >
               Dirección:
@@ -214,12 +206,12 @@ function ModifyProperty({ property, locationsData, setIsEditing }) {
               type="text"
               id="address"
               name="address"
-              value={propertyToEdit.address}
+              value={propertyData.address}
               onChange={handleChange}
               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
               required
-              pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s\d]+"
-              title="Dirección válida"
+              pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+"
+              title="Solo se permiten letras y espacios en blanco"
             />
           </div>
           <div className="mb-2">
@@ -232,13 +224,13 @@ function ModifyProperty({ property, locationsData, setIsEditing }) {
             <select
               id="location"
               name="id_location"
-              value={selectedLocation}
+              value={propertyData.id_location}
               onChange={handleChange}
               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
               required
             >
               <option value="">Seleccionar ubicación</option>
-              {propertyToEdit.locations.map((location) => (
+              {propertyData.locations.map((location) => (
                 <option key={location.id_location} value={location.id_location}>
                   {`${location.city}, ${location.state}, ${location.country}`}
                 </option>
@@ -247,7 +239,7 @@ function ModifyProperty({ property, locationsData, setIsEditing }) {
           </div>
           <div className="mb-2">
             <label
-              htmlFor="rooms"
+              htmlFor="title"
               className="block text-gray-800 text-sm font-bold mb-1"
             >
               Ambientes:
@@ -256,7 +248,7 @@ function ModifyProperty({ property, locationsData, setIsEditing }) {
               type="number"
               id="rooms"
               name="rooms"
-              value={propertyToEdit.rooms}
+              value={propertyData.rooms}
               onChange={handleChange}
               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
               required
@@ -264,7 +256,7 @@ function ModifyProperty({ property, locationsData, setIsEditing }) {
           </div>
           <div className="mb-2">
             <label
-              htmlFor="description"
+              htmlFor="title"
               className="block text-gray-800 text-sm font-bold mb-1"
             >
               Descripción:
@@ -272,15 +264,15 @@ function ModifyProperty({ property, locationsData, setIsEditing }) {
             <textarea
               id="description"
               name="description"
-              value={propertyToEdit.description}
+              value={propertyData.description}
               onChange={handleChange}
-              className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline h-auto resize-none"
+              className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline h-auto resize-none block"
               required
             />
           </div>
           <div className="mb-2">
             <label
-              htmlFor="price"
+              htmlFor="title"
               className="block text-gray-800 text-sm font-bold mb-1"
             >
               Precio - $:
@@ -289,13 +281,13 @@ function ModifyProperty({ property, locationsData, setIsEditing }) {
               type="number"
               id="price"
               name="price"
-              value={propertyToEdit.price}
+              value={propertyData.price}
               onChange={handleChange}
               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
               required
             />
           </div>
-          <div className="mb-2">
+          <div>
             <label
               htmlFor="imageUpload"
               className="block text-sm text-gray-800 font-bold mb-2"
@@ -308,8 +300,11 @@ function ModifyProperty({ property, locationsData, setIsEditing }) {
               onDragOver={handleDragOver}
               onDrop={handleDrop}
             >
-              <div className="flex flex-wrap gap-4" style={{ maxWidth: "300px" }}>
-                {propertyToEdit.images.map((imageUrl, index) => (
+              <div
+                className="flex flex-wrap gap-4"
+                style={{ maxWidth: "300px" }}
+              >
+                {propertyData.images.map((imageUrl, index) => (
                   <div key={index} className="relative">
                     <img
                       src={
@@ -329,16 +324,6 @@ function ModifyProperty({ property, locationsData, setIsEditing }) {
                     </button>
                   </div>
                 ))}
-                {newImages.map((imageFile, index) => (
-                  <div key={`new-${index}`} className="relative">
-                    <img
-                      src={URL.createObjectURL(imageFile)}
-                      alt={`New Image ${index}`}
-                      className="max-w-18 h-auto mb-2 rounded-lg"
-                      style={{ maxWidth: "100px", maxHeight: "100px" }}
-                    />
-                  </div>
-                ))}
               </div>
               <label htmlFor="imageUpload">
                 Arrastra y suelta imágenes aquí
@@ -353,33 +338,26 @@ function ModifyProperty({ property, locationsData, setIsEditing }) {
               style={{ display: "none" }}
             />
           </div>
-          <div className="flex justify-end">
+          <div className="flex justify-center mt-4">
+            <ClipLoader
+              loading={loading}
+              css={override}
+              size={70}
+              color={"#2A2A26 "}
+            />
+          </div>
+          {!loading && (
             <button
               type="submit"
-              className="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded mr-2"
+              className="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded"
               disabled={loading}
             >
-              Guardar
+              Enviar
             </button>
-            <button
-              onClick={() => setIsEditing(false)}
-              className="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded"
-            >
-              Cancelar
-            </button>
-          </div>
+          )}
         </form>
-        <div className="flex justify-center mt-4">
-          <ClipLoader
-            loading={loading}
-            css={override}
-            size={70}
-            color={"#2A2A26"}
-          />
-        </div>
       </div>
     </div>
   );
 }
-
-export default ModifyProperty;
+export default RegisterProperty;
