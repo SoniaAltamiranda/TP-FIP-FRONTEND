@@ -45,9 +45,20 @@ function PropertyDetails() {
     }
   };
 
+  const  token = localStorage.getItem('token')
+
   const fetchOwnerEmail = async (userId) => {
     try {
-      const response = await fetch(`${API_URL}/user/${userId}`);
+      const response = await fetch(`${API_URL}/user/${userId}`, 
+        
+        {
+          
+         headers: {
+              "Content-Type" : "application/json",
+              Authorization: `Bearer ${token}`
+          
+         } }
+      );
       if (response.ok) {
         const data = await response.json();
         console.log("Datos del propietario:", data);
@@ -81,10 +92,11 @@ function PropertyDetails() {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
+          Authorization : `Bearer ${token}`
         },
       });
       if (response.ok) {
-        // Eliminar la reserva de la lista en el frontend
+      
         const updatedReservations = reservations.filter(
           (reservation) => reservation.id_booking !== reservationId
         );

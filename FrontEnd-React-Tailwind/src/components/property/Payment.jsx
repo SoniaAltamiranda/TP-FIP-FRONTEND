@@ -121,8 +121,9 @@ function Payments() {
             </ul>
             {property && (
                 <div>
-                    <h3>Property Information</h3>
+                    <h3>Property Information prueba </h3>
                     <p>{property.title}</p>
+                    <p>Gracias por confiar en nosotros {bookingData.userId}</p>
                 </div>
             )}
         </div>

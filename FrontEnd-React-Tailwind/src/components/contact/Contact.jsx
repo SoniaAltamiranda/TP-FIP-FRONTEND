@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import {jwtDecode} from "jwt-decode"; 
+import { jwtDecode } from "jwt-decode";
 import API_URL from '../../configAPIclever/Url_apiClever';
 
 function Contact() {
@@ -7,7 +7,6 @@ function Contact() {
     firstName: "",
     lastName: "",
     email: "",
-    phoneNumber: "",
     message: "",
   });
 
@@ -16,52 +15,52 @@ function Contact() {
     message: "",
   });
 
-  const [userData, setUserData] = useState(null); // Aquí se almacenará la información del usuario autenticado
+  const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const token = localStorage.getItem("token"); // Obtiene el token JWT del almacenamiento local
-        const payload = jwtDecode(token); // Decodifica el token JWT para obtener los datos del usuario
-
+        const token = localStorage.getItem("token");
+        const payload = jwtDecode(token);
+  
         const response = await fetch(
-          `${API_URL}/user/${payload.sub}`, // Endpoint para obtener los datos del usuario
+          `${API_URL}/user/${payload.sub}`,
           {
             headers: {
-              Authorization: `Bearer ${token}`, // Incluye el token JWT en la cabecera de autorización
+              Authorization: `Bearer ${token}`,
             },
           }
         );
-
+  
         if (!response.ok) {
           throw new Error("Error al obtener los datos del usuario");
         }
-
-        const data = await response.json(); // Convierte la respuesta a JSON
-        setUserData(data); // Almacena los datos del usuario en el estado
-        setLoading(false); // Cambia el estado de carga a false
+  
+        const data = await response.json();
+        setUserData(data);
+        setLoading(false);
       } catch (error) {
-        console.error("Error:", error); // Manejo de errores
-        setLoading(false); // Cambia el estado de carga a false
+        console.error("Error:", error);
+        setLoading(false);
       }
     };
-
-    fetchUserData(); // Llama a la función para obtener los datos del usuario al cargar el componente
+  
+    fetchUserData();
   }, []);
+  
 
   useEffect(() => {
-    // Cuando se obtengan los datos del usuario, prellenar automáticamente los campos del formulario
     if (userData) {
       setFormData({
         firstName: userData.firstName,
         lastName: userData.lastName,
         email: userData.email,
-        phoneNumber: "", // Puedes decidir si prellenar el número de teléfono si está disponible
         message: "",
       });
     }
-  }, [userData]); // Se ejecutará cada vez que cambie userData
+  }, [userData]);
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -73,22 +72,23 @@ function Contact() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Aquí va la lógica para enviar el formulario
+  
     try {
-      // Lógica para enviar el formulario
-      console.log("Formulario enviado:", formData);
-      // Aquí puedes llamar a la función sendEmail(formData) o realizar la lógica de envío adecuada
+      const { firstName, lastName, email, message } = formData;
+  
+      const mailtoLink = `mailto:${email}?subject=Consulta&body=${encodeURIComponent(message)}`;
+  
+      window.location.href = mailtoLink;
+  
       setNotification({
         type: "success",
         message: "¡Tu consulta se ha enviado exitosamente!",
       });
-      // Reinicia el estado del formulario después del envío exitoso
+  
       setFormData({
         firstName: "",
         lastName: "",
         email: "",
-        phoneNumber: "",
         message: "",
       });
     } catch (error) {
@@ -99,7 +99,7 @@ function Contact() {
       });
     }
   };
-
+  
   useEffect(() => {
     // Limpiar la notificación después de 2 segundos
     const notificationTimeout = setTimeout(() => {
@@ -196,13 +196,13 @@ function Contact() {
               />
             </div>
             <div className="mb-4 flex justify-center">
-              <button
-                type="submit"
-                className="w-full bg-gray-700 text-white py-2 rounded-md hover:bg-gray-800 focus:outline-none focus:ring focus:ring-blue-200"
-              >
-                Enviar
-              </button>
-            </div>
+  <button
+    onClick={handleSubmit}
+    className="w-full bg-gray-700 text-white py-2 rounded-md hover:bg-gray-800 focus:outline-none focus:ring focus:ring-blue-200"
+  >
+    Enviar
+  </button>
+</div>
           </form>
         </div>
         <div

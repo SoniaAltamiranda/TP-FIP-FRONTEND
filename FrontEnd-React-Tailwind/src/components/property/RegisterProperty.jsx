@@ -1,5 +1,3 @@
-//firebase hosting:disable && firebase hosting:enable   BORRAR CACHE FIREBASE
-
 import React, { useState, useEffect } from "react";
 import API_URL from "../../configAPIclever/Url_apiClever";
 import { jwtDecode } from "jwt-decode";
@@ -7,59 +5,52 @@ import Swal from "sweetalert2";
 import { ClipLoader } from "react-spinners";
 import { css } from "@emotion/react";
 
-function RegisterProperty() {
+function ModifyProperty({ property, locationsData, setIsEditing }) {
   const override = css`
     display: block;
     margin: 0 auto;
   `;
+
   const [loading, setLoading] = useState(false);
-  const [propertyData, setPropertyData] = useState({
-    title: "",
-    description: "",
-    rooms: 0,
-    price: 0,
-    images: [],
-    rate: 0,
-    type: "",
-    address: "",
-    url_iframe: "",
-    status : "not reserved",
-    locations: [],
-  });
+  const [propertyToEdit, setPropertyToEdit] = useState(property);
+  const [selectedLocation, setSelectedLocation] = useState(property.id_location);
+  const [newImages, setNewImages] = useState([]);
+
   useEffect(() => {
     const getTokenAndSetUserId = async () => {
       try {
         const token = localStorage.getItem("token");
         const payload = jwtDecode(token);
-        setPropertyData((prevData) => ({ ...prevData, id_user: payload.sub }));
+        setPropertyToEdit((prevData) => ({ ...prevData, id_user: payload.sub }));
       } catch (error) {
         console.error("Error al obtener el id_user del token:", error);
       }
     };
     getTokenAndSetUserId();
-    fetchLocations();
   }, []);
+
   const fetchLocations = async () => {
     try {
       const response = await fetch(`${API_URL}/location`);
       const locations = await response.json();
-      setPropertyData((prevData) => ({ ...prevData, locations }));
+      setPropertyToEdit((prevData) => ({ ...prevData, locations }));
     } catch (error) {
       console.error("Error al obtener las ubicaciones:", error);
     }
   };
-  const handleSubmit = async (e) => {
+
+  useEffect(() => {
+    fetchLocations();
+  }, []);
+
+  const handleUpdate = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     try {
       const token = localStorage.getItem("token");
-      const payload = jwtDecode(token);
-      const locationId = parseInt(propertyData.id_location);
-      const userId = parseInt(propertyData.id_user);
-      const parsedRooms = parseInt(propertyData.rooms);
-      const parsedPrice = parseInt(propertyData.price);
       const uploadedImages = await Promise.all(
-        propertyData.images.map(async (imageFile, index) => {
+        newImages.map(async (imageFile, index) => {
           const formData = new FormData();
           formData.append("image", imageFile);
           formData.append("type", "image");
@@ -72,73 +63,87 @@ function RegisterProperty() {
               Authorization: `Client-ID 83323e63212094a`,
             },
             body: formData,
-            redirect: "follow",
           });
+
+          if (!response.ok) {
+            throw new Error(`Error al subir la imagen a Imgur: ${response.statusText}`);
+          }
+
           const result = await response.json();
           if (result.success) {
             return result.data.link;
           } else {
-            throw new Error("Error al subir la imagen a Imgur");
+            throw new Error("Error al obtener el enlace de la imagen");
           }
         })
       );
-      const dataToSend = {
-        ...propertyData,
-        id_user: payload.sub,
-        rooms: parsedRooms,
-        price: parsedPrice,
-        id_location: locationId,
-        images: uploadedImages,
+
+      const updatedProperty = {
+        ...propertyToEdit,
+        id_location: Number(selectedLocation),
+        rooms: Number(propertyToEdit.rooms),
+        price: Number(propertyToEdit.price),
+        images: [...propertyToEdit.images, ...uploadedImages],
       };
-      const response = await fetch(`${API_URL}/property`, {
-        method: "POST",
+
+      const response = await fetch(`${API_URL}/property/${propertyToEdit.id_property}`, {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(dataToSend),
+        body: JSON.stringify(updatedProperty),
       });
-      const data = await response.json();
-      console.log("Propiedad registrada:", data);
-      Swal.fire({
-        title: "¡Propiedad Registrada!",
-        text: "Tu propiedad ha sido registrada exitosamente.",
-        icon: "success",
-      });
+
+      if (response.ok) {
+        setIsEditing(false);
+        Swal.fire({
+          title: "Éxito",
+          text: "La propiedad se ha actualizado correctamente",
+          icon: "success",
+        });
+      } else {
+        const responseData = await response.json();
+        console.error("Error en la respuesta:", response.status, response.statusText);
+        console.error("Datos de la respuesta:", responseData);
+        throw new Error("Error al actualizar la propiedad");
+      }
     } catch (error) {
-      console.error("Error al registrar la propiedad:", error);
+      console.error("Error al actualizar la propiedad:", error);
       Swal.fire({
         title: "Error",
-        text: "Hubo un error al registrar la propiedad. Por favor, inténtalo de nuevo más tarde.",
+        text: "Hubo un error al actualizar la propiedad. Por favor, inténtalo de nuevo más tarde.",
         icon: "error",
       });
     } finally {
       setLoading(false);
     }
   };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "id_location") {
-      const locationId = parseInt(value);
-      setPropertyData((prevData) => ({ ...prevData, id_location: locationId }));
+      setSelectedLocation(value);
     } else {
-      setPropertyData((prevData) => ({ ...prevData, [name]: value }));
+      setPropertyToEdit((prevData) => ({ ...prevData, [name]: value }));
     }
   };
+
   const handleFileSelect = (e) => {
     const files = e.target.files;
     const imageFiles = Array.from(files);
-    setPropertyData((prevData) => ({
+    setNewImages(imageFiles);
+    setPropertyToEdit((prevData) => ({
       ...prevData,
       images: [...prevData.images, ...imageFiles],
     }));
   };
 
   const handleRemoveImage = (indexToRemove) => {
-    const updatedImages = propertyData.images.filter(
+    const updatedImages = propertyToEdit.images.filter(
       (_, index) => index !== indexToRemove
     );
-    setPropertyData((prevData) => ({
+    setPropertyToEdit((prevData) => ({
       ...prevData,
       images: updatedImages,
     }));
@@ -147,14 +152,17 @@ function RegisterProperty() {
   const handleDragOver = (e) => {
     e.preventDefault();
   };
+
   const handleDrop = (e) => {
     e.preventDefault();
   };
+
   return (
-    <div className="flex justify-center items-center h-auto">
-      <div className="max-w-md p-4 bg-white rounded-lg shadow-md mt-20">
-        <form onSubmit={handleSubmit} encType="multipart/form-data">
-          <div className="">
+    <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-900 bg-opacity-50">
+      <div className="bg-white p-6 rounded-lg shadow-md w-full md:w-2/3">
+        <form onSubmit={handleUpdate} encType="multipart/form-data">
+          <h2 className="text-2xl font-bold">Datos de la propiedad:</h2>
+          <div className="mb-2">
             <label
               htmlFor="title"
               className="block text-gray-800 text-sm font-bold mb-1"
@@ -165,7 +173,7 @@ function RegisterProperty() {
               type="text"
               id="title"
               name="title"
-              value={propertyData.title}
+              value={propertyToEdit.title}
               onChange={handleChange}
               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
               required
@@ -183,7 +191,7 @@ function RegisterProperty() {
             <select
               id="type"
               name="type"
-              value={propertyData.type}
+              value={propertyToEdit.type}
               onChange={handleChange}
               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
               required
@@ -195,9 +203,9 @@ function RegisterProperty() {
               </option>
             </select>
           </div>
-          <div className="">
+          <div className="mb-2">
             <label
-              htmlFor="title"
+              htmlFor="address"
               className="block text-gray-800 text-sm font-bold mb-1"
             >
               Dirección:
@@ -206,12 +214,12 @@ function RegisterProperty() {
               type="text"
               id="address"
               name="address"
-              value={propertyData.address}
+              value={propertyToEdit.address}
               onChange={handleChange}
               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
               required
-              pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+"
-              title="Solo se permiten letras y espacios en blanco"
+              pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s\d]+"
+              title="Dirección válida"
             />
           </div>
           <div className="mb-2">
@@ -224,13 +232,13 @@ function RegisterProperty() {
             <select
               id="location"
               name="id_location"
-              value={propertyData.id_location}
+              value={selectedLocation}
               onChange={handleChange}
               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
               required
             >
               <option value="">Seleccionar ubicación</option>
-              {propertyData.locations.map((location) => (
+              {propertyToEdit.locations.map((location) => (
                 <option key={location.id_location} value={location.id_location}>
                   {`${location.city}, ${location.state}, ${location.country}`}
                 </option>
@@ -239,7 +247,7 @@ function RegisterProperty() {
           </div>
           <div className="mb-2">
             <label
-              htmlFor="title"
+              htmlFor="rooms"
               className="block text-gray-800 text-sm font-bold mb-1"
             >
               Ambientes:
@@ -248,7 +256,7 @@ function RegisterProperty() {
               type="number"
               id="rooms"
               name="rooms"
-              value={propertyData.rooms}
+              value={propertyToEdit.rooms}
               onChange={handleChange}
               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
               required
@@ -256,7 +264,7 @@ function RegisterProperty() {
           </div>
           <div className="mb-2">
             <label
-              htmlFor="title"
+              htmlFor="description"
               className="block text-gray-800 text-sm font-bold mb-1"
             >
               Descripción:
@@ -264,15 +272,15 @@ function RegisterProperty() {
             <textarea
               id="description"
               name="description"
-              value={propertyData.description}
+              value={propertyToEdit.description}
               onChange={handleChange}
-              className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline h-auto resize-none block"
+              className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline h-auto resize-none"
               required
             />
           </div>
           <div className="mb-2">
             <label
-              htmlFor="title"
+              htmlFor="price"
               className="block text-gray-800 text-sm font-bold mb-1"
             >
               Precio - $:
@@ -281,13 +289,13 @@ function RegisterProperty() {
               type="number"
               id="price"
               name="price"
-              value={propertyData.price}
+              value={propertyToEdit.price}
               onChange={handleChange}
               className="w-full px-3 py-1 border rounded-lg focus:outline-none focus:shadow-outline"
               required
             />
           </div>
-          <div>
+          <div className="mb-2">
             <label
               htmlFor="imageUpload"
               className="block text-sm text-gray-800 font-bold mb-2"
@@ -300,11 +308,8 @@ function RegisterProperty() {
               onDragOver={handleDragOver}
               onDrop={handleDrop}
             >
-              <div
-                className="flex flex-wrap gap-4"
-                style={{ maxWidth: "300px" }}
-              >
-                {propertyData.images.map((imageUrl, index) => (
+              <div className="flex flex-wrap gap-4" style={{ maxWidth: "300px" }}>
+                {propertyToEdit.images.map((imageUrl, index) => (
                   <div key={index} className="relative">
                     <img
                       src={
@@ -324,6 +329,16 @@ function RegisterProperty() {
                     </button>
                   </div>
                 ))}
+                {newImages.map((imageFile, index) => (
+                  <div key={`new-${index}`} className="relative">
+                    <img
+                      src={URL.createObjectURL(imageFile)}
+                      alt={`New Image ${index}`}
+                      className="max-w-18 h-auto mb-2 rounded-lg"
+                      style={{ maxWidth: "100px", maxHeight: "100px" }}
+                    />
+                  </div>
+                ))}
               </div>
               <label htmlFor="imageUpload">
                 Arrastra y suelta imágenes aquí
@@ -338,27 +353,33 @@ function RegisterProperty() {
               style={{ display: "none" }}
             />
           </div>
-          <div className="flex justify-center mt-4">
-            <ClipLoader
-              loading={loading}
-              css={override}
-              size={70}
-              color={"#2A2A26 "}
-            />
-          </div>
-          {!loading && (
+          <div className="flex justify-end">
             <button
               type="submit"
-              className="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded"
+              className="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded mr-2"
               disabled={loading}
             >
-              Enviar
+              Guardar
             </button>
-          )}
+            <button
+              onClick={() => setIsEditing(false)}
+              className="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded"
+            >
+              Cancelar
+            </button>
+          </div>
         </form>
+        <div className="flex justify-center mt-4">
+          <ClipLoader
+            loading={loading}
+            css={override}
+            size={70}
+            color={"#2A2A26"}
+          />
+        </div>
       </div>
     </div>
   );
 }
 
-export default RegisterProperty;
+export default ModifyProperty;

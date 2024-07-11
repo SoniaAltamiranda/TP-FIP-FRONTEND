@@ -48,10 +48,9 @@ function User() {
   }, []);
 
   const handleShowComponent = (component) => {
-    // Si se selecciona una nueva opción del menú, cerrar el menú lateral
+  
     setMenuExpanded(false);
 
-    // Si ya se está mostrando un componente, limpiar el componente mostrado
     if (shownComponent === component) {
       setShownComponent("");
     } else {

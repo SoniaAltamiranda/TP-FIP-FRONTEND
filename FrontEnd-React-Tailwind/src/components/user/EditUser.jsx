@@ -7,10 +7,12 @@ function EditUser({ user }) {
   const navigate = useNavigate();
   const [userData, setUserData] = useState({
     name: user.name,
+    lastname: user.lastname, // Asegúrate de tener este campo en el usuario
     email: user.email,
     password: "",           // Campo para la contraseña actual
     newPassword: "",        // Campo para la nueva contraseña
     confirmNewPassword: "", // Campo para confirmar la nueva contraseña
+    username: user.username, // Asegúrate de tener este campo en el usuario
   });
 
   function handleChange(e) {
@@ -53,22 +55,33 @@ function EditUser({ user }) {
 
     const dataToSend = {
       name: userData.name,
+      lastname: userData.lastname, // Incluye este campo
       email: userData.email,
       password: userData.password,
       newPassword: userData.newPassword,
+      username: userData.username, // Incluye este campo
     };
+
+    // Obtén el token de donde lo estés almacenando (localStorage, contexto, etc.)
+    const token = localStorage.getItem('token'); // O de donde lo estés guardando
 
     fetch(`${API_URL}/user/${user.id_user}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`, // Incluye el token en el encabezado de autorización
       },
       body: JSON.stringify(dataToSend),
     })
       .then((response) => {
         if (!response.ok) {
-          throw new Error('Error al actualizar usuario');
+          return response.json().then((data) => {
+            throw new Error(data.message || 'Error al actualizar usuario');
+          });
         }
+        return response.json(); // Asegúrate de devolver la respuesta parseada como JSON
+      })
+      .then((responseData) => {
         Swal.fire({
           icon: 'success',
           title: 'Éxito',
@@ -86,13 +99,11 @@ function EditUser({ user }) {
       });
   }
   
-  
-  
   return (
     <div className="flex flex-col items-center bg-gray-200 justify-center">
       <form
         onSubmit={handleSubmit}
-        className="border-2 border-gray-300  bg-gray-200 p-4 rounded-lg shadow-lg w-80 mb-4"
+        className="border-2 border-gray-300 bg-gray-200 p-4 rounded-lg shadow-lg w-80 mb-4"
       >
         <h1 className="text-xl font-semibold text-center mb-4">Editar Usuario</h1>
         <div className="mb-4">
@@ -104,6 +115,19 @@ function EditUser({ user }) {
             id="name"
             name="name"
             value={userData.name}
+            onChange={handleChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="lastname" className="block text-sm font-medium">
+            Apellido:
+          </label>
+          <input
+            type="text"
+            id="lastname"
+            name="lastname"
+            value={userData.lastname}
             onChange={handleChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
           />
@@ -156,6 +180,19 @@ function EditUser({ user }) {
             id="confirmNewPassword"
             name="confirmNewPassword"
             value={userData.confirmNewPassword}
+            onChange={handleChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="username" className="block text-sm font-medium">
+            Nombre de Usuario:
+          </label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            value={userData.username}
             onChange={handleChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
           />
