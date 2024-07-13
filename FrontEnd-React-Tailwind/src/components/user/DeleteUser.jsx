@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import API_URL from "../../configAPIclever/Url_apiClever";
 
-function DeleteUser() {
+function DeleteUser({ user }) {
   const [formData, setFormData] = useState({ name: "", password: "" });
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -12,63 +14,65 @@ function DeleteUser() {
   };
 
   const handleCancel = () => {
-    navigate("/user"); 
+    navigate("/");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { name, password } = formData;
-    
-    const BASE_URL = "https://app-911c1751-2ae2-4279-bd11-cb475df87978.cleverapps.io/user/";
 
+    if (!token) {
+      Swal.fire({
+        icon: "error",
+        title: "Error de autenticación",
+        text: "Usuario no autenticado. Por favor, inicia sesión.",
+      });
+      return;
+    }
+  console.log(user);
     try {
-      const response = await fetch(
-        `${BASE_URL}?name=${name}&password=${password}`
-      );
-      if (response.ok) {
-        const userData = await response.json();
-        if (userData.length > 0) {
-          const userId = userData[0].id;
-          const deleteResponse = await fetch(`${BASE_URL}${userId}`, {
-            method: "DELETE",
-          });
+      if (!user || !user.id_user) {
+        throw new Error("No se proporcionó un usuario válido para eliminar.");
+      }
 
-          if (deleteResponse.ok) {
-            Swal.fire({
-              icon: "success",
-              title: "Usuario eliminado con éxito",
-              showConfirmButton: true,
-            }).then(() => {
-              navigate("/");
-            });
-          }
-        } else {
-          Swal.fire({
-            icon: "error",
-            title: "Error de autenticación",
-            showCancelButton: true,
-            confirmButtonText: "Reintentar",
-            cancelButtonText: "Salir",
-          }).then((result) => {
-            if (result.isConfirmed) {
-              // Reintento
-            } else if (result.dismiss === Swal.DismissReason.cancel) {
-              navigate("/user");
-            }
-          });
-        }
+      const userId = user.id_user;
+
+      
+      const deleteResponse = await fetch(`${API_URL}/user/${userId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    
+
+      if (deleteResponse.ok) {
+        Swal.fire({
+          icon: "success",
+          title: "Usuario eliminado con éxito",
+          showConfirmButton: true,
+        }).then(() => {
+          navigate("/");
+        });
       } else {
-        alert(
-          "Error de autenticación. Por favor, inténtalo de nuevo más tarde."
-        );
+        throw new Error("Error al eliminar usuario.");
       }
     } catch (error) {
-      console.error("Error al realizar la autenticación:", error);
-      alert("Error de autenticación. Por favor, inténtalo de nuevo más tarde.");
+      console.error("Error al eliminar usuario:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: error.message || "Hubo un error al intentar eliminar el usuario.",
+      });
     }
 
     setFormData({ name: "", password: "" });
   };
+
+  useEffect(() => {
+    if (!token) {
+      navigate("/login");
+    }
+  }, [navigate, token]);
 
   return (
     <div className="flex items-center justify-center h-screen">
@@ -100,20 +104,20 @@ function DeleteUser() {
             />
           </div>
           <div className="mb-8 flex justify-between">
-          <button
-            type="submit"
-            className="w-1/2 bg-gray-700 text-white py-2 rounded-md hover:bg-gray-800 focus:outline-none focus:ring focus:ring-blue-200"
-          >
-            Eliminar
-          </button>
-          <div className="w-4"></div>
-          <button
-            type="button"
-            className="w-1/2 bg-gray-700 text-white py-2 rounded-md hover:bg-gray-800 focus:outline-none focus:ring focus:ring-blue-200"
-            onClick={handleCancel}
-          >
-            Cancelar
-          </button>
+            <button
+              type="submit"
+              className="w-1/2 bg-gray-700 text-white py-2 rounded-md hover:bg-gray-800 focus:outline-none focus:ring focus:ring-blue-200"
+            >
+              Eliminar
+            </button>
+            <div className="w-4"></div>
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="w-1/2 bg-gray-700 text-white py-2 rounded-md hover:bg-gray-800 focus:outline-none focus:ring focus:ring-blue-200"
+            >
+              Cancelar
+            </button>
           </div>
         </form>
       </div>

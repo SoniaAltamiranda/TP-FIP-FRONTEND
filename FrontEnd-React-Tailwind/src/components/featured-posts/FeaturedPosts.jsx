@@ -26,27 +26,36 @@ function FeaturedPosts() {
     <div className="flex flex-col sm:flex-row">
       <div className="sm:flex-1">
         <h1 className="text-2xl font-semibold text-center mb-4">Destacados</h1>
-        <hr className="mb-4" />
+        <hr className="bg-gray-500 mb-6" />
         {currentProperties.map((property) => (
           <div
             key={property.id_property}
-            className="flex flex-col sm:flex-row p-4 border rounded-lg shadow-md mb-4"
+            className="bg-white flex flex-col sm:flex-row p-4 border rounded-lg shadow-md mb-4"
           >
-            <div className="sm:w-1/4 mb-4 sm:mb-0 sm:mr-4">
+            <div className="sm:w-1/3 mb-6 sm:mb-0 sm:mr-4">
               <div className="person-image-container">
                 <div className="person-image relative">
                   <img
                     src={property.images[0]}
                     alt="Property Image"
-                    className="object-cover w-full h-40 rounded-t-lg rounded-b-lg"
+                    className="object-cover w-full h-50 rounded-t-lg rounded-b-lg"
                   />
                 </div>
               </div>
             </div>
             <div className="sm:w-3/4">
-              <h4 className="text-xl font-semibold mb-2">{property.title}</h4>
-              <p className="text-gray-600 mb-4">{property.description}</p>
-              <div className="text-center">
+              <h2 className="text-xl font-semibold mb-4">{property.title}</h2>
+              <p className="mb-2">
+                  Habitaciones:{" "}
+                  <span className="text-gray-500">{property?.rooms}</span>
+                </p>
+              
+              <p className="text-gray-600 mb-4">Descripción: {property.description.slice(0, 100)}</p>
+<p className="mb-2">
+                  Ubicación: {property?.location.city},{" "}
+                  {property?.location.state}, {property?.location.country}
+                </p>
+              <div className="text-center mt-2">
                 <Link
                   to={`/rentals/${property.id_property}`}
                   state={{ property }}
@@ -71,7 +80,7 @@ function FeaturedPosts() {
           )}
           {currentProperties.length === propertiesPerPage && (
             <button
-              className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
+              className="bg-gray-200 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
               onClick={() => paginate(currentPage + 1)}
             >
               {" >"}

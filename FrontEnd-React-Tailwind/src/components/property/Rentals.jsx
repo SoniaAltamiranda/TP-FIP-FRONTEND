@@ -7,8 +7,7 @@ function PermanentRentals() {
   const [filter, setFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const properties = useContext(propertiesContext);
-  const propertiesPerPage = 3; 
-
+  const propertiesPerPage = 3;
 
   const filteredProperties = properties.filter((property) => {
     if (filter === "") {
@@ -25,29 +24,44 @@ function PermanentRentals() {
     indexOfLastProperty
   );
 
-
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
-    <div className="bg-gray-100">
+    <div className="bg-gradient-to-b from-gray-100 to-gray-300">
       <br />
       <div className="mt-20 container mx-auto">
-        <h1 className="text-3xl font-semibold text-center mb-8">Alquileres</h1>
+        <div className="text-center md:text-left mb-10 md:flex md:items-center justify-center mx-2">
+          <div>
+            <h1 className="text-3xl md:text-6xl text-gray-700 font-extrabold mb-2">
+              ALQUILAFÁCIL.COM
+            </h1>
+            <hr className="w-1/4 md:w-1/6 border-t-2 border-gray-500 mx-auto mb-4" />
+            <p className="text-lg md:text-xl text-gray-600">
+              La forma más conveniente de alquilar lo que necesitas.
+            </p>
+          </div>
+        </div>
         <RentalFilter onChange={(e) => setFilter(e.target.value)} />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {currentProperties.map((property) => (
             <div key={property.id}>
-              <div className="bg-white shadow-lg rounded-lg overflow-hidden h-[470px]">
+              <div className="bg-white shadow-lg rounded-lg overflow-hidden h-[550px]">
                 <img
                   src={`${property.images[0]}`}
                   alt="Imagen de propiedad"
-                  className="w-full h-[200px] object-cover"
+                  className="w-full h-[270px] object-cover"
                 />
                 <div className="p-4">
-                  <h2 className="text-xl font-semibold mb-2">{property.title}</h2>
-                  <p className="text-gray-600">{property.description}</p>
-                  <p className="text-gray-600">Precio: ${property.price}</p>
-                  <p className="text-gray-600">Tipo: {property.type}</p>
+                  <h2 className="text-xl md:text-2xl font-semibold mb-2 text-gray-800">
+                    {property.title}
+                  </h2>
+                  <p className="text-gray-600 mb-2">{property.description}</p>
+                  <p className="text-gray-700 mb-2">Precio: ${property.price}</p>
+                  <p className="text-gray-700 mb-2">
+                    Ubicación: {property?.location.city}, {property?.location.state},{" "}
+                    {property?.location.country}
+                  </p>
+                  <p className="text-gray-700 mb-2">Tipo: {property.type}</p>
                   <div className="mt-4 text-center">
                     <Link
                       to={`/rentals/${property.id_property}`}
@@ -63,7 +77,6 @@ function PermanentRentals() {
           ))}
         </div>
 
-       
         <div className="flex justify-center items-center mt-4">
           {currentPage > 1 && (
             <button

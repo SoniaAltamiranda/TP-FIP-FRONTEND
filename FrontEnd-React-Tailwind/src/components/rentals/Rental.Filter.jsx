@@ -14,7 +14,7 @@ function RentalFilter({ onChange }) {
       >
         <option value="">Todos</option>
         <option value="Alquiler temporal">Alquiler temporal</option>
-        <option value="Alquiler a largo plazo">Alquiler a largo plazo</option>
+        <option value="Alquiler permanente">Alquiler a largo plazo</option>
       </select>
     </div>
   );

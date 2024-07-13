@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import API_URL from '../../configAPIclever/Url_apiClever';
+import API_URL from '../../configAPIclever/Url_apiClever'; // Assuming this is correctly imported
 import Swal from 'sweetalert2';
 
 const MyBookings = ({ user }) => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+console.log('soy user prop', user);
   useEffect(() => {
     const fetchBookings = async () => {
       try {
@@ -15,8 +15,10 @@ const MyBookings = ({ user }) => {
           throw new Error('Error al obtener las reservas');
         }
         const data = await response.json();
+        console.log('somos las reservas', data);
 
-        const userBookings = data.filter(booking => booking.userId === user.id);
+        // Filter bookings based on user id
+        const userBookings = data.filter(booking => booking.id_user === user.id_user);
         setBookings(userBookings);
       } catch (error) {
         console.error('Error:', error);
@@ -27,10 +29,10 @@ const MyBookings = ({ user }) => {
     };
 
     fetchBookings();
-  }, [user.id]);
+  }, [user.id_user]);
 
+  // Function to delete a reservation
   const token = localStorage.getItem('token');
-
   const deleteReservation = async (reservationId) => {
     try {
       const response = await fetch(`${API_URL}/booking/${reservationId}`, {
@@ -41,6 +43,7 @@ const MyBookings = ({ user }) => {
         },
       });
       if (response.ok) {
+        // Update bookings state after successful deletion
         const updatedBookings = bookings.filter(booking => booking.id_booking !== reservationId);
         setBookings(updatedBookings);
         console.log(`Reserva ${reservationId} eliminada correctamente.`);
@@ -54,6 +57,7 @@ const MyBookings = ({ user }) => {
     }
   };
 
+  // Function to handle cancel button click and confirm cancellation
   const handleCancelBooking = (bookingId) => {
     Swal.fire({
       title: '¿Estás seguro?',
@@ -71,14 +75,17 @@ const MyBookings = ({ user }) => {
     });
   };
 
+  // Loading state
   if (loading) {
     return <p>Cargando...</p>;
   }
 
+  // Error state
   if (error) {
     return <p>Error: {error}</p>;
   }
 
+  // Display bookings in a table
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Mis Reservas</h1>

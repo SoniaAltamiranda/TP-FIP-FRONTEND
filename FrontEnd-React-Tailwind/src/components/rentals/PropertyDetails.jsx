@@ -25,7 +25,7 @@ function PropertyDetails() {
           <p className="text-lg">Rooms: {property.rooms}</p>
           <p className="text-lg">Description: {property.description}</p>
           <p className="text-lg">Price: ${property.price}</p>
-          <p className="text-lg">Location: {property.location}</p>
+          <p className="text-lg">Locatissson: {property.location}</p>
         </div>
       </div>
     </div>
