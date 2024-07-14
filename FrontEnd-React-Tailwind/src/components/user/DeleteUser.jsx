@@ -4,7 +4,8 @@ import { useNavigate } from "react-router-dom";
 import API_URL from "../../configAPIclever/Url_apiClever";
 
 function DeleteUser({ user }) {
-  const [formData, setFormData] = useState({ name: "", password: "" });
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [formActive, setFormActive] = useState(true);
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
@@ -14,7 +15,53 @@ function DeleteUser({ user }) {
   };
 
   const handleCancel = () => {
-    navigate("/");
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: "Si cancelas, los cambios no se guardarán.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085D6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí",
+      cancelButtonText: "No",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setFormActive(false); // Desactivar el formulario
+        navigate('/user');
+      }
+    });
+  };
+
+  const validateUser = async () => {
+    try {
+      const response = await fetch(`${API_URL}/auth/validate`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Error al validar usuario: ${errorText}`);
+      }
+
+      const result = await response.json();
+      return result.isValid;
+    } catch (error) {
+      console.error("Error al validar usuario:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: error.message || "Hubo un error al intentar validar el usuario.",
+      });
+      return false;
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -28,22 +75,24 @@ function DeleteUser({ user }) {
       });
       return;
     }
-  console.log(user);
+
     try {
       if (!user || !user.id_user) {
         throw new Error("No se proporcionó un usuario válido para eliminar.");
       }
 
-      const userId = user.id_user;
+      const isValid = await validateUser();
+      if (!isValid) {
+        throw new Error("Nombre de usuario o contraseña incorrectos.");
+      }
 
-      
+      const userId = user.id_user;
       const deleteResponse = await fetch(`${API_URL}/user/${userId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-    
 
       if (deleteResponse.ok) {
         Swal.fire({
@@ -65,7 +114,7 @@ function DeleteUser({ user }) {
       });
     }
 
-    setFormData({ name: "", password: "" });
+    setFormData({ email: "", password: "" });
   };
 
   useEffect(() => {
@@ -73,6 +122,11 @@ function DeleteUser({ user }) {
       navigate("/login");
     }
   }, [navigate, token]);
+
+
+  if (!formActive) {
+    return null; 
+  }
 
   return (
     <div className="flex items-center justify-center h-screen">
@@ -82,11 +136,11 @@ function DeleteUser({ user }) {
         </div>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-gray-700 font-bold mb-2">Usuario:</label>
+            <label className="block text-gray-700 font-bold mb-2">Email:</label>
             <input
-              type="text"
-              name="name"
-              value={formData.name}
+              type="email"
+              name="email"
+              value={formData.email}
               onChange={handleChange}
               className="border border-gray-400 p-2 w-full rounded"
               required

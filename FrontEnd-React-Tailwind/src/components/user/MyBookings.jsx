@@ -17,7 +17,6 @@ console.log('soy user prop', user);
         const data = await response.json();
         console.log('somos las reservas', data);
 
-        // Filter bookings based on user id
         const userBookings = data.filter(booking => booking.id_user === user.id_user);
         setBookings(userBookings);
       } catch (error) {
@@ -31,7 +30,6 @@ console.log('soy user prop', user);
     fetchBookings();
   }, [user.id_user]);
 
-  // Function to delete a reservation
   const token = localStorage.getItem('token');
   const deleteReservation = async (reservationId) => {
     try {
@@ -43,7 +41,7 @@ console.log('soy user prop', user);
         },
       });
       if (response.ok) {
-        // Update bookings state after successful deletion
+   
         const updatedBookings = bookings.filter(booking => booking.id_booking !== reservationId);
         setBookings(updatedBookings);
         console.log(`Reserva ${reservationId} eliminada correctamente.`);
@@ -57,7 +55,6 @@ console.log('soy user prop', user);
     }
   };
 
-  // Function to handle cancel button click and confirm cancellation
   const handleCancelBooking = (bookingId) => {
     Swal.fire({
       title: '¿Estás seguro?',
@@ -75,17 +72,15 @@ console.log('soy user prop', user);
     });
   };
 
-  // Loading state
+
   if (loading) {
     return <p>Cargando...</p>;
   }
 
-  // Error state
   if (error) {
     return <p>Error: {error}</p>;
   }
 
-  // Display bookings in a table
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Mis Reservas</h1>

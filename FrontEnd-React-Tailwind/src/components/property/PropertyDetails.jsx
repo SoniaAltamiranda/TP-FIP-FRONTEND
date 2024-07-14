@@ -117,7 +117,7 @@ function PropertyDetails() {
         <div className="container mx-auto p-4 mt-14 text-gray-600">
           <div className="text-center md:text-left mb-10 md:flex md:items-center justify-center mx-2">
             <div>
-              <h1 className="text-center text-3xl md:text-6xl text-gray-500 font-extrabold mb-2">
+              <h1 className="text-center text-3xl md:text-6xl text-gray-600 font-extrabold mb-2">
                 ALQUILAFÁCIL.COM
               </h1>
               <hr className="w-1/4 md:w-1/6 border-t-2 border-gray-300 mx-auto mb-4" />

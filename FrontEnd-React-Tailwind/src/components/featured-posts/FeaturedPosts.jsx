@@ -7,11 +7,10 @@ function FeaturedPosts() {
   const properties = useContext(propertiesContext);
   const [currentPage, setCurrentPage] = useState(1);
   const propertiesPerPageLarge = 6;
-  const propertiesPerPageSmall = 3; 
+  const propertiesPerPageSmall = 3;
 
-
-  const propertiesPerPage = window.innerWidth >= 640 ? propertiesPerPageLarge : propertiesPerPageSmall;
-
+  const propertiesPerPage =
+    window.innerWidth >= 640 ? propertiesPerPageLarge : propertiesPerPageSmall;
 
   const indexOfLastProperty = currentPage * propertiesPerPage;
   const indexOfFirstProperty = indexOfLastProperty - propertiesPerPage;
@@ -46,15 +45,17 @@ function FeaturedPosts() {
             <div className="sm:w-3/4">
               <h2 className="text-xl font-semibold mb-4">{property.title}</h2>
               <p className="mb-2">
-                  Habitaciones:{" "}
-                  <span className="text-gray-500">{property?.rooms}</span>
-                </p>
-              
-              <p className="text-gray-600 mb-4">Descripción: {property.description.slice(0, 100)}</p>
-<p className="mb-2">
-                  Ubicación: {property?.location.city},{" "}
-                  {property?.location.state}, {property?.location.country}
-                </p>
+                Habitaciones:{" "}
+                <span className="text-gray-500">{property?.rooms}</span>
+              </p>
+
+              <p className="text-gray-600 mb-4">
+                Descripción: {property.description.slice(0, 100)}
+              </p>
+              <p className="mb-2">
+                Ubicación: {property?.location.city}, {property?.location.state}
+                , {property?.location.country}
+              </p>
               <div className="text-center mt-2">
                 <Link
                   to={`/rentals/${property.id_property}`}
@@ -67,8 +68,7 @@ function FeaturedPosts() {
             </div>
           </div>
         ))}
-        
-      
+
         <div className="flex justify-center items-center mt-4 sm:hidden">
           {currentPage > 1 && (
             <button
@@ -89,7 +89,6 @@ function FeaturedPosts() {
         </div>
       </div>
 
-  
       <div className="sm:w-1/3 hidden sm:block">
         <img
           src="/images/banner pagina.png"

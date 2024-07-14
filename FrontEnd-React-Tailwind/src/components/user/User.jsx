@@ -49,7 +49,6 @@ function User() {
   }, []);
 
   const handleShowComponent = (component) => {
-  
     setMenuExpanded(false);
 
     if (shownComponent === component) {
@@ -79,11 +78,16 @@ function User() {
   };
 
   return (
-    <div className="h-screen flex flex-col md:flex-row">
-     
-      <div className={`bg-gray-200 text-blue p-6 transition-all duration-500 ${menuExpanded ? "w-full md:w-1/4" : "w-full md:w-16"} ${isSmallScreen ? "mt-6" : ""}`}>
+    <div className="h-screen flex flex-col md:flex-row relative overflow-hidden">
+      <img
+        src="/images/fondo.jpg"
+        alt="Fondo"
+        className="absolute top-0 left-0 w-full h-full object-cover -z-10 filter grayscale opacity-20"
+      />
 
+      <div className={`bg-gray-100 text-blue p-6 transition-all duration-500 ${menuExpanded ? "w-full md:w-1/4" : "w-full md:w-16"} ${isSmallScreen ? "mt-6" : ""}`}>
         <div className="relative flex items-center justify-center h-full">
+         
           <button
             className="absolute top-20 right-4 md:top-20 md:right-0 md:mr-2 md:mt-2 text-blue focus:outline-none"
             onClick={() => setMenuExpanded(!menuExpanded)}
@@ -101,7 +105,7 @@ function User() {
               ) : (
                 <>
                   <div>
-                    <h1 className="w-full  flex justify-center items-center text-xl md:text-3xl font-bold text-gray-800 mb-4 md:mb-8">
+                    <h1 className="w-full flex justify-center items-center text-xl md:text-3xl font-bold text-gray-800 mb-4 md:mb-8">
                       ALQUILAFÁCIL.COM
                     </h1>
                     <hr />
@@ -162,14 +166,14 @@ function User() {
         </div>
       </div>
       
-    
       <div className={`flex-grow flex flex-col items-center justify-center p-4 md:p-8 ${menuExpanded ? 'mt-0 md:mt-0' : 'mt-16 md:mt-0'} overflow-y-auto`}>
         {shownComponent === "" ? (
           <div className="text-center">
-            <h1 className="text-2xl md:text-4xl font-bold">
-              ¡Bienvenido, {userData && userData.name}!
+            <h1 className="text-4xl md:text-5xl text-gray-800 font-extrabold mb-6">
+              ¡Bienvenid@, {userData && userData.name}!
             </h1>
-            <p className="text-lg md:text-xl mt-4">
+            <hr className="w-1/4 md:w-1/10 border-t-1 border-gray-700 mx-auto mb-6 " />
+            <p className="text-lg md:text-2xl text-gray-800 mt-4">
               Selecciona una opción del menú para comenzar.
             </p>
           </div>
@@ -191,7 +195,7 @@ function User() {
         )}
         {shownComponent === "Editar Usuario" && (
           <div className="w-full max-w-4xl">
-            <EditUser user={userData} onClose={() => setShownComponent("")} />
+            <EditUser user={userData} onClose={() => setShownComponent("/user")} />
           </div>
         )}
         {shownComponent === "Eliminar Usuario" && (

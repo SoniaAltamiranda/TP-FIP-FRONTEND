@@ -1,14 +1,18 @@
 import React, { useState } from "react";
 import Swal from "sweetalert2";
 import API_URL from "../../configAPIclever/Url_apiClever";
+import { ClipLoader } from "react-spinners";
 
 function ModifyProperty({ property, locationsData, setIsEditing }) {
   const [propertyToEdit, setPropertyToEdit] = useState(property);
   const [selectedLocation, setSelectedLocation] = useState(property.id_location);
   const [newImages, setNewImages] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const handleUpdate = async (e) => {
     e.preventDefault();
+    setLoading(true);
+
     try {
       const token = localStorage.getItem("token");
 
@@ -40,7 +44,6 @@ function ModifyProperty({ property, locationsData, setIsEditing }) {
           }
         })
       );
-
 
       const updatedProperty = {
         ...propertyToEdit,
@@ -79,6 +82,8 @@ function ModifyProperty({ property, locationsData, setIsEditing }) {
         text: "Hubo un error al actualizar la propiedad. Por favor, inténtalo de nuevo más tarde.",
         icon: "error",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -136,10 +141,7 @@ function ModifyProperty({ property, locationsData, setIsEditing }) {
         <form onSubmit={handleUpdate} className="space-y-4">
           <h2 className="text-2xl font-bold">Datos de la propiedad:</h2>
           <div>
-            <label
-              htmlFor="title"
-              className="block text-gray-800 font-bold mb-1"
-            >
+            <label htmlFor="title" className="block text-gray-800 font-bold mb-1">
               Título:
             </label>
             <input
@@ -147,17 +149,12 @@ function ModifyProperty({ property, locationsData, setIsEditing }) {
               id="title"
               name="title"
               value={propertyToEdit.title}
-              onChange={(e) =>
-                setPropertyToEdit({ ...propertyToEdit, title: e.target.value })
-              }
+              onChange={(e) => setPropertyToEdit({ ...propertyToEdit, title: e.target.value })}
               className="border border-gray-400 p-2 rounded w-full"
             />
           </div>
           <div>
-            <label
-              htmlFor="description"
-              className="block text-gray-800 font-bold mb-1"
-            >
+            <label htmlFor="description" className="block text-gray-800 font-bold mb-1">
               Descripción:
             </label>
             <input
@@ -165,20 +162,12 @@ function ModifyProperty({ property, locationsData, setIsEditing }) {
               id="description"
               name="description"
               value={propertyToEdit.description}
-              onChange={(e) =>
-                setPropertyToEdit({
-                  ...propertyToEdit,
-                  description: e.target.value,
-                })
-              }
+              onChange={(e) => setPropertyToEdit({ ...propertyToEdit, description: e.target.value })}
               className="border border-gray-400 p-2 rounded w-full"
             />
           </div>
           <div>
-            <label
-              htmlFor="rooms"
-              className="block text-gray-800 font-bold mb-1"
-            >
+            <label htmlFor="rooms" className="block text-gray-800 font-bold mb-1">
               Ambientes:
             </label>
             <input
@@ -186,29 +175,19 @@ function ModifyProperty({ property, locationsData, setIsEditing }) {
               id="rooms"
               name="rooms"
               value={propertyToEdit.rooms}
-              onChange={(e) =>
-                setPropertyToEdit({ ...propertyToEdit, rooms: e.target.value })
-              }
+              onChange={(e) => setPropertyToEdit({ ...propertyToEdit, rooms: e.target.value })}
               className="border border-gray-400 p-2 rounded w-full"
             />
           </div>
           <div>
-            <label
-              htmlFor="type"
-              className="block text-gray-800 font-bold mb-1"
-            >
+            <label htmlFor="type" className="block text-gray-800 font-bold mb-1">
               Tipo de Alquiler:
             </label>
             <select
               id="type"
               name="type"
               value={propertyToEdit.type}
-              onChange={(e) =>
-                setPropertyToEdit({
-                  ...propertyToEdit,
-                  type: e.target.value,
-                })
-              }
+              onChange={(e) => setPropertyToEdit({ ...propertyToEdit, type: e.target.value })}
               className="border border-gray-400 p-2 rounded w-full"
             >
               <option value="Alquiler temporal">Alquiler temporal</option>
@@ -216,10 +195,7 @@ function ModifyProperty({ property, locationsData, setIsEditing }) {
             </select>
           </div>
           <div>
-            <label
-              htmlFor="price"
-              className="block text-gray-800 font-bold mb-1"
-            >
+            <label htmlFor="price" className="block text-gray-800 font-bold mb-1">
               Precio:
             </label>
             <input
@@ -227,17 +203,12 @@ function ModifyProperty({ property, locationsData, setIsEditing }) {
               id="price"
               name="price"
               value={propertyToEdit.price}
-              onChange={(e) =>
-                setPropertyToEdit({ ...propertyToEdit, price: e.target.value })
-              }
+              onChange={(e) => setPropertyToEdit({ ...propertyToEdit, price: e.target.value })}
               className="border border-gray-400 p-2 rounded w-full"
             />
           </div>
           <div>
-            <label
-              htmlFor="location"
-              className="block text-gray-800 font-bold mb-1"
-            >
+            <label htmlFor="location" className="block text-gray-800 font-bold mb-1">
               Ubicación:
             </label>
             <select
@@ -254,12 +225,8 @@ function ModifyProperty({ property, locationsData, setIsEditing }) {
               ))}
             </select>
           </div>
-
           <div>
-            <label
-              htmlFor="images"
-              className="block text-gray-800 font-bold mb-1"
-            >
+            <label htmlFor="images" className="block text-gray-800 font-bold mb-1">
               Imágenes:
             </label>
             <div className="flex flex-wrap gap-2 mb-4">
@@ -302,6 +269,13 @@ function ModifyProperty({ property, locationsData, setIsEditing }) {
               multiple
               onChange={handleImageChange}
               className="border border-gray-400 p-2 rounded w-full"
+            />
+          </div>
+          <div className="flex justify-center mt-4">
+            <ClipLoader
+              loading={loading}
+              size={70}
+              color={"#2A2A26"}
             />
           </div>
           <div className="flex justify-end">

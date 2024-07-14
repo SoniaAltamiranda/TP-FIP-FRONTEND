@@ -161,17 +161,17 @@ function Payments() {
           <div className="text-center">
             <img
               src="../public/images/lista-de-verificacion.png"
-              alt="Pago aprovado"
+              alt="Pago aprobado"
               className="mx-auto mb-4 w-32 h-32"
             />
             <h2 className="text-2xl font-semibold mb-4">
-              Su pago fue exitoso.!!!
+              Su pago fué EXITOSO.
             </h2>
             {bookingData && (
               <div>
                 <div className="flex justify-center flex-wrap -m-2">
                   {property.images.map((image, index) => (
-                    <div key={index} className="p-2 w-1/3">
+                    <div key={index} className="p-2 w-1/2">
                       <img
                         src={image}
                         alt={`Property image ${index + 1}`}

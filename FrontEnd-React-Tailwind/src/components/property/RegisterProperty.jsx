@@ -1,10 +1,10 @@
-//firebase hosting:disable && firebase hosting:enable   BORRAR CACHE FIREBASE
 import React, { useState, useEffect } from "react";
 import API_URL from "../../configAPIclever/Url_apiClever";
 import { jwtDecode } from "jwt-decode";
 import Swal from "sweetalert2";
 import { ClipLoader } from "react-spinners";
 import { css } from "@emotion/react";
+
 function RegisterProperty() {
   const override = css`
     display: block;
@@ -21,14 +21,11 @@ function RegisterProperty() {
     type: "",
     address: "",
     url_iframe: "",
-    status : "not reserved",
+    status: "not reserved",
     locations: [],
   });
+  const [formActive, setFormActive] = useState(true); // Estado para controlar si el formulario está activo
 
-
-    
-          
-  
   useEffect(() => {
     const getTokenAndSetUserId = async () => {
       try {
@@ -42,6 +39,7 @@ function RegisterProperty() {
     getTokenAndSetUserId();
     fetchLocations();
   }, []);
+
   const fetchLocations = async () => {
     try {
       const response = await fetch(`${API_URL}/location`);
@@ -51,6 +49,7 @@ function RegisterProperty() {
       console.error("Error al obtener las ubicaciones:", error);
     }
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -67,7 +66,10 @@ function RegisterProperty() {
           formData.append("image", imageFile);
           formData.append("type", "image");
           formData.append("title", `iMAGE ${index + 1}`);
-          formData.append("description", `Description for image ${index + 1}`);
+          formData.append(
+            "description",
+            `Description for image ${index + 1}`
+          );
           const response = await fetch("https://api.imgur.com/3/image", {
             method: "POST",
             headers: {
@@ -106,18 +108,22 @@ function RegisterProperty() {
         title: "¡Propiedad Registrada!",
         text: "Tu propiedad ha sido registrada exitosamente.",
         icon: "success",
+      }).then(() => {
+        setFormActive(false); // Desactiva el formulario después del éxito
       });
     } catch (error) {
       console.error("Error al registrar la propiedad:", error);
       Swal.fire({
         title: "Error",
-        text: "Hubo un error al registrar la propiedad. Por favor, inténtalo de nuevo más tarde.",
+        text:
+          "Hubo un error al registrar la propiedad. Por favor, inténtalo de nuevo más tarde.",
         icon: "error",
       });
     } finally {
       setLoading(false);
     }
   };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "id_location") {
@@ -127,6 +133,7 @@ function RegisterProperty() {
       setPropertyData((prevData) => ({ ...prevData, [name]: value }));
     }
   };
+
   const handleFileSelect = (e) => {
     const files = e.target.files;
     const imageFiles = Array.from(files);
@@ -135,6 +142,7 @@ function RegisterProperty() {
       images: [...prevData.images, ...imageFiles],
     }));
   };
+
   const handleRemoveImage = (indexToRemove) => {
     const updatedImages = propertyData.images.filter(
       (_, index) => index !== indexToRemove
@@ -144,12 +152,36 @@ function RegisterProperty() {
       images: updatedImages,
     }));
   };
+
   const handleDragOver = (e) => {
     e.preventDefault();
   };
+
   const handleDrop = (e) => {
     e.preventDefault();
   };
+
+  const handleCancel = () => {
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: "Si cancelas, los cambios no se guardarán.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085D6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí",
+      cancelButtonText: "No",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setFormActive(false); // Desactiva el formulario
+      }
+    });
+  };
+
+  if (!formActive) {
+    return null; // Si formActive es falso, no se renderiza nada
+  }
+
   return (
     <div className="flex justify-center items-center h-auto">
       <div className="max-w-md p-4 bg-white rounded-lg shadow-md mt-20">
@@ -231,7 +263,10 @@ function RegisterProperty() {
             >
               <option value="">Seleccionar ubicación</option>
               {propertyData.locations.map((location) => (
-                <option key={location.id_location} value={location.id_location}>
+                <option
+                  key={location.id_location}
+                  value={location.id_location}
+                >
                   {`${location.city}, ${location.state}, ${location.country}`}
                 </option>
               ))}
@@ -347,17 +382,27 @@ function RegisterProperty() {
             />
           </div>
           {!loading && (
-            <button
-              type="submit"
-              className="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded"
-              disabled={loading}
-            >
-              Enviar
-            </button>
+            <div className="mb-6 flex justify-between">
+              <button
+                type="submit"
+                className="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded"
+                disabled={loading}
+              >
+                Enviar
+              </button>
+              <button
+                type="button"
+                onClick={handleCancel}
+                className="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded"
+              >
+                Cancelar
+              </button>
+            </div>
           )}
         </form>
       </div>
     </div>
   );
 }
+
 export default RegisterProperty;
