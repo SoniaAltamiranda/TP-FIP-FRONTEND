@@ -6,8 +6,8 @@ import { propertiesContext } from "../../context/propertiesContext";
 function FeaturedPosts() {
   const properties = useContext(propertiesContext);
   const [currentPage, setCurrentPage] = useState(1);
-  const propertiesPerPageLarge = 6;
-  const propertiesPerPageSmall = 3;
+  const propertiesPerPageLarge = 3;
+  const propertiesPerPageSmall = 2;
 
   const propertiesPerPage =
     window.innerWidth >= 640 ? propertiesPerPageLarge : propertiesPerPageSmall;
@@ -23,9 +23,11 @@ function FeaturedPosts() {
 
   return (
     <div className="flex flex-col sm:flex-row">
-      <div className="sm:flex-1">
-        <h1 className="text-2xl font-semibold text-center mb-4">Destacados</h1>
-        <hr className="bg-gray-500 mb-6" />
+      <div className="sm:flex-1 mt-10 ">
+        <h1 className="text-2xl text-center md:text-4xl text-gray-700 font-extrabold mb-2">
+          DESTACADOS
+        </h1>
+        <hr className="bg-gray-800 mb-6" />
         {currentProperties.map((property) => (
           <div
             key={property.id_property}
@@ -35,9 +37,9 @@ function FeaturedPosts() {
               <div className="person-image-container">
                 <div className="person-image relative">
                   <img
-                    src={property.images[0]}
-                    alt="Property Image"
-                    className="object-cover w-full h-50 rounded-t-lg rounded-b-lg"
+                    src={`${property.images[0]}`}
+                    alt="Imagen de propiedad"
+                    className="w-full h-[270px] object-cover rounded-lg"
                   />
                 </div>
               </div>

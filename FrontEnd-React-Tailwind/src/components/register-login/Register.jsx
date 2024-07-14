@@ -45,7 +45,7 @@ function Register() {
       }
   
       const data = await response.json();
-      console.log('Usuario registrado:', data);
+      ('Usuario registrado:', data);
       
       Swal.fire({
         icon: 'success',

@@ -18,7 +18,7 @@ function Payments() {
       paymentData[key] = value;
     });
     setPaymentData(paymentData);
-    console.log(paymentData);
+    (paymentData);
 
     const dataToSend = {
       payment_id: Number(paymentData.payment_id),
@@ -42,10 +42,10 @@ function Payments() {
           body: JSON.stringify(dataToSend),
         });
         if (response.ok) {
-          console.log("Se guardaron los datos el pago");
+          ("Se guardaron los datos el pago");
         }
       } catch (error) {
-        console.log(`Error al cargar los datos` + error);
+        (`Error al cargar los datos` + error);
       }
     };
 
@@ -102,15 +102,15 @@ function Payments() {
 
     const updatePropertyStatus = async (propertyId) => {
       try {
-        console.log(propertyId);
+        (propertyId);
         const token = localStorage.getItem("token");
 
         if (!property) {
           console.error("Property is null or undefined");
           return;
         }
-        console.log(property);
-        console.log(statusProperty);
+        (property);
+        (statusProperty);
         const updatedPropertyData = {
           ...property,
           status: statusProperty,

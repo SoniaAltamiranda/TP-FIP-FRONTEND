@@ -20,13 +20,13 @@ function DeleteUser({ user }) {
       text: "Si cancelas, los cambios no se guardarán.",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#3085D6",
-      cancelButtonColor: "#d33",
+      confirmButtonColor: "#2C3E50",
+      cancelButtonColor: "#5D6D7E",
       confirmButtonText: "Sí",
       cancelButtonText: "No",
     }).then((result) => {
       if (result.isConfirmed) {
-        setFormActive(false); // Desactivar el formulario
+        setFormActive(false); 
         navigate('/user');
       }
     });

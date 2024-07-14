@@ -3,7 +3,7 @@ import React from "react";
 function RentalFilter({ onChange }) {
   return (
     <div className="mb-4">
-      <label htmlFor="rentalType" className="block text-gray-800 text-sm font-bold mb-1">
+      <label htmlFor="rentalType" className="block text-gray-800 text-m font-bold mb-2">
         Filtrar por tipo de alquiler:
       </label>
       <select
@@ -14,10 +14,11 @@ function RentalFilter({ onChange }) {
       >
         <option value="">Todos</option>
         <option value="Alquiler temporal">Alquiler temporal</option>
-        <option value="Alquiler permanente">Alquiler a largo plazo</option>
+        <option value="Alquiler a largo plazo">Alquiler a largo plazo</option>
       </select>
     </div>
   );
 }
 
 export default RentalFilter;
+  

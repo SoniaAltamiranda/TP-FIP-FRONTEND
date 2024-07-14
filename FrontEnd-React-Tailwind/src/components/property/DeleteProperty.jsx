@@ -6,7 +6,7 @@ function DeleteProperty({ property, setIsDeleting }) {
     const handleDeleteProperty = async () => {
         try {
             const token = localStorage.getItem("token");
-            console.log(property.id_property);
+            (property.id_property);
            
             const response = await fetch(`${API_URL}/property/${property.id_property}`, {
                 method: "DELETE",
@@ -45,7 +45,7 @@ function DeleteProperty({ property, setIsDeleting }) {
                 <div className="flex justify-end mt-4">
                     <button
                         onClick={handleDeleteProperty}
-                        className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mr-2"
+                        className="bg-gray-600 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded mr-2"
                     >
                         Eliminar
                     </button>

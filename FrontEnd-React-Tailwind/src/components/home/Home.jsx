@@ -4,7 +4,7 @@ import FeaturedPosts from "../featured-posts/FeaturedPosts";
 
 function Home() {
   return (
-    <div className="bg-gradient-to-b from-gray-100 to-gray-300">
+    <div className="bg-gradient-to-b from-gray-100 to-gray-200">
       <br />
       <br />
         <CarouselComponent />

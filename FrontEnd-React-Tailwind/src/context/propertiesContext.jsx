@@ -13,7 +13,7 @@ export const PropertiesProvider = ({ children }) => {
         const response = await fetch(`${API_URL}/property`);
         if (response.ok) {
           const data = await response.json();
-          console.log("Fetched properties:", data); // Debugging log
+     
           setProperties(data);
           setLoading(false);
         } else {

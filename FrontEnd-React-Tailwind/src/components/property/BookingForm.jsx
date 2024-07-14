@@ -80,7 +80,7 @@ function BookingForm({ property, open, onClose }) {
         status: true,
         id_preference: id,
       };
-      console.log(bookingData);
+      (bookingData);
 
       const res = await fetch(`${API_URL}/booking`, {
         method: "POST",
@@ -120,7 +120,7 @@ function BookingForm({ property, open, onClose }) {
       if (!response.ok) {
         throw new Error("Error creating preference: " + response.status);
       }
-      console.log(response.status);
+      (response.status);
 
       const { id } = await response.json();
       return id;

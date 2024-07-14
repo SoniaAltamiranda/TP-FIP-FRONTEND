@@ -14,7 +14,7 @@ function User() {
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState(null);
   const [shownComponent, setShownComponent] = useState("");
-  const [menuExpanded, setMenuExpanded] = useState(false);
+  const [menuExpanded, setMenuExpanded] = useState(true); 
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 768);
 
   useEffect(() => {
@@ -64,8 +64,8 @@ function User() {
       text: "¿Quieres cerrar sesión?",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
+      confirmButtonColor: "#2C3E50",
+      cancelButtonColor: "#5D6D7E",
       confirmButtonText: "Sí",
       cancelButtonText: "No",
     }).then((result) => {
@@ -88,15 +88,15 @@ function User() {
       <div className={`bg-gray-100 text-blue p-6 transition-all duration-500 ${menuExpanded ? "w-full md:w-1/4" : "w-full md:w-16"} ${isSmallScreen ? "mt-6" : ""}`}>
         <div className="relative flex items-center justify-center h-full">
          
-          <button
-            className="absolute top-20 right-4 md:top-20 md:right-0 md:mr-2 md:mt-2 text-blue focus:outline-none"
-            onClick={() => setMenuExpanded(!menuExpanded)}
-          >
-            <FontAwesomeIcon
-              icon={menuExpanded ? faChevronLeft : faChevronRight}
-              size="2x"
-            />
-          </button>
+         <button
+  className={`absolute top-20 right-4 md:top-20 ${isSmallScreen && menuExpanded ? 'right-0' : 'md:right-0 md:mr-2 md:mt-2'} text-blue focus:outline-none`}
+  onClick={() => setMenuExpanded(!menuExpanded)}
+>
+  <FontAwesomeIcon
+    icon={menuExpanded ? faChevronLeft : faChevronRight}
+    size="2x"
+  />
+</button>
 
           {menuExpanded && (
             <div className="bg-white rounded-lg shadow-lg p-4 md:p-8 w-full transition-height duration-500 ease-in-out h-auto">
@@ -195,7 +195,7 @@ function User() {
         )}
         {shownComponent === "Editar Usuario" && (
           <div className="w-full max-w-4xl">
-            <EditUser user={userData} onClose={() => setShownComponent("/user")} />
+            <EditUser user={userData} onClose={() => setShownComponent("")} />
           </div>
         )}
         {shownComponent === "Eliminar Usuario" && (

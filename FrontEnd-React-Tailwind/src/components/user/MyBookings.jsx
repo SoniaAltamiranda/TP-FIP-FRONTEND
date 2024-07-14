@@ -6,7 +6,7 @@ const MyBookings = ({ user }) => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-console.log('soy user prop', user);
+
   useEffect(() => {
     const fetchBookings = async () => {
       try {
@@ -15,7 +15,7 @@ console.log('soy user prop', user);
           throw new Error('Error al obtener las reservas');
         }
         const data = await response.json();
-        console.log('somos las reservas', data);
+       
 
         const userBookings = data.filter(booking => booking.id_user === user.id_user);
         setBookings(userBookings);
@@ -44,7 +44,7 @@ console.log('soy user prop', user);
    
         const updatedBookings = bookings.filter(booking => booking.id_booking !== reservationId);
         setBookings(updatedBookings);
-        console.log(`Reserva ${reservationId} eliminada correctamente.`);
+        (`Reserva ${reservationId} eliminada correctamente.`);
         Swal.fire('Reserva cancelada', 'La reserva ha sido cancelada correctamente.', 'success');
       } else {
         throw new Error("Fallo al eliminar la reserva");
@@ -61,8 +61,8 @@ console.log('soy user prop', user);
       text: '¿Quieres cancelar esta reserva?',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
+      confirmButtonColor: "#2C3E50",
+      cancelButtonColor: "#5D6D7E",
       confirmButtonText: 'Sí, cancelar',
       cancelButtonText: 'No'
     }).then((result) => {

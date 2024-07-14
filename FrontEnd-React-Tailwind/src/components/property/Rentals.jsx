@@ -29,18 +29,18 @@ function PermanentRentals() {
   return (
     <div className="bg-gradient-to-b from-gray-100 to-gray-300">
       <br />
-      <div className="mt-20 container mx-auto">
-        <div className="text-center md:text-left mb-10 md:flex md:items-center justify-center mx-2">
-          <div>
-            <h1 className="text-3xl md:text-6xl text-gray-700 font-extrabold mb-2">
-              ALQUILAFÁCIL.COM
-            </h1>
-            <hr className="w-1/4 md:w-1/6 border-t-2 border-gray-500 mx-auto mb-4" />
-            <p className="text-lg md:text-xl text-gray-600">
-              La forma más conveniente de alquilar lo que necesitas.
-            </p>
+      <div className="mt-24 container mx-auto">
+      <div className="text-center md:text-left mb-10 md:flex md:items-center justify-center mx-2">
+            <div>
+              <h1 className="text-center text-3xl md:text-6xl text-gray-600 font-extrabold mb-2">
+                ALQUILAFÁCIL.COM
+              </h1>
+              <hr className="w-1/4 md:w-1/6 border-t-2 border-gray-300 mx-auto mb-4" />
+              <p className="text-base text-center md:text-lg text-gray-500">
+                La forma más conveniente de alquilar lo que necesitas.
+              </p>
+            </div>
           </div>
-        </div>
         <RentalFilter onChange={(e) => setFilter(e.target.value)} />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {currentProperties.map((property) => (

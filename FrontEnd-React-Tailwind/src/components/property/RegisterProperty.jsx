@@ -103,7 +103,7 @@ function RegisterProperty() {
         body: JSON.stringify(dataToSend),
       });
       const data = await response.json();
-      console.log("Propiedad registrada:", data);
+      ("Propiedad registrada:", data);
       Swal.fire({
         title: "¡Propiedad Registrada!",
         text: "Tu propiedad ha sido registrada exitosamente.",

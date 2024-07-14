@@ -20,7 +20,7 @@ const App = () => {
 
   return (
     
-      <div className="App">
+      <div className="bg-gradient-to-b from-gray-100 to-gray-300">
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />

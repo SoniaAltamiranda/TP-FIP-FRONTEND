@@ -95,7 +95,7 @@ function Contact() {
 
     emailjs.sendForm(serviceId, templateId, e.target)
       .then((result) => {
-        console.log(result.text);
+        (result.text);
         setNotification({
           type: 'success',
           message: '¡Tu consulta se ha enviado exitosamente!',
@@ -117,6 +117,7 @@ function Contact() {
   };
 
   return (
+    <div className="bg-gradient-to-b from-gray-100 to-gray-350">
     <div
       id="contact"
       className="w-full mx-auto p-10 flex flex-col mt-20"
@@ -124,7 +125,7 @@ function Contact() {
     >
       <div
         id="contact-page"
-        className="border-2 border-gray-300 p-2 rounded-md shadow-md w-full flex flex-col md:flex-row"
+        className="border border-gray-300 p-2 rounded-md shadow-md w-full flex flex-col md:flex-row"
       >
         <div id="contact-content" className="w-full md:w-1/2 p-2 flex flex-col">
           {notification.type === "success" && (
@@ -212,17 +213,18 @@ function Contact() {
         </div>
         <div
           id="contact-image"
-          className="w-full md:w-1/2"
+          className="w-full rounded-md md:w-1/2"
           style={{
             backgroundImage: `url("https://cdn.pixabay.com/photo/2015/02/02/11/08/office-620817_1280.jpg")`,
             backgroundSize: "cover",
             backgroundPosition: "center",
-            height: "300px", // Ajusta la altura según sea necesario
+            height: "500px",
             flex: "1",
             position: "relative",
           }}
         ></div>
       </div>
+    </div>
     </div>
   );
 }

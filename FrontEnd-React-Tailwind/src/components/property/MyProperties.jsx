@@ -31,9 +31,8 @@ function MyProperties({ user }) {
         }
 
         const userId = user.id_user;
-        console.log(userId); // Verifica que userId sea correcto
+        
 
-        // Obtener propiedades del usuario específico
         const responseProperties = await fetch(
           `${API_URL}/property?userId=${userId}`,
           {
@@ -48,17 +47,14 @@ function MyProperties({ user }) {
           throw new Error("Error al cargar las propiedades.");
         }
         const propertiesData = await responseProperties.json();
-        console.log(propertiesData); // Verifica las propiedades que estás recibiendo
+       
 
-        // Filtrar propiedades por userId
         const propertiesForCurrentUser = propertiesData.filter(
           (property) => property.id_user === userId
         );
-        console.log(propertiesForCurrentUser); // Verifica las propiedades filtradas para el usuario actual
-
+        (propertiesForCurrentUser); 
         setProperties(propertiesForCurrentUser);
 
-        // Obtener ubicaciones de las propiedades
         const locationIds = propertiesData.map(
           (property) => property.id_location
         );
@@ -78,7 +74,6 @@ function MyProperties({ user }) {
         const locations = await responseLocations.json();
         setLocationsData(locations);
 
-        // Obtener todas las reservas y usuarios
         const responseReservations = await fetch(`${API_URL}/booking`, {
           method: "GET",
           headers: {
@@ -104,7 +99,7 @@ function MyProperties({ user }) {
         const usersData = await responseUsers.json();
         setUsers(usersData);
 
-        // Combinar propiedades con reservas y usuarios correspondientes
+       
         const propertiesWithReservations = propertiesForCurrentUser.map(
           (property) => {
             const propertyReservations = reservationsData.filter(

@@ -35,7 +35,7 @@ function PropertyDetails() {
       const response = await fetch(`${API_URL}/property/${id}`);
       if (response.ok) {
         const data = await response.json();
-        console.log("Datos de la propiedad:", data);
+        ("Datos de la propiedad:", data);
         setProperty(data);
         if (data.id_user) {
           fetchOwnerEmail(data.id_user);
@@ -60,7 +60,7 @@ function PropertyDetails() {
       });
       if (response.ok) {
         const data = await response.json();
-        console.log("Datos del propietario:", data);
+        ("Datos del propietario:", data);
         setOwnerEmail(data.email);
       } else {
         throw new Error("Fallo al obtener los datos del propietario");
@@ -75,7 +75,7 @@ function PropertyDetails() {
       const response = await fetch(`${API_URL}/booking?propertyId=${id}`);
       if (response.ok) {
         const data = await response.json();
-        console.log("Datos de las reservas:", data);
+        ("Datos de las reservas:", data);
         setReservations(data);
       } else {
         throw new Error("Fallo al obtener las reservas de la propiedad");
@@ -100,8 +100,10 @@ function PropertyDetails() {
         text: "Debes iniciar sesión para poder reservar.",
         showCancelButton: true,
         confirmButtonText: "Iniciar Sesión",
+        confirmButtonColor: "#2C3E50",
+        
         cancelButtonText: "Cancelar",
-        cancelButtonColor: "#d33",
+        cancelButtonColor: "#5D6D7E",
       }).then((result) => {
         if (result.isConfirmed) {
           window.location.href = "/login";
@@ -121,7 +123,7 @@ function PropertyDetails() {
                 ALQUILAFÁCIL.COM
               </h1>
               <hr className="w-1/4 md:w-1/6 border-t-2 border-gray-300 mx-auto mb-4" />
-              <p className="text-base text-center md:text-lg text-gray-400">
+              <p className="text-base text-center md:text-lg text-gray-500">
                 La forma más conveniente de alquilar lo que necesitas.
               </p>
             </div>
@@ -187,7 +189,7 @@ function PropertyDetails() {
                     open={open}
                     onClose={() => setOpen(false)}
                     onBookingSuccess={() => {
-                      console.log("¡Reserva exitosa!");
+                      ("¡Reserva exitosa!");
                       setOpen(false);
                     }}
                   />
