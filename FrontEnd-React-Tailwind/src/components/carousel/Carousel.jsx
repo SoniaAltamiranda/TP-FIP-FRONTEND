@@ -7,7 +7,7 @@ const CarouselComponent = () => {
   return (
     <div className="h-full w-full flex items-center justify-center">
       
-      <div className="w-4/5  h-4/5 flex items-center justify-center">
+      <div className="w-2/3  h-1/2 flex items-center justify-center">
         <Carousel
           showStatus={false}
           showThumbs={false}

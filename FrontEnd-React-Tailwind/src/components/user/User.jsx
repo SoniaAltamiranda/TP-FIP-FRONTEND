@@ -6,7 +6,10 @@ import EditUser from "./EditUser";
 import DeleteUser from "./DeleteUser";
 import Swal from "sweetalert2";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronRight, faChevronLeft } from "@fortawesome/free-solid-svg-icons";
+import {
+  faChevronRight,
+  faChevronLeft,
+} from "@fortawesome/free-solid-svg-icons";
 import API_URL from "../../configAPIclever/Url_apiClever";
 import MyBookings from "./MyBookings";
 
@@ -14,7 +17,7 @@ function User() {
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState(null);
   const [shownComponent, setShownComponent] = useState("");
-  const [menuExpanded, setMenuExpanded] = useState(true); 
+  const [menuExpanded, setMenuExpanded] = useState(true);
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 768);
 
   useEffect(() => {
@@ -23,14 +26,11 @@ function User() {
         const token = localStorage.getItem("token");
         const payload = jwtDecode(token);
 
-        const response = await fetch(
-          `${API_URL}/user/${payload.sub}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await fetch(`${API_URL}/user/${payload.sub}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         if (!response.ok) {
           throw new Error("Error al obtener los datos del usuario");
@@ -82,21 +82,28 @@ function User() {
       <img
         src="/images/fondo.jpg"
         alt="Fondo"
-        className="absolute top-0 left-0 w-full h-full object-cover -z-10 filter grayscale opacity-20"
+        className="absolute top-0 left-0 w-full h-full object-cover filter grayscale opacity-20 z-0"
       />
 
-      <div className={`bg-gray-100 text-blue p-6 transition-all duration-500 ${menuExpanded ? "w-full md:w-1/4" : "w-full md:w-16"} ${isSmallScreen ? "mt-6" : ""}`}>
+      <div
+        className={`bg-gray-100 text-blue p-6 transition-all duration-500 ${
+          menuExpanded ? "w-full md:w-1/4" : "w-full md:w-16"
+        } ${isSmallScreen ? "mt-6" : ""} z-10`}
+      >
         <div className="relative flex items-center justify-center h-full">
-         
-         <button
-  className={`absolute top-20 right-4 md:top-20 ${isSmallScreen && menuExpanded ? 'right-0' : 'md:right-0 md:mr-2 md:mt-2'} text-blue focus:outline-none`}
-  onClick={() => setMenuExpanded(!menuExpanded)}
->
-  <FontAwesomeIcon
-    icon={menuExpanded ? faChevronLeft : faChevronRight}
-    size="2x"
-  />
-</button>
+          <button
+            className={`absolute top-20 right-4 md:top-20 ${
+              isSmallScreen && menuExpanded
+                ? "right-0"
+                : "md:right-0 md:mr-2 md:mt-2"
+            } text-blue focus:outline-none`}
+            onClick={() => setMenuExpanded(!menuExpanded)}
+          >
+            <FontAwesomeIcon
+              icon={menuExpanded ? faChevronLeft : faChevronRight}
+              size="2x"
+            />
+          </button>
 
           {menuExpanded && (
             <div className="bg-white rounded-lg shadow-lg p-4 md:p-8 w-full transition-height duration-500 ease-in-out h-auto">
@@ -165,8 +172,12 @@ function User() {
           )}
         </div>
       </div>
-      
-      <div className={`flex-grow flex flex-col items-center justify-center p-4 md:p-8 ${menuExpanded ? 'mt-0 md:mt-0' : 'mt-16 md:mt-0'} overflow-y-auto`}>
+
+      <div
+        className={`flex-grow flex flex-col items-center justify-center p-4 md:p-8 ${
+          menuExpanded ? "mt-0 md:mt-0" : "mt-16 md:mt-0"
+        } overflow-y-auto z-10`}
+      >
         {shownComponent === "" ? (
           <div className="text-center">
             <h1 className="text-4xl md:text-5xl text-gray-800 font-extrabold mb-6">
@@ -200,7 +211,7 @@ function User() {
         )}
         {shownComponent === "Eliminar Usuario" && (
           <div className="w-full max-w-4xl">
-            <DeleteUser />
+            <DeleteUser user = {userData}/>
           </div>
         )}
       </div>

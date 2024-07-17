@@ -108,8 +108,9 @@ function RegisterProperty() {
         title: "¡Propiedad Registrada!",
         text: "Tu propiedad ha sido registrada exitosamente.",
         icon: "success",
+        confirmButtonColor: "#2C3E50",
       }).then(() => {
-        setFormActive(false); // Desactiva el formulario después del éxito
+        setFormActive(false); 
       });
     } catch (error) {
       console.error("Error al registrar la propiedad:", error);
@@ -167,24 +168,24 @@ function RegisterProperty() {
       text: "Si cancelas, los cambios no se guardarán.",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#3085D6",
-      cancelButtonColor: "#d33",
+      confirmButtonColor: "#2C3E50",
+      cancelButtonColor: "#5D6D7E",
       confirmButtonText: "Sí",
       cancelButtonText: "No",
     }).then((result) => {
       if (result.isConfirmed) {
-        setFormActive(false); // Desactiva el formulario
+        setFormActive(false); 
       }
     });
   };
 
   if (!formActive) {
-    return null; // Si formActive es falso, no se renderiza nada
+    return null;
   }
 
   return (
     <div className="flex justify-center items-center h-auto">
-      <div className="max-w-md p-4 bg-white rounded-lg shadow-md mt-20">
+      <div className="max-w-md p-4 bg-white rounded-lg shadow-md mt-60">
         <form onSubmit={handleSubmit} encType="multipart/form-data">
           <div className="">
             <label

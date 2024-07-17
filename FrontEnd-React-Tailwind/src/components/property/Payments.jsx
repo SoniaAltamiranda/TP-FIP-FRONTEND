@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import API_URL from "../../configAPIclever/Url_apiClever";
 import { propertiesContext } from "../../context/propertiesContext";
+import { useNavigate } from "react-router-dom";
 
 function Payments() {
   const properties = useContext(propertiesContext);
@@ -10,6 +11,7 @@ function Payments() {
   const [statusProperty, setStatusProperty] = useState(null);
   const [idProperty, setIdProperty] = useState(null);
   const [property, setProperty] = useState(null);
+  const navigate = useNavigate()
 
   useEffect(() => {
     const urlSearchParams = new URLSearchParams(window.location.search);
@@ -78,6 +80,10 @@ function Payments() {
     fetchPaymentData();
     fetchBookingData();
   }, [properties]);
+
+  const handleBackToHome = () => {
+    navigate("/user");
+  };
 
   useEffect(() => {
     const updateBookingStatus = async (bookingId) => {
@@ -160,7 +166,7 @@ function Payments() {
         {paymentData.status === "approved" ? (
           <div className="text-center">
             <img
-              src="../public/images/lista-de-verificacion.png"
+              src="/images/lista-de-verificacion.png"
               alt="Pago aprobado"
               className="mx-auto mb-4 w-32 h-32"
             />
@@ -205,9 +211,9 @@ function Payments() {
         ) : (
           <div>
             <img
-              src="../public/images/rechazado.png"
+              src="/images/rechazado.png"
               alt="Pago rechazado"
-              className="mx-auto mb-4 w-32 h-32"
+              className="mx-auto mb-4 w-32 h-22"
             />
             <h2 className="text-2xl font-semibold mb-4">
               Su pago fue rechazado.!!!
@@ -219,6 +225,14 @@ function Payments() {
             <p>Gracias!</p>
           </div>
         )}
+        <div className="flex justify-center">
+          <button
+            onClick={handleBackToHome}
+            className="mt-8 bg-gray-700 text-white hover:bg-gray-600 text-white font-bold py-2 px-4 rounded"
+          >
+            Volver a Mi Cuenta
+          </button>
+        </div>
       </div>
     </div>
   );

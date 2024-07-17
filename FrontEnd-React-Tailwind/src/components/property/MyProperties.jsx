@@ -31,7 +31,6 @@ function MyProperties({ user }) {
         }
 
         const userId = user.id_user;
-        
 
         const responseProperties = await fetch(
           `${API_URL}/property?userId=${userId}`,
@@ -47,12 +46,10 @@ function MyProperties({ user }) {
           throw new Error("Error al cargar las propiedades.");
         }
         const propertiesData = await responseProperties.json();
-       
 
         const propertiesForCurrentUser = propertiesData.filter(
           (property) => property.id_user === userId
         );
-        (propertiesForCurrentUser); 
         setProperties(propertiesForCurrentUser);
 
         const locationIds = propertiesData.map(
@@ -99,7 +96,6 @@ function MyProperties({ user }) {
         const usersData = await responseUsers.json();
         setUsers(usersData);
 
-       
         const propertiesWithReservations = propertiesForCurrentUser.map(
           (property) => {
             const propertyReservations = reservationsData.filter(
@@ -128,8 +124,7 @@ function MyProperties({ user }) {
         console.error("Error en la carga de datos:", error);
         Swal.fire({
           title: "Error",
-          text:
-            "Hubo un error al cargar los datos. Por favor, inténtalo de nuevo más tarde.",
+          text: "Hubo un error al cargar los datos. Por favor, inténtalo de nuevo más tarde.",
           icon: "error",
         });
       }
@@ -147,6 +142,42 @@ function MyProperties({ user }) {
   const handleDeleteClick = (property) => {
     setPropertyToDelete(property);
     setIsDeleting(true);
+  };
+
+  const updateProperties = async () => {
+    // Actualizar lista de propiedades después de eliminar
+    try {
+      const token = localStorage.getItem("token");
+      const userId = user.id_user;
+
+      const response = await fetch(
+        `${API_URL}/property?userId=${userId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Error al cargar las propiedades actualizadas.");
+      }
+
+      const propertiesData = await response.json();
+      const propertiesForCurrentUser = propertiesData.filter(
+        (property) => property.id_user === userId
+      );
+      setProperties(propertiesForCurrentUser);
+    } catch (error) {
+      console.error("Error al actualizar las propiedades:", error);
+      Swal.fire({
+        title: "Error",
+        text: "Hubo un error al actualizar las propiedades. Por favor, inténtalo de nuevo más tarde.",
+        icon: "error",
+      });
+    }
   };
 
   const clearSelectedProperty = () => {
@@ -172,13 +203,12 @@ function MyProperties({ user }) {
         Mis Propiedades
       </p>
 
-
-      {properties.length > 0 ? (
-        properties.map((property) => (
+      {currentProperties.length > 0 ? (
+        currentProperties.map((property) => (
           <div key={property.id_property} className="mb-6">
             <div className="bg-white shadow-md rounded-lg">
-              <div className="flex flex-col md:flex-row">
-                <div className="md:w-1/3 md:mr-4 mb-4 md:mb-0">
+              <div className="flex mt-6 flex-col md:flex-row">
+                <div className="md:w-1/3 m-6 md:mr-4 mb-6 md:mb-0">
                   <img
                     src={property.images[0]}
                     alt="Avatar"
@@ -239,10 +269,12 @@ function MyProperties({ user }) {
           </div>
         ))
       ) : (
-        <p className="text-center text-gray-800 mt-4">No hay propiedades disponibles.</p>
+        <p className="text-center text-gray-800 mt-4">
+          No tienes propiedades en alquiler publicadas. Para publicar,
+          selecciona en el Menú el botón "Publicar".
+        </p>
       )}
 
-     
       {isEditing && (
         <ModifyProperty
           property={propertyToEdit}
@@ -256,10 +288,10 @@ function MyProperties({ user }) {
         <DeleteProperty
           property={propertyToDelete}
           setIsDeleting={setIsDeleting}
+          updateProperties={updateProperties} // Pasar la función de actualización
         />
       )}
 
-   
       {showModal && selectedProperty && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
           <div className="bg-white p-8 md:w-1/3 rounded-lg shadow-lg">
@@ -323,25 +355,25 @@ function MyProperties({ user }) {
           </div>
         </div>
       )}
+<div className="flex justify-center items-center mt-4">
+  {currentPage > 1 && (
+    <button
+      className="bg-gray-400 hover:bg-gray-700 text-gray-800 font-bold py-2 px-4 rounded"
+      onClick={() => paginate(currentPage - 1)}
+    >
+      {"< "}
+    </button>
+  )}
+  {indexOfLastProperty < properties.length && (
+    <button
+      className="bg-gray-400 hover:bg-gray-600 text-gray-800 font-bold py-2 px-4 rounded"
+      onClick={() => paginate(currentPage + 1)}
+    >
+      {" >"}
+    </button>
+  )}
+</div>
 
-     
-      <div className="flex justify-center mt-4">
-        {Array.from({
-          length: Math.ceil(properties.length / propertiesPerPage),
-        }).map((_, index) => (
-          <button
-            key={index}
-            onClick={() => paginate(index + 1)}
-            className={`${
-              currentPage === index + 1
-                ? "bg-gray-900 text-white"
-                : "bg-gray-300 text-gray-700"
-            } font-bold py-2 px-4 rounded mx-1`}
-          >
-            {index + 1}
-          </button>
-        ))}
-      </div>
     </div>
   );
 }

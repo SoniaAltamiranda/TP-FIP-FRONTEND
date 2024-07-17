@@ -12,7 +12,7 @@ function EditUser({ user }) {
     password: "",
     username: "",
   });
-  const [formActive, setFormActive] = useState(true); // Estado para controlar si el formulario está activo
+  const [formActive, setFormActive] = useState(true); 
 
   useEffect(() => {
     async function fetchUserData() {
@@ -65,7 +65,7 @@ function EditUser({ user }) {
     }).then((result) => {
       if (result.isConfirmed) {
         setFormActive(false);
-        navigate('/user'); 
+        navigate('/login'); 
       }
     });
   }

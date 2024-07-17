@@ -2,12 +2,10 @@ import React from "react";
 import Swal from "sweetalert2";
 import API_URL from "../../configAPIclever/Url_apiClever";
 
-function DeleteProperty({ property, setIsDeleting }) {
+function DeleteProperty({ property, setIsDeleting, updateProperties }) {
     const handleDeleteProperty = async () => {
         try {
             const token = localStorage.getItem("token");
-            (property.id_property);
-           
             const response = await fetch(`${API_URL}/property/${property.id_property}`, {
                 method: "DELETE",
                 headers: {
@@ -17,10 +15,12 @@ function DeleteProperty({ property, setIsDeleting }) {
             });
             if (response.ok) {
                 setIsDeleting(false); 
+                updateProperties(); 
                 Swal.fire({
                     title: "Éxito",
                     text: "La propiedad se ha eliminado correctamente",
                     icon: "success",
+                    confirmButtonColor: "#2C3E50",
                 });
             } else {
                 throw new Error("Error al eliminar la propiedad");
