@@ -120,8 +120,8 @@ function Contact() {
     <div className="bg-gradient-to-b from-gray-100 to-gray-350">
     <div
       id="contact"
-      className="w-full mx-auto p-10 flex flex-col mt-20"
-      style={{ maxWidth: '800px' }}
+      className="w-full mx-auto p-12 flex flex-col mt-20"
+      style={{ maxWidth: '800px'  }}
     >
       <div
         id="contact-page"

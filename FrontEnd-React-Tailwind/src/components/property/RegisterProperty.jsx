@@ -24,8 +24,7 @@ function RegisterProperty() {
     status: "not reserved",
     locations: [],
   });
-  const [formActive, setFormActive] = useState(true); // Estado para controlar si el formulario está activo
-
+  const [formActive, setFormActive] = useState(true); 
   useEffect(() => {
     const getTokenAndSetUserId = async () => {
       try {
@@ -60,24 +59,23 @@ function RegisterProperty() {
       const userId = parseInt(propertyData.id_user);
       const parsedRooms = parseInt(propertyData.rooms);
       const parsedPrice = parseInt(propertyData.price);
+  
       const uploadedImages = await Promise.all(
         propertyData.images.map(async (imageFile, index) => {
           const formData = new FormData();
           formData.append("image", imageFile);
           formData.append("type", "image");
-          formData.append("title", `iMAGE ${index + 1}`);
-          formData.append(
-            "description",
-            `Description for image ${index + 1}`
-          );
+          formData.append("title", `Image ${index + 1}`);
+          formData.append("description", `Description for image ${index + 1}`);
+  
           const response = await fetch("https://api.imgur.com/3/image", {
             method: "POST",
             headers: {
               Authorization: `Client-ID 83323e63212094a`,
             },
             body: formData,
-            redirect: "follow",
           });
+  
           const result = await response.json();
           if (result.success) {
             return result.data.link;
@@ -86,6 +84,7 @@ function RegisterProperty() {
           }
         })
       );
+  
       const dataToSend = {
         ...propertyData,
         id_user: payload.sub,
@@ -94,6 +93,7 @@ function RegisterProperty() {
         id_location: locationId,
         images: uploadedImages,
       };
+  
       const response = await fetch(`${API_URL}/property`, {
         method: "POST",
         headers: {
@@ -102,16 +102,20 @@ function RegisterProperty() {
         },
         body: JSON.stringify(dataToSend),
       });
-      const data = await response.json();
-      ("Propiedad registrada:", data);
-      Swal.fire({
-        title: "¡Propiedad Registrada!",
-        text: "Tu propiedad ha sido registrada exitosamente.",
-        icon: "success",
-        confirmButtonColor: "#2C3E50",
-      }).then(() => {
-        setFormActive(false); 
-      });
+  
+      if (response.ok) {
+        const data = await response.json();
+        Swal.fire({
+          title: "¡Propiedad Registrada!",
+          text: "Tu propiedad ha sido registrada exitosamente.",
+          icon: "success",
+          confirmButtonColor: "#2C3E50",
+        }).then(() => {
+          setFormActive(false);
+        });
+      } else {
+        throw new Error("Error al registrar la propiedad");
+      }
     } catch (error) {
       console.error("Error al registrar la propiedad:", error);
       Swal.fire({
@@ -124,6 +128,7 @@ function RegisterProperty() {
       setLoading(false);
     }
   };
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -160,6 +165,12 @@ function RegisterProperty() {
 
   const handleDrop = (e) => {
     e.preventDefault();
+    const files = Array.from(e.dataTransfer.files);
+    const imageFiles = files.filter((file) => file.type.startsWith("image/"));
+    setPropertyData((prevData) => ({
+      ...prevData,
+      images: [...prevData.images, ...imageFiles],
+    }));
   };
 
   const handleCancel = () => {
@@ -174,7 +185,7 @@ function RegisterProperty() {
       cancelButtonText: "No",
     }).then((result) => {
       if (result.isConfirmed) {
-        setFormActive(false); 
+        setFormActive(false);
       }
     });
   };
@@ -378,7 +389,7 @@ function RegisterProperty() {
             <ClipLoader
               loading={loading}
               css={override}
-              size={70}
+              size={50}
               color={"#2A2A26 "}
             />
           </div>

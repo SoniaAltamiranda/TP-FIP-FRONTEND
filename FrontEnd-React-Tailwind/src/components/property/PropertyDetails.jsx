@@ -60,7 +60,7 @@ function PropertyDetails() {
       });
       if (response.ok) {
         const data = await response.json();
-        console.log("Datos del propietario:", data);
+        
         setOwnerEmail(data.email);
       } else {
         throw new Error("Fallo al obtener los datos del propietario");
@@ -75,7 +75,7 @@ function PropertyDetails() {
       const response = await fetch(`${API_URL}/booking?propertyId=${id}`);
       if (response.ok) {
         const data = await response.json();
-        console.log("Datos de las reservas:", data);
+      
         setReservations(data);
       } else {
         throw new Error("Fallo al obtener las reservas de la propiedad");

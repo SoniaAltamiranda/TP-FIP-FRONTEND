@@ -2,8 +2,13 @@ import React, { useState } from "react";
 import Swal from "sweetalert2";
 import API_URL from "../../configAPIclever/Url_apiClever";
 import { ClipLoader } from "react-spinners";
+import { css } from "@emotion/react";
 
 function ModifyProperty({ property, locationsData, setIsEditing }) {
+  const override = css`
+    display: block;
+    margin: 0 auto;
+  `;
   const [propertyToEdit, setPropertyToEdit] = useState(property);
   const [selectedLocation, setSelectedLocation] = useState(property.id_location);
   const [newImages, setNewImages] = useState([]);
@@ -23,15 +28,16 @@ function ModifyProperty({ property, locationsData, setIsEditing }) {
           formData.append("type", "image");
           formData.append("title", `Image ${index + 1}`);
           formData.append("description", `Description for image ${index + 1}`);
-
+          console.log(formData.image);
           const response = await fetch("https://api.imgur.com/3/image", {
             method: "POST",
             headers: {
               Authorization: `Client-ID 83323e63212094a`,
             },
             body: formData,
+            redirect: "follow",
           });
-
+          
           if (!response.ok) {
             throw new Error(`Error al subir la imagen a Imgur: ${response.statusText}`);
           }
@@ -68,6 +74,7 @@ function ModifyProperty({ property, locationsData, setIsEditing }) {
           title: "Éxito",
           text: "La propiedad se ha actualizado correctamente",
           icon: "success",
+          confirmButtonColor: "#2C3E50",
         });
       } else {
         const responseData = await response.json();
@@ -87,59 +94,40 @@ function ModifyProperty({ property, locationsData, setIsEditing }) {
     }
   };
 
-  const handleImageChange = (e) => {
-    const files = Array.from(e.target.files);
-    setNewImages((prevImages) => [...prevImages, ...files]);
-
-    const imagePromises = files.map((file) => {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-
-        reader.onload = (e) => {
-          resolve(e.target.result);
-        };
-
-        reader.onerror = (e) => {
-          reject(new Error("Error al leer la imagen."));
-        };
-
-        reader.readAsDataURL(file);
-      });
-    });
-
-    Promise.all(imagePromises)
-      .then((imagesDataUrls) => {
-        setPropertyToEdit((prevData) => ({
-          ...prevData,
-          images: [...prevData.images, ...imagesDataUrls],
-        }));
-      })
-      .catch((error) => {
-        console.error("Error al cargar las imágenes:", error);
-        Swal.fire({
-          title: "Error",
-          text: "Hubo un error al cargar las imágenes. Por favor, inténtalo de nuevo más tarde.",
-          icon: "error",
-        });
-      });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === "id_location") {
+      const locationId = parseInt(value);
+      setSelectedLocation(locationId);
+    } else {
+      setPropertyToEdit((prevData) => ({ ...prevData, [name]: value }));
+    }
   };
 
-  const handleRemoveImage = (index) => {
-    setPropertyToEdit((prevData) => {
-      const updatedImages = [...prevData.images];
-      updatedImages.splice(index, 1);
-      return {
-        ...prevData,
-        images: updatedImages,
-      };
-    });
+  const handleFileSelect = (e) => {
+    const files = e.target.files;
+    const imageFiles = Array.from(files);
+    setNewImages((prevImages) => [...prevImages, ...imageFiles]);
+  };
+
+  const handleRemoveImage = (indexToRemove) => {
+    const updatedImages = propertyToEdit.images.filter((_, index) => index !== indexToRemove);
+    setPropertyToEdit((prevData) => ({ ...prevData, images: updatedImages }));
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
   };
 
   return (
     <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-900 bg-opacity-50">
-      <div className="bg-white p-6 rounded-lg shadow-md w-full md:w-2/3">
-        <form onSubmit={handleUpdate} className="space-y-4">
-          <h2 className="text-2xl font-bold">Datos de la propiedad:</h2>
+      <div className="bg-white p-6 rounded-lg shadow-md md:w-1/2 lg:w-1/3 xl:w-1/2 mt-8">
+        <form onSubmit={handleUpdate} className="space-y-1">
+          <h2 className="text-1x1 font-bold">Datos de la propiedad:</h2>
           <div>
             <label htmlFor="title" className="block text-gray-800 font-bold mb-1">
               Título:
@@ -149,21 +137,20 @@ function ModifyProperty({ property, locationsData, setIsEditing }) {
               id="title"
               name="title"
               value={propertyToEdit.title}
-              onChange={(e) => setPropertyToEdit({ ...propertyToEdit, title: e.target.value })}
-              className="border border-gray-400 p-2 rounded w-full"
+              onChange={handleChange}
+              className="border border-gray-400 p-1 rounded w-full"
             />
           </div>
           <div>
             <label htmlFor="description" className="block text-gray-800 font-bold mb-1">
               Descripción:
             </label>
-            <input
-              type="text"
+            <textarea
               id="description"
               name="description"
               value={propertyToEdit.description}
-              onChange={(e) => setPropertyToEdit({ ...propertyToEdit, description: e.target.value })}
-              className="border border-gray-400 p-2 rounded w-full"
+              onChange={handleChange}
+              className="border border-gray-400 p-1 rounded w-full h-auto resize-none"
             />
           </div>
           <div>
@@ -175,8 +162,8 @@ function ModifyProperty({ property, locationsData, setIsEditing }) {
               id="rooms"
               name="rooms"
               value={propertyToEdit.rooms}
-              onChange={(e) => setPropertyToEdit({ ...propertyToEdit, rooms: e.target.value })}
-              className="border border-gray-400 p-2 rounded w-full"
+              onChange={handleChange}
+              className="border border-gray-400 p-1 rounded w-full"
             />
           </div>
           <div>
@@ -187,8 +174,8 @@ function ModifyProperty({ property, locationsData, setIsEditing }) {
               id="type"
               name="type"
               value={propertyToEdit.type}
-              onChange={(e) => setPropertyToEdit({ ...propertyToEdit, type: e.target.value })}
-              className="border border-gray-400 p-2 rounded w-full"
+              onChange={handleChange}
+              className="border border-gray-400 p-1 rounded w-full"
             >
               <option value="Alquiler temporal">Alquiler temporal</option>
               <option value="Alquiler permanente">Alquiler permanente</option>
@@ -203,8 +190,8 @@ function ModifyProperty({ property, locationsData, setIsEditing }) {
               id="price"
               name="price"
               value={propertyToEdit.price}
-              onChange={(e) => setPropertyToEdit({ ...propertyToEdit, price: e.target.value })}
-              className="border border-gray-400 p-2 rounded w-full"
+              onChange={handleChange}
+              className="border border-gray-400 p-1 rounded w-full"
             />
           </div>
           <div>
@@ -213,10 +200,10 @@ function ModifyProperty({ property, locationsData, setIsEditing }) {
             </label>
             <select
               id="location"
-              name="location"
+              name="id_location"
               value={selectedLocation}
-              onChange={(e) => setSelectedLocation(e.target.value)}
-              className="border border-gray-400 p-2 rounded w-full"
+              onChange={handleChange}
+              className="border border-gray-400 p-1 rounded w-full"
             >
               {locationsData.map((location) => (
                 <option key={location.id_location} value={location.id_location}>
@@ -229,68 +216,65 @@ function ModifyProperty({ property, locationsData, setIsEditing }) {
             <label htmlFor="images" className="block text-gray-800 font-bold mb-1">
               Imágenes:
             </label>
-            <div className="flex flex-wrap gap-2 mb-4">
-              {propertyToEdit.images.map((imageUrl, index) => (
-                <div key={index} className="relative">
-                  <img
-                    src={
-                      imageUrl instanceof File
-                        ? URL.createObjectURL(imageUrl)
-                        : imageUrl
-                    }
-                    alt={`Image ${index}`}
-                    className="max-w-18 h-auto mb-2 rounded-lg"
-                    style={{ maxWidth: '100px', maxHeight: '100px' }}
-                  />
-                  <button
-                    className="absolute top-0 right-0 p-1 bg-gray-500 text-white rounded-full"
-                    onClick={() => handleRemoveImage(index)}
-                  >
-                    X
-                  </button>
-                </div>
-              ))}
-              {newImages.map((imageFile, index) => (
-                <div key={`new-${index}`} className="relative">
-                  <img
-                    src={URL.createObjectURL(imageFile)}
-                    alt={`New Image ${index}`}
-                    className="max-w-18 h-auto mb-2 rounded-lg"
-                    style={{ maxWidth: '100px', maxHeight: '100px' }}
-                  />
-                </div>
-              ))}
+            <div
+              id="imageDropArea"
+              className="w-full px-2 py-2 border rounded-lg focus:outline-none focus:shadow-outline transition-colors ease-in-out duration-300 hover:bg-blue-200"
+              onDragOver={handleDragOver}
+              onDrop={handleDrop}
+            >
+              <div className="flex flex-wrap gap-4" style={{ maxWidth: "300px" }}>
+                {propertyToEdit.images.map((imageUrl, index) => (
+                  <div key={index} className="relative">
+                    <img
+                      src={imageUrl instanceof File ? URL.createObjectURL(imageUrl) : imageUrl}
+                      alt={`Image ${index}`}
+                      className="max-w-18 h-auto mb-2 rounded-lg"
+                      style={{ maxWidth: "100px", maxHeight: "100px" }}
+                    />
+                    <button
+                      className="absolute top-0 right-0 p-1 bg-gray-500 text-white rounded-full"
+                      onClick={() => handleRemoveImage(index)}
+                    >
+                      X
+                    </button>
+                  </div>
+                ))}
+                {newImages.map((imageFile, index) => (
+                  <div key={`new-${index}`} className="relative">
+                    <img
+                      src={URL.createObjectURL(imageFile)}
+                      alt={`New Image ${index}`}
+                      className="max-w-18 h-auto mb-1 rounded-lg"
+                      style={{ maxWidth: "100px", maxHeight: "100px" }}
+                    />
+                  </div>
+                ))}
+              </div>
+              <label htmlFor="imageUpload">Arrastra y suelta imágenes aquí </label>
             </div>
             <input
               type="file"
-              id="images"
-              name="images"
-              accept="image/*"
+              id="imageUpload"
+              name="imageUpload"
               multiple
-              onChange={handleImageChange}
-              className="border border-gray-400 p-2 rounded w-full"
+              onChange={handleFileSelect}
+              className="hidden"
             />
           </div>
-          <div className="flex justify-center mt-4">
-            <ClipLoader
-              loading={loading}
-              size={70}
-              color={"#2A2A26"}
-            />
-          </div>
-          <div className="flex justify-end">
-            <button
-              type="submit"
-              className="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded mr-2"
-            >
-              Guardar
-            </button>
+          <div className="flex justify-end space-x-3">
             <button
               type="button"
               onClick={() => setIsEditing(false)}
-              className="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded"
+              className="px-4 py-2 bg-gray-500 text-white rounded"
             >
               Cancelar
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-gray-800 text-white rounded"
+              disabled={loading}
+            >
+              {loading ? <ClipLoader css={override} size={20} color={"#ffffff"} loading={loading} /> : "Actualizar"}
             </button>
           </div>
         </form>

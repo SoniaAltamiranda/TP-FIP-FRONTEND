@@ -27,7 +27,7 @@ function DeleteUser({ user }) {
     }).then((result) => {
       if (result.isConfirmed) {
         setFormActive(false); 
-        navigate('/user');
+        navigate('/');
       }
     });
   };
